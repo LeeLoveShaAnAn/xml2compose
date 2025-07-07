@@ -1,12 +1,17 @@
 :root {
     --primary-color: #4285F4;
-    --background-color: #1e1e1e;
-    --surface-color: #2d2d2d;
-    --text-color: #d4d4d4;
-    --header-bg: #252526;
-    --border-color: #3e3e3e;
+    --primary-dark: #3367D6;
+    --secondary-color: #6c757d;
+    --background-color: #ffffff;
+    --surface-color: #f8f9fa;
+    --text-color: #3c4043;
+    --text-light: #5f6368;
+    --border-color: #dfe1e5;
     --font-family: 'Poppins', sans-serif;
-    --font-mono: 'Source Code Pro', monospace;
+}
+
+html {
+    scroll-behavior: smooth;
 }
 
 body {
@@ -14,22 +19,23 @@ body {
     background-color: var(--background-color);
     color: var(--text-color);
     margin: 0;
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
+    text-align: center;
 }
 
 .container {
-    max-width: 100%;
+    max-width: 960px;
+    width: 100%;
     padding: 0 2rem;
     margin: 0 auto;
 }
 
 header {
-    background-color: var(--header-bg);
+    background-color: var(--background-color);
     border-bottom: 1px solid var(--border-color);
-    padding: 0.75rem 0;
-    flex-shrink: 0;
+    padding: 1rem 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
 }
 
 header .container {
@@ -39,85 +45,201 @@ header .container {
 }
 
 header .logo h1 {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: var(--primary-color);
+    font-size: 1.75rem;
+    font-weight: 700;
     margin: 0;
 }
 
-#convert-btn {
-    padding: 0.6rem 1.5rem;
+header .logo h1 a {
+    text-decoration: none;
+    color: var(--primary-color);
+}
+
+header nav ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+header nav a {
+    text-decoration: none;
+    color: var(--text-light);
+    font-weight: 600;
+    transition: color 0.2s ease-in-out;
+}
+
+header nav a:hover {
+    color: var(--primary-color);
+}
+
+header nav .cta-button {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 0.6rem 1.2rem;
+    border-radius: 6px;
+    transition: background-color 0.2s ease-in-out;
+}
+
+header nav .cta-button:hover {
+    background-color: var(--primary-dark);
+    color: white;
+}
+
+main#home {
+    padding: 4rem 0;
+}
+
+.hero .subtitle {
+    font-size: 1.5rem;
+    font-weight: 400;
+    color: var(--text-light);
+    margin: 0 0 2rem;
+}
+
+.visual-placeholder {
+    background-color: var(--surface-color);
+    border-radius: 16px;
+    padding: 3rem;
+    margin: 2rem 0;
+    display: inline-block;
+}
+
+.visual-placeholder svg .stroke-primary {
+    stroke: var(--primary-color);
+}
+
+.visual-placeholder svg .stroke-secondary {
+    stroke: var(--secondary-color);
+}
+
+.about-section {
+    background-color: var(--surface-color);
+    padding: 4rem 0;
+    text-align: left;
+}
+
+.about-section h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 2rem;
+}
+
+.about-section p {
+    font-size: 1.125rem;
+    line-height: 1.8;
+    max-width: 800px;
+    margin: 0 auto 1rem;
+}
+
+.form-container {
+    padding: 4rem 0;
+}
+
+.form-container h2 {
+    font-size: 1.75rem;
+    font-weight: 600;
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+}
+
+.form-group {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+input[type="email"] {
+    flex-grow: 1;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1rem;
+    min-width: 0;
+}
+
+input[type="email"]:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px var(--primary-color-light);
+}
+
+button[type="submit"] {
+    padding: 0.75rem 1.5rem;
     background-color: var(--primary-color);
     color: white;
     border: none;
-    border-radius: 6px;
+    border-radius: 8px;
     font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
     transition: background-color 0.2s ease-in-out;
 }
 
-#convert-btn:hover {
-    background-color: #3367D6;
+button[type="submit"]:hover {
+    background-color: var(--primary-dark);
 }
 
-.converter-container {
-    display: flex;
-    flex-grow: 1;
-    overflow: hidden;
-}
-
-.editor-pane {
-    width: 50%;
-    display: flex;
-    flex-direction: column;
-    padding: 1rem;
-    border-right: 1px solid var(--border-color);
-}
-
-.editor-pane:last-child {
-    border-right: none;
-}
-
-.editor-pane h2 {
-    margin: 0 0 1rem;
-    font-size: 1.1rem;
+#form-message {
+    margin-top: 1.5rem;
     font-weight: 600;
-    text-align: center;
+    min-height: 1.5rem;
 }
 
-.code-input, .code-output {
-    flex-grow: 1;
+#form-message.success {
+    color: #1e8e3e;
+}
+
+#form-message.error {
+    color: #d93025;
+}
+
+footer {
     background-color: var(--surface-color);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    padding: 1rem;
-    font-family: var(--font-mono);
-    font-size: 0.95rem;
-    line-height: 1.6;
-    color: var(--text-color);
-    resize: none;
-    outline: none;
+    padding: 2rem 0;
+    color: var(--text-light);
+    font-size: 0.875rem;
 }
 
-#compose-output {
-    white-space: pre-wrap;
-    word-wrap: break-word;
-    height: 100%;
-    overflow-y: auto;
+.social-links {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-bottom: 1rem;
 }
 
-/* Custom scrollbar for a better look */
-::-webkit-scrollbar {
-    width: 8px;
+.social-links a {
+    color: var(--secondary-color);
+    transition: color 0.2s ease-in-out;
 }
-::-webkit-scrollbar-track {
-    background: var(--background-color);
+
+.social-links a:hover {
+    color: var(--primary-color);
 }
-::-webkit-scrollbar-thumb {
-    background: #555;
-    border-radius: 4px;
-}
-::-webkit-scrollbar-thumb:hover {
-    background: #666;
+
+@media (max-width: 768px) {
+    header .container {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    header nav ul {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .form-group {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    button[type="submit"] {
+        width: 100%;
+    }
 }
