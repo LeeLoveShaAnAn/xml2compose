@@ -10,6 +10,12 @@
     --font-family: 'Poppins', sans-serif;
 }
 
+@keyframes breathing {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
 html {
     scroll-behavior: smooth;
 }
@@ -75,19 +81,6 @@ header nav a:hover {
     color: var(--primary-color);
 }
 
-header nav .cta-button {
-    background-color: var(--primary-color);
-    color: white;
-    padding: 0.6rem 1.2rem;
-    border-radius: 6px;
-    transition: background-color 0.2s ease-in-out;
-}
-
-header nav .cta-button:hover {
-    background-color: var(--primary-dark);
-    color: white;
-}
-
 main#home {
     padding: 4rem 0;
 }
@@ -105,6 +98,18 @@ main#home {
     padding: 3rem;
     margin: 2rem 0;
     display: inline-block;
+    cursor: pointer;
+}
+
+.converter-link {
+    display: inline-block;
+    animation: breathing 3s ease-in-out infinite;
+    transition: transform 0.3s ease;
+}
+
+.converter-link:hover {
+    transform: translateY(-5px) scale(1.05);
+    animation-play-state: paused;
 }
 
 .visual-placeholder svg .stroke-primary {
