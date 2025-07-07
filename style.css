@@ -120,6 +120,10 @@ main#home {
     stroke: var(--secondary-color);
 }
 
+.visual-placeholder svg .fill-primary {
+    fill: var(--primary-color);
+}
+
 .about-section {
     background-color: var(--surface-color);
     padding: 4rem 0;
