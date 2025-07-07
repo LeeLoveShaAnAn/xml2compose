@@ -1,47 +1,157 @@
-document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('contact-form');
-    const formMessage = document.getElementById('form-message');
+document.addEventListener('DOMContentLoaded', () => {
+    const xmlInput = document.getElementById('xml-input');
+    const composeOutput = document.getElementById('compose-output');
+    const convertBtn = document.getElementById('convert-btn');
 
-    // Smooth scrolling for navigation links
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            e.preventDefault();
-            document.querySelector(this.getAttribute('href')).scrollIntoView({
-                behavior: 'smooth'
-            });
+    const sampleXml = `<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Hello, Jetpack Compose!"
+        android:textSize="24sp" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Click Me" />
+
+</LinearLayout>`;
+
+    xmlInput.value = sampleXml;
+
+    const convertXmlToCompose = (xmlString) => {
+        const parser = new DOMParser();
+        const xmlDoc = parser.parseFromString(xmlString, "application/xml");
+        const rootElement = xmlDoc.documentElement;
+
+        if (xmlDoc.getElementsByTagName("parsererror").length) {
+            return "Error: Invalid XML format";
+        }
+
+        return formatCompose(parseNode(rootElement, 0));
+    };
+
+    const parseNode = (node, indentLevel) => {
+        const tagName = node.tagName;
+        const attributes = getAttributes(node);
+        const children = Array.from(node.children);
+
+        const composable = mapTagToComposable(tagName, attributes);
+        let composeCode = `\n${indent(indentLevel)}${composable.name}(`;
+
+        const modifiers = buildModifiers(attributes, indentLevel + 1);
+        if (modifiers) {
+            composeCode += `\n${indent(indentLevel + 1)}modifier = Modifier${modifiers},`;
+        }
+        
+        // Add other attributes
+        Object.entries(composable.attributes).forEach(([key, value]) => {
+            composeCode += `\n${indent(indentLevel + 1)}${key} = ${value},`;
         });
-    });
 
-    // Form submission handler
-    if (form) {
-        form.addEventListener('submit', function(event) {
-            event.preventDefault();
-            const formData = new FormData(form);
-
-            fetch(form.action, {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'Accept': 'application/json'
-                }
-            }).then(response => {
-                if (response.ok) {
-                    const formContainer = form.parentElement;
-                    formContainer.innerHTML = '<p class="success">Thanks for your submission! We will notify you upon launch.</p>';
-                } else {
-                    response.json().then(data => {
-                        const errorMessage = data.errors ? data.errors.map(error => error.message).join(', ') : 'Oops! There was a problem submitting your form';
-                        formMessage.textContent = errorMessage;
-                        formMessage.className = 'error';
-                    }).catch(() => {
-                        formMessage.textContent = 'Oops! There was a problem submitting your form';
-                        formMessage.className = 'error';
-                    });
-                }
-            }).catch(() => {
-                formMessage.textContent = 'Oops! There was a problem submitting your form';
-                formMessage.className = 'error';
+        if (children.length > 0) {
+            composeCode += `\n${indent(indentLevel)}) {`;
+            children.forEach(child => {
+                composeCode += parseNode(child, indentLevel + 1);
             });
-        });
-    }
+            composeCode += `\n${indent(indentLevel)}}`;
+        } else {
+            composeCode += `\n${indent(indentLevel)})`;
+        }
+
+        return composeCode;
+    };
+
+    const getAttributes = (node) => {
+        const attrs = {};
+        for (const attr of node.attributes) {
+            attrs[attr.name] = attr.value;
+        }
+        return attrs;
+    };
+
+    const mapTagToComposable = (tag, attrs) => {
+        const result = { name: tag, attributes: {} };
+        switch (tag) {
+            case 'LinearLayout':
+                result.name = attrs['android:orientation'] === 'horizontal' ? 'Row' : 'Column';
+                break;
+            case 'TextView':
+                result.name = 'Text';
+                if (attrs['android:text']) {
+                    result.attributes.text = `"${attrs['android:text']}"`;
+                }
+                if (attrs['android:textSize']) {
+                    result.attributes.fontSize = `${parseInt(attrs['android:textSize'])}.sp`;
+                }
+                break;
+            case 'Button':
+                result.name = 'Button';
+                // Button text is inside a Text composable
+                break;
+            case 'ImageView':
+                result.name = 'Image';
+                result.attributes.painter = `painterResource(id = R.drawable.placeholder)`;
+                result.attributes.contentDescription = `"${attrs['android:contentDescription'] || 'Image'}"`;
+                break;
+            default:
+                result.name = 'Box'; // Default to Box for unknown tags
+        }
+        return result;
+    };
+
+    const buildModifiers = (attrs, indentLevel) => {
+        let modifierString = '';
+        const indentStr = indent(indentLevel);
+
+        if (attrs['android:layout_width'] === 'match_parent') {
+            modifierString += `\n${indentStr}.fillMaxWidth()`;
+        } else if (attrs['android:layout_width'] === 'wrap_content') {
+            modifierString += `\n${indentStr}.wrapContentWidth()`;
+        } else if (attrs['android:layout_width']) {
+            modifierString += `\n${indentStr}.width(${parseInt(attrs['android:layout_width'])}.dp)`;
+        }
+
+        if (attrs['android:layout_height'] === 'match_parent') {
+            modifierString += `\n${indentStr}.fillMaxHeight()`;
+        } else if (attrs['android:layout_height'] === 'wrap_content') {
+            modifierString += `\n${indentStr}.wrapContentHeight()`;
+        } else if (attrs['android:layout_height']) {
+            modifierString += `\n${indentStr}.height(${parseInt(attrs['android:layout_height'])}.dp)`;
+        }
+
+        if (attrs['android:padding']) {
+            modifierString += `\n${indentStr}.padding(${parseInt(attrs['android:padding'])}.dp)`;
+        }
+
+        return modifierString;
+    };
+
+    const formatCompose = (code) => {
+        // Basic formatting: clean up commas and spacing
+        return code.replace(/,(\n\s*\})/g, '$1') // Remove trailing commas
+                   .replace(/\n\s*\n/g, '\n') // Remove extra blank lines
+                   .trim();
+    };
+
+    const indent = (level) => '    '.repeat(level);
+
+    const performConversion = () => {
+        const xmlCode = xmlInput.value;
+        const composeCode = convertXmlToCompose(xmlCode);
+        composeOutput.textContent = composeCode;
+        hljs.highlightElement(composeOutput);
+    };
+
+    convertBtn.addEventListener('click', performConversion);
+
+    // Initial conversion on load
+    performConversion();
 });
