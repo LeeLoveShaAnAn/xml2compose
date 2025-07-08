@@ -248,3 +248,124 @@ footer {
         width: 100%;
     }
 }
+
+/* Blog specific styles */
+main .container {
+    text-align: left; /* Align content to left for readability */
+}
+
+.blog-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.blog-item {
+    background-color: var(--surface-color);
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.blog-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.blog-item h3 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    font-size: 1.5rem;
+}
+
+.blog-item h3 a {
+    text-decoration: none;
+    color: var(--primary-color);
+    transition: color 0.2s ease-in-out;
+}
+
+.blog-item h3 a:hover {
+    color: var(--primary-dark);
+}
+
+.blog-meta {
+    font-size: 0.875rem;
+    color: var(--text-light);
+    margin-bottom: 1rem;
+}
+
+.blog-summary {
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+.read-more {
+    display: inline-block;
+    background-color: var(--primary-color);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.read-more:hover {
+    background-color: var(--primary-dark);
+}
+
+/* Article specific styles */
+article {
+    background-color: var(--background-color);
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    margin-top: 2rem;
+}
+
+article h2 {
+    font-size: 2rem;
+    margin-top: 0;
+    margin-bottom: 1rem;
+    color: var(--primary-color);
+}
+
+article p {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    margin-bottom: 1rem;
+}
+
+article .blog-meta {
+    margin-bottom: 2rem;
+}
+
+article a {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+article a:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+    .blog-item {
+        padding: 1rem;
+    }
+
+    .blog-item h3 {
+        font-size: 1.25rem;
+    }
+
+    article {
+        padding: 1.5rem;
+    }
+
+    article h2 {
+        font-size: 1.75rem;
+    }
+}
