@@ -82,14 +82,24 @@ header nav a:hover {
 }
 
 main#home {
-    padding: 4rem 0;
+    padding: 6rem 0;
+}
+
+.hero h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--primary-dark);
+    margin: 0 0 1rem;
 }
 
 .hero .subtitle {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     font-weight: 400;
     color: var(--text-light);
-    margin: 0 0 2rem;
+    margin: 0 0 3rem;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .visual-placeholder {
@@ -250,9 +260,7 @@ footer {
 }
 
 /* Blog specific styles */
-main .container {
-    text-align: left; /* Align content to left for readability */
-}
+
 
 .blog-list {
     display: grid;
