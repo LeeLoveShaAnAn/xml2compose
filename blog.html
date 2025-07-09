@@ -1,10 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+        <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-F2G7TSB6Q6"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+    
+      gtag('config', 'G-F2G7TSB6Q6');
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blog - xml2compose.dev</title>
+    <title>安卓开发与Jetpack Compose博客 | xml2compose.dev</title>
+    <meta name="description" content="获取关于安卓XML布局迁移、Jetpack Compose最佳实践、性能优化技巧的深度文章和教程。">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
     <header>
@@ -23,17 +34,59 @@
         </div>
     </header>
 
-    <main>
+    <main class="blog-page">
         <div class="container">
-            <h2>Blog Posts</h2>
-            <div class="blog-list">
-                <div class="blog-item">
-                    <h3><a href="blog/sample-article.html">Sample Article Title</a></h3>
-                    <p class="blog-meta">Published on: 2025年7月8日 | Word Count: 300 | Reading Time: 2 min</p>
-                    <p class="blog-summary">This is a brief summary of the sample article. It provides a concise overview of the content, enticing readers to click and learn more. This section will highlight the main points without giving away all the details.</p>
-                    <a href="blog/sample-article.html" class="read-more">Read More</a>
+            <section class="featured-post">
+                <div class="featured-image">
+                    <img src="https://images.unsplash.com/photo-1599658880122-ba28d15b3550?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80" alt="Featured article cover image">
                 </div>
-                <!-- More blog items will go here -->
+                <div class="featured-content">
+                    <span class="featured-tag">终极指南</span>
+                    <h2><a href="blog/sample-article.html">如何优雅地将XML布局迁移到Jetpack Compose</a></h2>
+                    <p>这篇深度文章将带你走过从传统XML到现代声明式UI的每一步，包含常见陷阱、性能考量和最佳实践。</p>
+                    <a href="blog/sample-article.html" class="read-more-btn">立即阅读 <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </section>
+
+            <div class="blog-main-content">
+                <div class="posts-container">
+                    <div class="blog-list">
+                        <div class="blog-item-card">
+                            <div class="card-image">
+                                <img src="https://images.unsplash.com/photo-1633356122544-f134324a6cee?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80" alt="Article thumbnail">
+                            </div>
+                            <div class="card-content">
+                                <span class="card-category">Compose技巧</span>
+                                <h3><a href="blog/sample-article.html">掌握State Hoisting的5个高级技巧</a></h3>
+                                <p class="blog-summary">状态管理是Compose的核心。本文将介绍几个能让你的UI代码更清晰、更高效的状态提升模式。</p>
+                                <div class="card-meta">
+                                    <span>2025年7月8日</span>
+                                    <span>· 3 min read</span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- More blog items will go here -->
+                    </div>
+                </div>
+
+                <aside class="sidebar">
+                    <div class="widget search-widget">
+                        <h3 class="widget-title">搜索文章</h3>
+                        <div class="search-bar">
+                            <input type="text" placeholder="输入关键词...">
+                            <button><i class="fas fa-search"></i></button>
+                        </div>
+                    </div>
+                    <div class="widget categories-widget">
+                        <h3 class="widget-title">文章分类</h3>
+                        <ul>
+                            <li><a href="#">迁移指南 <span>(3)</span></a></li>
+                            <li><a href="#">Compose技巧 <span>(8)</span></a></li>
+                            <li><a href="#">性能优化 <span>(5)</span></a></li>
+                            <li><a href="#">案例研究 <span>(2)</span></a></li>
+                        </ul>
+                    </div>
+                </aside>
             </div>
         </div>
     </main>
