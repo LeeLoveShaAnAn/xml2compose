@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
         <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-F2G7TSB6Q6"></script>
@@ -14,6 +14,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sample Article Title</title>
     <meta name="description" content="This is a sample article about Android development and Jetpack Compose.">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="../favicon.ico" type="image/x-icon">
+    
+    <!-- Preload critical assets -->
+    <link rel="preload" href="../style.css" as="style">
+    
+    <!-- SEO Meta Tags -->
+    <link rel="canonical" href="https://xml2compose.dev/article/sample-article-title.html">
+    <meta property="og:title" content="Sample Article Title">
+    <meta property="og:description" content="This is a sample article about Android development and Jetpack Compose.">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1599658880122-ba28d15b3550?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80">
+    <meta property="og:url" content="https://xml2compose.dev/article/sample-article-title.html">
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="xml2compose.dev">
+    
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Sample Article Title">
+    <meta name="twitter:description" content="This is a sample article about Android development and Jetpack Compose.">
+    <meta name="twitter:image" content="https://images.unsplash.com/photo-1599658880122-ba28d15b3550?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80">
+    
+    <!-- Schema.org Structured Data -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -34,9 +56,43 @@
           "url": "https://example.com/logo.png"
         }
       },
-      "description": "This is a sample article about Android development and Jetpack Compose, demonstrating how to structure blog posts for Xml2Compose."
+      "description": "This is a sample article about Android development and Jetpack Compose, demonstrating how to structure blog posts for Xml2Compose.",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://xml2compose.dev/article/sample-article-title.html"
+      }
     }
     </script>
+    
+    <!-- Breadcrumbs structured data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://xml2compose.dev/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Blog",
+          "item": "https://xml2compose.dev/blog.html"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Sample Article Title",
+          "item": "https://xml2compose.dev/article/sample-article-title.html"
+        }
+      ]
+    }
+    </script>
+    
+    <!-- Stylesheets -->
     <link rel="stylesheet" href="../style.css">
 </head>
 <body>
@@ -45,12 +101,12 @@
             <div class="logo">
                 <h1><a href="../index.html">xml2compose.dev</a></h1>
             </div>
-            <nav>
+            <nav aria-label="主导航">
                 <ul>
-                    <li><a href="../index.html#home">Home</a></li>
-                    <li><a href="../index.html#about">About</a></li>
-                    <li><a href="../index.html#contact">Contact</a></li>
-                    <li><a href="../blog.html">Blog</a></li>
+                    <li><a href="../index.html#home">首页</a></li>
+                    <li><a href="../index.html#about">关于</a></li>
+                    <li><a href="../index.html#contact">联系我们</a></li>
+                    <li><a href="../blog.html">博客</a></li>
                 </ul>
             </nav>
         </div>
@@ -58,26 +114,46 @@
 
     <main>
         <div class="container">
+            <!-- Breadcrumbs navigation -->
+            <nav aria-label="面包屑导航" class="breadcrumbs">
+                <ol>
+                    <li><a href="../index.html">首页</a></li>
+                    <li><a href="../blog.html">博客</a></li>
+                    <li aria-current="page">Sample Article Title</li>
+                </ol>
+            </nav>
+            
             <article>
-                <h2>Sample Article Title</h2>
-                <p class="blog-meta">Published on: 2025年7月8日 | Word Count: 300 | Reading Time: 2 min</p>
+                <header>
+                    <h2>Sample Article Title</h2>
+                    <p class="blog-meta">发布日期: 2025年7月8日 | 字数: 300 | 阅读时间: 2 分钟</p>
+                </header>
+                
                 <p>This is the full content of the sample article. Here, you can elaborate on the summary provided on the blog list page. You can include more details, examples, code snippets, and images to make your article informative and engaging.</p>
 
-                <h3>Example Code Snippet</h3>
-                <p>Here's an example of a code snippet. All code must be wrapped in `<code>` tags within `<pre>` for proper formatting and syntax highlighting.</p>
-                <pre><code class="language-kotlin">
+                <section>
+                    <h3>Example Code Snippet</h3>
+                    <p>Here's an example of a code snippet. All code must be wrapped in `<code>` tags within `<pre>` for proper formatting and syntax highlighting.</p>
+                    <pre><code class="language-kotlin">
 // Sample Kotlin code
 fun greet(name: String): String {
     return "Hello, ${name}!"
 }
-                </code></pre>
+                    </code></pre>
+                </section>
 
-                <h3>Illustrative Image</h3>
-                <p>You can include images to explain complex concepts. Use descriptive alt text for accessibility and SEO.</p>
-                <figure>
-                    <img src="https://via.placeholder.com/600x300?text=Placeholder+Image" alt="Description of the image content">
-                    <figcaption>Caption for the image.</figcaption>
-                </figure>
+                <section>
+                    <h3>Illustrative Image</h3>
+                    <p>You can include images to explain complex concepts. Use descriptive alt text for accessibility and SEO.</p>
+                    <figure>
+                        <img src="https://via.placeholder.com/600x300?text=Placeholder+Image" 
+                             alt="Description of the image content" 
+                             loading="lazy" 
+                             width="600" 
+                             height="300">
+                        <figcaption>Caption for the image.</figcaption>
+                    </figure>
+                </section>
 
                 <p>Remember to break down your content into readable paragraphs and use headings to improve readability. This section is where you provide value to your readers.</p>
                 <p>When dealing with complex XML layouts and considering migration to Jetpack Compose, manually converting every element can be very time-consuming and error-prone. Instead, you can directly use our online converter to handle these situations efficiently. <a href="../converter.html">Try our Xml2Compose converter now!</a></p>
@@ -88,12 +164,15 @@ fun greet(name: String): String {
                     <p>立即试用Xml2Compose转换器，一键搞定！</p>
                     <a href="../converter.html" class="btn primary-cta">立即试用Xml2Compose转换器</a>
 
-                    <h3 style="margin-top: 20px;">喜欢这篇文章吗？</h3>
+                    <h3>喜欢这篇文章吗？</h3>
                     <p>订阅我们的博客，获取更多Compose干货。</p>
-                    <a href="#" class="btn secondary-cta">订阅我们的博客</a> <!-- Placeholder for subscription link -->
+                    <a href="#" class="btn secondary-cta">订阅我们的博客</a>
                 </div>
             </article>
-            <p><a href="../blog.html">Back to Blog List</a></p>
+            
+            <div class="article-navigation">
+                <a href="../blog.html" class="back-link">返回博客列表</a>
+            </div>
         </div>
     </main>
 
@@ -102,5 +181,15 @@ fun greet(name: String): String {
             <p>&copy; 2025 xml2compose.dev. All rights reserved.</p>
         </div>
     </footer>
+
+    <!-- Scripts moved to end of body for better performance -->
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-F2G7TSB6Q6"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-F2G7TSB6Q6');
+    </script>
 </body>
 </html>
