@@ -12,8 +12,8 @@
     </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>xml2compose.dev | Live XML to Jetpack Compose Converter</title>
-    <meta name="description" content="A live, interactive tool to automatically convert Android XML layout files into clean, modern Jetpack Compose code with code highlighting and formatting.">
+    <title>在线XML转Jetpack Compose转换器 | xml2compose.dev</title>
+    <meta name="description" content="实时、准确地将安卓XML布局文件转换为简洁、现代的Jetpack Compose代码。无需安装，一键复制，加速你的迁移进程。">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Source+Code+Pro:wght@400;500&display=swap" rel="stylesheet">
@@ -36,14 +36,35 @@
 
     <main class="converter-container">
         <div class="editor-pane">
-            <h2>Android XML</h2>
+            <div class="pane-header">
+                <h2>Android XML</h2>
+                <div class="pane-actions">
+                    <button id="load-sample-btn" class="action-btn">Load Sample</button>
+                    <button id="clear-btn" class="action-btn">Clear</button>
+                </div>
+            </div>
             <textarea id="xml-input" class="code-input" spellcheck="false"></textarea>
         </div>
         <div class="editor-pane">
-            <h2>Jetpack Compose</h2>
+            <div class="pane-header">
+                <h2>Jetpack Compose</h2>
+                <div class="pane-actions">
+                    <button id="copy-btn" class="action-btn">Copy Code</button>
+                </div>
+            </div>
             <pre><code id="compose-output" class="language-kotlin"></code></pre>
         </div>
     </main>
+
+    <section class="faq-section">
+        <div class="container">
+            <h2>常见问题 (FAQ)</h2>
+            <div class="faq-item">
+                <h3>如何处理 &lt;merge&gt; 标签的转换？</h3>
+                <p>关于 &lt;merge&gt; 标签的处理，我们写了一篇详细的<a href="blog/sample-article.html">博客文章</a>来说明，希望能帮助到你。</p>
+            </div>
+        </div>
+    </section>
 
     <!-- highlight.js script -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>

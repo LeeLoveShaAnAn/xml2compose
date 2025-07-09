@@ -102,11 +102,40 @@ header .logo h1 a {
     border-right: none;
 }
 
+.pane-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
 .editor-pane h2 {
-    margin: 0 0 1rem;
+    margin: 0;
     font-size: 1.1rem;
     font-weight: 600;
-    text-align: center;
+}
+
+.pane-actions {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.action-btn {
+    background-color: var(--surface-color);
+    color: var(--text-light);
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    padding: 0.4rem 0.8rem;
+    font-family: var(--font-family);
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.action-btn:hover {
+    background-color: #3a3a3a;
+    color: white;
 }
 
 .code-input, #compose-output {
@@ -125,6 +154,32 @@ header .logo h1 a {
     word-wrap: break-word;
     height: 100%;
     overflow-y: auto;
+}
+
+.faq-section {
+    background-color: var(--header-bg);
+    border-top: 1px solid var(--border-color);
+    padding: 2rem 0;
+    flex-shrink: 0;
+}
+
+.faq-item h3 {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+}
+
+.faq-item p {
+    color: var(--text-light);
+    line-height: 1.6;
+}
+
+.faq-item a {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+.faq-item a:hover {
+    text-decoration: underline;
 }
 
 /* Custom scrollbar for a better look */
