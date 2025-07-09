@@ -12,7 +12,31 @@
     </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sample Article Title - xml2compose.dev Blog</title>
+    <title>Sample Article Title</title>
+    <meta name="description" content="This is a sample article about Android development and Jetpack Compose.">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "Sample Article Title",
+      "image": "https://images.unsplash.com/photo-1599658880122-ba28d15b3550?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80",
+      "datePublished": "2025-07-08T09:00:00+08:00",
+      "dateModified": "2025-07-08T09:00:00+08:00",
+      "author": {
+        "@type": "Person",
+        "name": "Xml2Compose Team"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Xml2Compose",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://example.com/logo.png"
+        }
+      },
+      "description": "This is a sample article about Android development and Jetpack Compose, demonstrating how to structure blog posts for Xml2Compose."
+    }
+    </script>
     <link rel="stylesheet" href="../style.css">
 </head>
 <body>
@@ -38,8 +62,36 @@
                 <h2>Sample Article Title</h2>
                 <p class="blog-meta">Published on: 2025年7月8日 | Word Count: 300 | Reading Time: 2 min</p>
                 <p>This is the full content of the sample article. Here, you can elaborate on the summary provided on the blog list page. You can include more details, examples, code snippets, and images to make your article informative and engaging.</p>
+
+                <h3>Example Code Snippet</h3>
+                <p>Here's an example of a code snippet. All code must be wrapped in `<code>` tags within `<pre>` for proper formatting and syntax highlighting.</p>
+                <pre><code class="language-kotlin">
+// Sample Kotlin code
+fun greet(name: String): String {
+    return "Hello, ${name}!"
+}
+                </code></pre>
+
+                <h3>Illustrative Image</h3>
+                <p>You can include images to explain complex concepts. Use descriptive alt text for accessibility and SEO.</p>
+                <figure>
+                    <img src="https://via.placeholder.com/600x300?text=Placeholder+Image" alt="Description of the image content">
+                    <figcaption>Caption for the image.</figcaption>
+                </figure>
+
                 <p>Remember to break down your content into readable paragraphs and use headings to improve readability. This section is where you provide value to your readers.</p>
+                <p>When dealing with complex XML layouts and considering migration to Jetpack Compose, manually converting every element can be very time-consuming and error-prone. Instead, you can directly use our online converter to handle these situations efficiently. <a href="../converter.html">Try our Xml2Compose converter now!</a></p>
                 <p>Feel free to replace this placeholder text with your actual blog post content.</p>
+
+                <div class="cta-section">
+                    <h3>觉得手动改太麻烦？</h3>
+                    <p>立即试用Xml2Compose转换器，一键搞定！</p>
+                    <a href="../converter.html" class="btn primary-cta">立即试用Xml2Compose转换器</a>
+
+                    <h3 style="margin-top: 20px;">喜欢这篇文章吗？</h3>
+                    <p>订阅我们的博客，获取更多Compose干货。</p>
+                    <a href="#" class="btn secondary-cta">订阅我们的博客</a> <!-- Placeholder for subscription link -->
+                </div>
             </article>
             <p><a href="../blog.html">Back to Blog List</a></p>
         </div>
