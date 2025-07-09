@@ -38,7 +38,7 @@
     <header>
         <div class="container">
             <div class="logo">
-                <h1><a href="#home">xml2compose.dev</a></h1>
+                <div class="logo-text"><a href="#home">xml2compose.dev</a></div>
             </div>
             <nav>
                 <ul>
@@ -56,16 +56,27 @@
             <div class="hero">
                 <h1>Convert Android XML to Jetpack Compose</h1>
                 <p class="subtitle">The ultimate tool for developers to automatically convert Android XML layout files into clean, modern Jetpack Compose code.</p>
-                <div class="visual-placeholder">
-                    <a href="converter.html" class="converter-link">
-                        <svg width="120" height="120" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M14 2H6C4.89543 2 4 2.89543 4 4V20C4 21.1046 4.89543 22 6 22H18C19.1046 22 20 21.1046 20 20V8L14 2Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="stroke-primary"/>
-                            <path d="M14 2V8H20" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="stroke-primary"/>
-                            <path d="M12 18L16 14L12 10" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="stroke-secondary"/>
-                            <path d="M8 14H16" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="stroke-secondary"/>
-                        </svg>
-                    </a>
-                </div>
+                <div class="code-comparison-container">
+                        <div class="code-box">
+                            <h3>Android XML</h3>
+                            <pre><code>&lt;LinearLayout ...&gt;
+    &lt;TextView
+        android:text="Hello, World!" /&gt;
+    &lt;Button
+        android:text="Click Me" /&gt;
+&lt;/LinearLayout&gt;</code></pre>
+                        </div>
+                        <div class="arrow-indicator">→</div>
+                        <div class="code-box compose">
+                            <h3>Jetpack Compose</h3>
+                            <pre><code>Column {
+    Text("Hello, World!")
+    Button(onClick = {}) {
+        Text("Click Me")
+    }
+}</code></pre>
+                        </div>
+                    </div>
             </div>
         </div>
     </main>
@@ -80,7 +91,7 @@
 
     <section id="contact" class="form-container">
         <div class="container">
-            <h2>Get Notified When We Launch!</h2>
+            <h2>成为首批体验官，抢先体验并影响产品走向。</h2>
             <form id="contact-form" action="https://formspree.io/f/your_form_id" method="POST">
                 <div class="form-group">
                     <input type="email" name="email" placeholder="Enter your email address" required>

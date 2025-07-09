@@ -50,13 +50,13 @@ header .container {
     align-items: center;
 }
 
-header .logo h1 {
+header .logo .logo-text {
     font-size: 1.75rem;
     font-weight: 700;
     margin: 0;
 }
 
-header .logo h1 a {
+header .logo .logo-text a {
     text-decoration: none;
     color: var(--primary-color);
 }
@@ -102,33 +102,7 @@ main#home {
     margin-right: auto;
 }
 
-.visual-placeholder {
-    background-color: var(--surface-color);
-    border-radius: 16px;
-    padding: 3rem;
-    margin: 2rem 0;
-    display: inline-block;
-    cursor: pointer;
-}
 
-.converter-link {
-    display: inline-block;
-    animation: breathing 3s ease-in-out infinite;
-    transition: transform 0.3s ease;
-}
-
-.converter-link:hover {
-    transform: translateY(-5px) scale(1.05);
-    animation-play-state: paused;
-}
-
-.visual-placeholder svg .stroke-primary {
-    stroke: var(--primary-color);
-}
-
-.visual-placeholder svg .stroke-secondary {
-    stroke: var(--secondary-color);
-}
 
 .about-section {
     background-color: var(--surface-color);
@@ -375,5 +349,63 @@ article a:hover {
 
     article h2 {
         font-size: 1.75rem;
+    }
+}
+
+/* Code Comparison Styles */
+.code-comparison-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin: 2rem auto;
+    max-width: 900px;
+}
+
+.code-box {
+    background-color: #2d2d2d;
+    color: #f1f1f1;
+    border-radius: 8px;
+    padding: 1.5rem;
+    width: 45%;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    text-align: left;
+}
+
+.code-box h3 {
+    margin-top: 0;
+    font-size: 1.2rem;
+    color: #a9b7c6;
+    border-bottom: 1px solid #444;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.code-box pre {
+    margin: 0;
+    font-family: 'Fira Code', 'Courier New', monospace;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.arrow-indicator {
+    font-size: 3rem;
+    color: var(--primary-color);
+    font-weight: 700;
+}
+
+.code-box.compose {
+    background-color: #0d1117; /* GitHub dark color */
+}
+
+@media (max-width: 768px) {
+    .code-comparison-container {
+        flex-direction: column;
+    }
+    .code-box {
+        width: 90%;
+    }
+    .arrow-indicator {
+        transform: rotate(90deg);
     }
 }
