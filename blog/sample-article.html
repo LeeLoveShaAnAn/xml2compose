@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-        <!-- Google tag (gtag.js) -->
+            <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-F2G7TSB6Q6"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -12,14 +12,11 @@
     </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sample Article Title</title>
+    <title>Sample Article Title - xml2compose.dev</title>
     <meta name="description" content="This is a sample article about Android development and Jetpack Compose.">
     
     <!-- Favicon -->
     <link rel="icon" href="../favicon.ico" type="image/x-icon">
-    
-    <!-- Preload critical assets -->
-    <link rel="preload" href="../style.css" as="style">
     
     <!-- SEO Meta Tags -->
     <link rel="canonical" href="https://xml2compose.dev/article/sample-article-title.html">
@@ -73,13 +70,13 @@
         {
           "@type": "ListItem",
           "position": 1,
-          "name": "Home",
+          "name": "首页",
           "item": "https://xml2compose.dev/"
         },
         {
           "@type": "ListItem",
           "position": 2,
-          "name": "Blog",
+          "name": "博客",
           "item": "https://xml2compose.dev/blog.html"
         },
         {
@@ -92,8 +89,377 @@
     }
     </script>
     
-    <!-- Stylesheets -->
-    <link rel="stylesheet" href="../style.css">
+    <!-- html2canvas for export -->
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    
+    <style>
+        /* 重置样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        /* 基础样式 */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f5;
+        }
+        
+        /* 容器样式 */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* 头部样式 */
+        header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .logo a {
+            color: white;
+            text-decoration: none;
+            transition: opacity 0.3s;
+        }
+        
+        .logo a:hover {
+            opacity: 0.8;
+        }
+        
+        /* 导航样式 */
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 2rem;
+        }
+        
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        nav a:hover {
+            color: #3498db;
+        }
+        
+        /* 主内容区域 */
+        main {
+            background-color: white;
+            margin: 2rem auto;
+            max-width: 800px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        /* 面包屑导航 */
+        .breadcrumbs {
+            background-color: #f8f9fa;
+            padding: 1rem 2rem;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .breadcrumbs ol {
+            list-style: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+        
+        .breadcrumbs li:not(:last-child)::after {
+            content: "›";
+            margin-left: 0.5rem;
+            color: #6c757d;
+        }
+        
+        .breadcrumbs a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        
+        .breadcrumbs a:hover {
+            text-decoration: underline;
+        }
+        
+        .breadcrumbs li[aria-current="page"] {
+            color: #6c757d;
+        }
+        
+        /* 文章样式 */
+        article {
+            padding: 2rem;
+        }
+        
+        article header {
+            background: none;
+            color: #333;
+            padding: 0;
+            margin-bottom: 2rem;
+            position: static;
+            box-shadow: none;
+        }
+        
+        article h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 1rem;
+            color: #2c3e50;
+        }
+        
+        .blog-meta {
+            color: #6c757d;
+            font-size: 0.9rem;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        /* 文章内容样式 */
+        article p {
+            margin-bottom: 1.5rem;
+            line-height: 1.8;
+            color: #495057;
+        }
+        
+        article section {
+            margin: 2.5rem 0;
+        }
+        
+        article h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #2c3e50;
+        }
+        
+        /* 代码块样式 */
+        pre {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 1rem;
+            overflow-x: auto;
+            margin-bottom: 1.5rem;
+        }
+        
+        code {
+            font-family: "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas, "Courier New", monospace;
+            font-size: 0.9rem;
+            color: #e83e8c;
+        }
+        
+        pre code {
+            color: #212529;
+        }
+        
+        /* 图片样式 */
+        figure {
+            margin: 2rem 0;
+            text-align: center;
+        }
+        
+        figure img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        figcaption {
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            color: #6c757d;
+            font-style: italic;
+        }
+        
+        /* CTA 区域样式 */
+        .cta-section {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 2rem;
+            margin: 3rem 0 2rem;
+            text-align: center;
+        }
+        
+        .cta-section h3 {
+            margin-bottom: 0.5rem;
+            color: #2c3e50;
+        }
+        
+        .cta-section h3:not(:first-child) {
+            margin-top: 2rem;
+        }
+        
+        .cta-section p {
+            margin-bottom: 1rem;
+            color: #6c757d;
+        }
+        
+        /* 按钮样式 */
+        .btn {
+            display: inline-block;
+            padding: 0.75rem 2rem;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin: 0.5rem;
+        }
+        
+        .primary-cta {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        .primary-cta:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(52, 152, 219, 0.3);
+        }
+        
+        .secondary-cta {
+            background-color: #2ecc71;
+            color: white;
+        }
+        
+        .secondary-cta:hover {
+            background-color: #27ae60;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(46, 204, 113, 0.3);
+        }
+        
+        /* 文章导航 */
+        .article-navigation {
+            padding: 2rem;
+            border-top: 1px solid #e9ecef;
+            text-align: center;
+        }
+        
+        .back-link {
+            color: #3498db;
+            text-decoration: none;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .back-link:before {
+            content: "←";
+            font-size: 1.2rem;
+        }
+        
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        
+        /* 页脚样式 */
+        footer {
+            background-color: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: 3rem;
+        }
+        
+        /* 导出按钮容器 */
+        .export-button-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+        
+        .export-button {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+            transition: all 0.3s;
+        }
+        
+        .export-button:hover {
+            background-color: #c0392b;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(231, 76, 60, 0.4);
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            header .container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            nav ul {
+                gap: 1rem;
+                font-size: 0.9rem;
+            }
+            
+            article h2 {
+                font-size: 2rem;
+            }
+            
+            .blog-meta {
+                font-size: 0.8rem;
+            }
+            
+            .cta-section {
+                padding: 1.5rem;
+            }
+            
+            .btn {
+                display: block;
+                width: 100%;
+                margin: 0.5rem 0;
+            }
+        }
+        
+        /* 打印样式 */
+        @media print {
+            header, footer, .export-button-container, .article-navigation {
+                display: none;
+            }
+            
+            main {
+                box-shadow: none;
+                margin: 0;
+            }
+            
+            article {
+                padding: 0;
+            }
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -113,66 +479,68 @@
     </header>
 
     <main>
-        <div class="container">
-            <!-- Breadcrumbs navigation -->
-            <nav aria-label="面包屑导航" class="breadcrumbs">
-                <ol>
-                    <li><a href="../index.html">首页</a></li>
-                    <li><a href="../blog.html">博客</a></li>
-                    <li aria-current="page">Sample Article Title</li>
-                </ol>
-            </nav>
+        <!-- 面包屑导航 -->
+        <nav aria-label="面包屑导航" class="breadcrumbs">
+            <ol>
+                <li><a href="../index.html">首页</a></li>
+                <li><a href="../blog.html">博客</a></li>
+                <li aria-current="page">Sample Article Title</li>
+            </ol>
+        </nav>
+        
+        <article>
+            <header>
+                <h2>Sample Article Title</h2>
+                <p class="blog-meta">
+                    <span>📅 发布日期: 2025年7月8日</span>
+                    <span>📝 字数: 300</span>
+                    <span>⏱️ 阅读时间: 2 分钟</span>
+                </p>
+            </header>
             
-            <article>
-                <header>
-                    <h2>Sample Article Title</h2>
-                    <p class="blog-meta">发布日期: 2025年7月8日 | 字数: 300 | 阅读时间: 2 分钟</p>
-                </header>
-                
-                <p>This is the full content of the sample article. Here, you can elaborate on the summary provided on the blog list page. You can include more details, examples, code snippets, and images to make your article informative and engaging.</p>
+            <p>This is the full content of the sample article. Here, you can elaborate on the summary provided on the blog list page. You can include more details, examples, code snippets, and images to make your article informative and engaging.</p>
 
-                <section>
-                    <h3>Example Code Snippet</h3>
-                    <p>Here's an example of a code snippet. All code must be wrapped in `<code>` tags within `<pre>` for proper formatting and syntax highlighting.</p>
-                    <pre><code class="language-kotlin">
-// Sample Kotlin code
+            <section>
+                <h3>Example Code Snippet</h3>
+                <p>Here's an example of a code snippet. All code must be wrapped in <code>&lt;code&gt;</code> tags within <code>&lt;pre&gt;</code> for proper formatting and syntax highlighting.</p>
+                <pre><code class="language-kotlin">// Sample Kotlin code
 fun greet(name: String): String {
     return "Hello, ${name}!"
-}
-                    </code></pre>
-                </section>
+}</code></pre>
+            </section>
 
-                <section>
-                    <h3>Illustrative Image</h3>
-                    <p>You can include images to explain complex concepts. Use descriptive alt text for accessibility and SEO.</p>
-                    <figure>
-                        <img src="https://via.placeholder.com/600x300?text=Placeholder+Image" 
-                             alt="Description of the image content" 
-                             loading="lazy" 
-                             width="600" 
-                             height="300">
-                        <figcaption>Caption for the image.</figcaption>
-                    </figure>
-                </section>
+            <section>
+                <h3>Illustrative Image</h3>
+                <p>You can include images to explain complex concepts. Use descriptive alt text for accessibility and SEO.</p>
+                <figure>
+                    <img src="https://via.placeholder.com/600x300?text=Placeholder+Image" 
+                         alt="Description of the image content" 
+                         loading="lazy" 
+                         width="600" 
+                         height="300">
+                    <figcaption>Caption for the image.</figcaption>
+                </figure>
+            </section>
 
-                <p>Remember to break down your content into readable paragraphs and use headings to improve readability. This section is where you provide value to your readers.</p>
-                <p>When dealing with complex XML layouts and considering migration to Jetpack Compose, manually converting every element can be very time-consuming and error-prone. Instead, you can directly use our online converter to handle these situations efficiently. <a href="../converter.html">Try our Xml2Compose converter now!</a></p>
-                <p>Feel free to replace this placeholder text with your actual blog post content.</p>
-
-                <div class="cta-section">
-                    <h3>觉得手动改太麻烦？</h3>
-                    <p>立即试用Xml2Compose转换器，一键搞定！</p>
-                    <a href="../converter.html" class="btn primary-cta">立即试用Xml2Compose转换器</a>
-
-                    <h3>喜欢这篇文章吗？</h3>
-                    <p>订阅我们的博客，获取更多Compose干货。</p>
-                    <a href="#" class="btn secondary-cta">订阅我们的博客</a>
-                </div>
-            </article>
+            <p>Remember to break down your content into readable paragraphs and use headings to improve readability. This section is where you provide value to your readers.</p>
             
-            <div class="article-navigation">
-                <a href="../blog.html" class="back-link">返回博客列表</a>
+            <p>When dealing with complex XML layouts and considering migration to Jetpack Compose, manually converting every element can be very time-consuming and error-prone. Instead, you can directly use our online converter to handle these situations efficiently. <a href="../converter.html">Try our Xml2Compose converter now!</a></p>
+            
+            <p>Feel free to replace this placeholder text with your actual blog post content.</p>
+
+            <div class="cta-section">
+                <h3>觉得手动改太麻烦？</h3>
+                <p>立即试用Xml2Compose转换器，一键搞定！</p>
+                <a href="../converter.html" class="btn primary-cta">立即试用Xml2Compose转换器</a>
+
+                <h3>喜欢这篇文章吗？</h3>
+                <p>订阅我们的博客，获取更多Compose干货。</p>
+                <a href="#" class="btn secondary-cta">订阅我们的博客</a>
             </div>
+        </article>
+        
+        <div class="article-navigation">
+            <a href="../blog.html" class="back-link">返回博客列表</a>
         </div>
     </main>
 
@@ -182,6 +550,11 @@ fun greet(name: String): String {
         </div>
     </footer>
 
+    <!-- 导出按钮 -->
+    <div class="export-button-container">
+        <button id="export-png" class="export-button">导出为PNG图片</button>
+    </div>
+
     <!-- Scripts moved to end of body for better performance -->
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-F2G7TSB6Q6"></script>
@@ -190,6 +563,32 @@ fun greet(name: String): String {
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-F2G7TSB6Q6');
+    </script>
+    
+    <!-- 导出功能脚本 -->
+    <script>
+    document.getElementById('export-png').addEventListener('click', function() {
+        // 临时隐藏不需要的元素
+        const exportButton = document.querySelector('.export-button-container');
+        exportButton.style.display = 'none';
+        
+        // 使用html2canvas生成图片
+        html2canvas(document.body, {
+            scale: 2,
+            logging: false,
+            useCORS: true,
+            backgroundColor: '#ffffff'
+        }).then(canvas => {
+            // 恢复隐藏的元素
+            exportButton.style.display = 'block';
+            
+            // 创建下载链接
+            const link = document.createElement('a');
+            link.download = 'xml2compose-article.png';
+            link.href = canvas.toDataURL();
+            link.click();
+        });
+    });
     </script>
 </body>
 </html>
