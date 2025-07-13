@@ -1,13 +1,26 @@
 :root {
-    --primary-color: #4285F4;
-    --primary-dark: #3367D6;
-    --secondary-color: #6c757d;
+    /* Apple-inspired color palette */
+    --primary-color: #007AFF;
+    --primary-dark: #0056CC;
+    --secondary-color: #8E8E93;
     --background-color: #ffffff;
-    --surface-color: #f8f9fa;
-    --text-color: #3c4043;
-    --text-light: #5f6368;
-    --border-color: #dfe1e5;
-    --font-family: 'Poppins', sans-serif;
+    --surface-color: #F2F2F7;
+    --surface-elevated: #ffffff;
+    --text-color: #1D1D1F;
+    --text-secondary: #86868B;
+    --text-light: #8E8E93;
+    --border-color: #D1D1D6;
+    --shadow-light: rgba(0, 0, 0, 0.04);
+    --shadow-medium: rgba(0, 0, 0, 0.08);
+    --shadow-strong: rgba(0, 0, 0, 0.12);
+    --font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
+    --border-radius: 12px;
+    --border-radius-small: 8px;
+    --spacing-xs: 0.5rem;
+    --spacing-sm: 1rem;
+    --spacing-md: 1.5rem;
+    --spacing-lg: 2rem;
+    --spacing-xl: 3rem;
 }
 
 @keyframes breathing {
@@ -26,22 +39,27 @@ body {
     color: var(--text-color);
     margin: 0;
     text-align: center;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 .container {
-    max-width: 960px;
+    max-width: 1120px;
     width: 100%;
-    padding: 0 2rem;
+    padding: 0 var(--spacing-lg);
     margin: 0 auto;
 }
 
 header {
-    background-color: var(--background-color);
+    background-color: rgba(255, 255, 255, 0.8);
+    backdrop-filter: saturate(180%) blur(20px);
     border-bottom: 1px solid var(--border-color);
-    padding: 1rem 0;
+    padding: var(--spacing-md) 0;
     position: sticky;
     top: 0;
     z-index: 100;
+    box-shadow: 0 1px 0 0 var(--shadow-light);
 }
 
 header .container {
@@ -51,13 +69,19 @@ header .container {
 }
 
 header .logo .logo-text {
-    font-size: 1.75rem;
-    font-weight: 700;
+    font-size: 1.5rem;
+    font-weight: 600;
     margin: 0;
+    letter-spacing: -0.02em;
 }
 
 header .logo .logo-text a {
     text-decoration: none;
+    color: var(--text-color);
+    transition: color 0.3s ease;
+}
+
+header .logo .logo-text a:hover {
     color: var(--primary-color);
 }
 
@@ -67,112 +91,146 @@ header nav ul {
     list-style: none;
     display: flex;
     align-items: center;
-    gap: 2rem;
+    gap: var(--spacing-xl);
 }
 
 header nav a {
     text-decoration: none;
-    color: var(--text-light);
-    font-weight: 600;
-    transition: color 0.2s ease-in-out;
+    color: var(--text-secondary);
+    font-weight: 400;
+    font-size: 1rem;
+    transition: color 0.3s ease;
+    position: relative;
 }
 
 header nav a:hover {
-    color: var(--primary-color);
+    color: var(--text-color);
+}
+
+header nav a::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: var(--primary-color);
+    transition: width 0.3s ease;
+}
+
+header nav a:hover::after {
+    width: 100%;
 }
 
 main#home {
-    padding: 6rem 0;
+    padding: calc(var(--spacing-xl) * 2) 0;
 }
 
 .hero h1 {
-    font-size: 3rem;
+    font-size: clamp(2.5rem, 5vw, 4rem);
     font-weight: 700;
-    color: var(--primary-dark);
-    margin: 0 0 1rem;
+    color: var(--text-color);
+    margin: 0 0 var(--spacing-md);
+    letter-spacing: -0.04em;
+    line-height: 1.1;
 }
 
 .hero .subtitle {
-    font-size: 1.25rem;
+    font-size: 1.375rem;
     font-weight: 400;
-    color: var(--text-light);
-    margin: 0 0 3rem;
-    max-width: 700px;
+    color: var(--text-secondary);
+    margin: 0 0 calc(var(--spacing-xl) * 2);
+    max-width: 800px;
     margin-left: auto;
     margin-right: auto;
+    line-height: 1.5;
 }
 
 
 
 .about-section {
     background-color: var(--surface-color);
-    padding: 4rem 0;
+    padding: calc(var(--spacing-xl) * 2) 0;
     text-align: left;
 }
 
 .about-section h2 {
-    font-size: 2rem;
-    font-weight: 700;
+    font-size: 2.25rem;
+    font-weight: 600;
     text-align: center;
     margin-top: 0;
-    margin-bottom: 2rem;
+    margin-bottom: var(--spacing-xl);
+    color: var(--text-color);
+    letter-spacing: -0.02em;
 }
 
 .about-section p {
     font-size: 1.125rem;
-    line-height: 1.8;
+    line-height: 1.7;
     max-width: 800px;
-    margin: 0 auto 1rem;
+    margin: 0 auto var(--spacing-md);
+    color: var(--text-secondary);
 }
 
 .form-container {
-    padding: 4rem 0;
+    padding: calc(var(--spacing-xl) * 2) 0;
 }
 
 .form-container h2 {
-    font-size: 1.75rem;
+    font-size: 2rem;
     font-weight: 600;
     margin-top: 0;
-    margin-bottom: 1.5rem;
+    margin-bottom: var(--spacing-lg);
+    color: var(--text-color);
+    letter-spacing: -0.02em;
 }
 
 .form-group {
     display: flex;
     justify-content: center;
-    gap: 0.5rem;
+    gap: var(--spacing-sm);
     max-width: 600px;
     margin: 0 auto;
 }
 
 input[type="email"] {
     flex-grow: 1;
-    padding: 0.75rem 1rem;
+    padding: 1rem var(--spacing-md);
     border: 1px solid var(--border-color);
-    border-radius: 8px;
+    border-radius: var(--border-radius);
     font-size: 1rem;
+    font-family: var(--font-family);
+    background-color: var(--surface-elevated);
+    color: var(--text-color);
     min-width: 0;
+    transition: all 0.3s ease;
 }
 
 input[type="email"]:focus {
     outline: none;
     border-color: var(--primary-color);
-    box-shadow: 0 0 0 2px var(--primary-color-light);
+    box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.1);
+    transform: translateY(-1px);
 }
 
 button[type="submit"] {
-    padding: 0.75rem 1.5rem;
+    padding: 1rem var(--spacing-lg);
     background-color: var(--primary-color);
     color: white;
     border: none;
-    border-radius: 8px;
+    border-radius: var(--border-radius);
     font-size: 1rem;
     font-weight: 600;
+    font-family: var(--font-family);
     cursor: pointer;
-    transition: background-color 0.2s ease-in-out;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px var(--shadow-medium);
 }
 
 button[type="submit"]:hover {
     background-color: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px var(--shadow-strong);
 }
 
 #form-message {
@@ -191,25 +249,29 @@ button[type="submit"]:hover {
 
 footer {
     background-color: var(--surface-color);
-    padding: 2rem 0;
-    color: var(--text-light);
+    padding: var(--spacing-xl) 0;
+    color: var(--text-secondary);
     font-size: 0.875rem;
 }
 
 .social-links {
     display: flex;
     justify-content: center;
-    gap: 1.5rem;
-    margin-bottom: 1rem;
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-md);
 }
 
 .social-links a {
-    color: var(--secondary-color);
-    transition: color 0.2s ease-in-out;
+    color: var(--text-secondary);
+    transition: all 0.3s ease;
+    padding: var(--spacing-xs);
+    border-radius: var(--border-radius-small);
 }
 
 .social-links a:hover {
     color: var(--primary-color);
+    background-color: var(--surface-elevated);
+    transform: translateY(-2px);
 }
 
 @media (max-width: 768px) {
@@ -357,45 +419,60 @@ article a:hover {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 1rem;
-    margin: 2rem auto;
-    max-width: 900px;
+    gap: var(--spacing-lg);
+    margin: calc(var(--spacing-xl) * 1.5) auto;
+    max-width: 1000px;
 }
 
 .code-box {
-    background-color: #2d2d2d;
-    color: #f1f1f1;
-    border-radius: 8px;
-    padding: 1.5rem;
+    background-color: var(--surface-elevated);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: var(--spacing-lg);
     width: 45%;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 20px var(--shadow-light);
     text-align: left;
+    transition: all 0.3s ease;
+}
+
+.code-box:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 32px var(--shadow-medium);
 }
 
 .code-box h3 {
     margin-top: 0;
-    font-size: 1.2rem;
-    color: #a9b7c6;
-    border-bottom: 1px solid #444;
-    padding-bottom: 0.5rem;
-    margin-bottom: 1rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: var(--spacing-xs);
+    margin-bottom: var(--spacing-md);
 }
 
 .code-box pre {
     margin: 0;
-    font-family: 'Fira Code', 'Courier New', monospace;
-    font-size: 0.9rem;
-    line-height: 1.5;
+    font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: var(--text-color);
+    background-color: var(--surface-color);
+    padding: var(--spacing-md);
+    border-radius: var(--border-radius-small);
+    overflow-x: auto;
 }
 
 .arrow-indicator {
-    font-size: 3rem;
+    font-size: 2rem;
     color: var(--primary-color);
-    font-weight: 700;
+    font-weight: 300;
+    opacity: 0.8;
 }
 
 .code-box.compose {
-    background-color: #0d1117; /* GitHub dark color */
+    background: linear-gradient(135deg, var(--surface-elevated) 0%, #f8f9ff 100%);
+    border-color: rgba(0, 122, 255, 0.2);
 }
 
 @media (max-width: 768px) {
@@ -413,24 +490,28 @@ article a:hover {
 /* Button Styles */
 .button {
     display: inline-block;
-    padding: 0.8rem 2rem;
-    border-radius: 8px;
+    padding: 1rem var(--spacing-lg);
+    border-radius: var(--border-radius);
     font-size: 1.1rem;
     font-weight: 600;
+    font-family: var(--font-family);
     text-decoration: none;
-    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
-    margin-top: 2rem; /* Add some space above the button */
+    transition: all 0.3s ease;
+    margin-top: var(--spacing-xl);
+    box-shadow: 0 2px 8px var(--shadow-medium);
+    letter-spacing: -0.01em;
 }
 
 .primary-button {
     background-color: var(--primary-color);
     color: white;
-    border: 2px solid var(--primary-color);
+    border: none;
 }
 
 .primary-button:hover {
     background-color: var(--primary-dark);
-    border-color: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px var(--shadow-strong);
 }
 
 .header {

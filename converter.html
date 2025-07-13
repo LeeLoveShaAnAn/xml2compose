@@ -19,16 +19,179 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Source+Code+Pro:wght@400;500&display=swap" rel="stylesheet">
     <!-- highlight.js styles for code highlighting -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
-    <link rel="stylesheet" href="converter.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Converter-specific styles */
+        body {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            text-align: left;
+        }
+        
+        .converter-container {
+            display: flex;
+            flex-grow: 1;
+            overflow: hidden;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-md);
+        }
+        
+        .editor-pane {
+            width: 50%;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--surface-elevated);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: var(--spacing-md);
+            box-shadow: 0 2px 8px var(--shadow-light);
+        }
+        
+        .pane-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-md);
+            padding-bottom: var(--spacing-xs);
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .editor-pane h2 {
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+        
+        .pane-actions {
+            display: flex;
+            gap: var(--spacing-xs);
+        }
+        
+        .action-btn {
+            background-color: var(--surface-color);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-small);
+            padding: 0.5rem 1rem;
+            font-family: var(--font-family);
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .action-btn:hover {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+            transform: translateY(-1px);
+        }
+        
+        .code-input, #compose-output {
+            flex-grow: 1;
+            background-color: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-small);
+            padding: var(--spacing-md);
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
+            font-size: 0.875rem;
+            line-height: 1.6;
+            color: var(--text-color);
+            resize: none;
+            outline: none;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            height: 100%;
+            overflow-y: auto;
+        }
+        
+        .code-input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+        }
+        
+        .faq-section {
+            background-color: var(--surface-color);
+            border-top: 1px solid var(--border-color);
+            padding: var(--spacing-lg) 0;
+            flex-shrink: 0;
+        }
+        
+        .faq-item h3 {
+            font-size: 1.1rem;
+            margin-bottom: var(--spacing-xs);
+            color: var(--text-color);
+        }
+        
+        .faq-item p {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin: 0;
+        }
+        
+        .faq-item a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+        
+        .faq-item a:hover {
+            text-decoration: underline;
+        }
+        
+        #convert-btn {
+            padding: 0.75rem var(--spacing-md);
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius-small);
+            font-size: 1rem;
+            font-weight: 600;
+            font-family: var(--font-family);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px var(--shadow-medium);
+        }
+        
+        #convert-btn:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px var(--shadow-strong);
+        }
+        
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+        
+        .back-link {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+        
+        .back-link:hover {
+            color: var(--text-color);
+        }
+    </style>
 </head>
 <body>
     <header>
         <div class="container">
             <div class="logo">
-                <h1><a href="index.html">xml2compose.dev</a></h1>
+                <div class="logo-text"><a href="index.html">xml2compose.dev</a></div>
             </div>
             <div class="header-actions">
-                <a href="index.html" class="back-link">Back to Home</a>
+                <nav>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="blog.html">Blog</a></li>
+                    </ul>
+                </nav>
                 <button id="convert-btn">Convert</button>
             </div>
         </div>
