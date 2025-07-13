@@ -11,24 +11,21 @@
     </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Modern Web Development with Jetpack Compose</title>
-    <meta name="description" content="Learn how to migrate from XML layouts to Jetpack Compose with practical examples and best practices.">
+    <title>技术博客 - xml2compose.dev</title>
+    <meta name="description" content="探索Android开发、Jetpack Compose和XML转换的最新技术文章和最佳实践。">
     
     <!-- Favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
     
     <!-- SEO Meta Tags -->
-    <link rel="canonical" href="https://xml2compose.dev/article/modern-web-development-jetpack-compose.html">
-    <meta property="og:title" content="Modern Web Development with Jetpack Compose">
-    <meta property="og:description" content="Learn how to migrate from XML layouts to Jetpack Compose with practical examples and best practices.">
+    <link rel="canonical" href="https://xml2compose.dev/blog.html">
+    <meta property="og:title" content="技术博客 - xml2compose.dev">
+    <meta property="og:description" content="探索Android开发、Jetpack Compose和XML转换的最新技术文章和最佳实践。">
     <meta property="og:image" content="https://images.unsplash.com/photo-1517180102446-f3ece451e9d8?w=1200&h=630&fit=crop">
-    <meta property="og:url" content="https://xml2compose.dev/article/modern-web-development-jetpack-compose.html">
-    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://xml2compose.dev/blog.html">
+    <meta property="og:type" content="website">
     
     <link rel="stylesheet" href="style.css">
-
-    <!-- html2canvas for export -->
-    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     
     <style>
         /* CSS Variables */
@@ -80,9 +77,9 @@
             border-bottom: 1px solid var(--border-color);
             position: sticky;
             top: 0;
-            z-index: 50;
+            z-index: 1000;
             backdrop-filter: blur(10px);
-            background-color: rgba(255, 255, 255, 0.9);
+            background-color: rgba(255, 255, 255, 0.95);
         }
         
         .header-content {
@@ -142,6 +139,8 @@
         .main {
             min-height: calc(100vh - 200px);
             padding: 3rem 0;
+            padding-top: 2rem;
+            margin-top: 1rem;
         }
         
         /* Article */
@@ -268,26 +267,100 @@
             color: var(--accent-color);
         }
         
-        /* Images */
-        .image-container {
-            margin: 2rem 0;
-            border-radius: var(--radius-md);
-            overflow: hidden;
+        /* Blog List Styles */
+        .blog-header {
+            text-align: center;
+            padding: 4rem 0 3rem;
+            background: linear-gradient(135deg, var(--bg-tertiary) 0%, var(--bg-primary) 100%);
+            margin-top: -1rem;
+        }
+        
+        .blog-title {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+            letter-spacing: -0.025em;
+        }
+        
+        .blog-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .blog-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        
+        .blog-card {
+            background-color: var(--bg-primary);
+            border-radius: var(--radius-lg);
             box-shadow: var(--shadow-md);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
         }
         
-        .image-container img {
+        .blog-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .blog-card-image {
             width: 100%;
-            height: auto;
-            display: block;
+            height: 200px;
+            object-fit: cover;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
         }
         
-        .image-caption {
-            padding: 0.75rem 1rem;
-            background-color: var(--bg-tertiary);
+        .blog-card-content {
+            padding: 1.5rem;
+        }
+        
+        .blog-card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+            line-height: 1.3;
+        }
+        
+        .blog-card-excerpt {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+        
+        .blog-card-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             font-size: 0.875rem;
             color: var(--text-secondary);
-            text-align: center;
+        }
+        
+        .blog-card-date {
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+        }
+        
+        .blog-card-readtime {
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+        }
+        
+        .meta-icon {
+            width: 1rem;
+            height: 1rem;
+            opacity: 0.6;
         }
         
         /* CTA Section */
@@ -385,29 +458,7 @@
             color: var(--primary-color);
         }
         
-        /* Export Button */
-        .export-button {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            background-color: var(--accent-color);
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 9999px;
-            border: none;
-            font-weight: 600;
-            cursor: pointer;
-            box-shadow: var(--shadow-lg);
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .export-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-        }
+
         
         /* Responsive Design */
         @media (max-width: 768px) {
@@ -419,6 +470,19 @@
             .nav {
                 gap: 1rem;
                 font-size: 0.875rem;
+            }
+            
+            .main {
+                padding-top: 0.5rem;
+            }
+            
+            .blog-title {
+                font-size: 2.5rem;
+            }
+            
+            .blog-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
             }
             
             .article-title {
@@ -449,12 +513,8 @@
         
         /* Print Styles */
         @media print {
-            .header, .footer, .export-button, .cta-section {
+            .header, .footer {
                 display: none;
-            }
-            
-            .article {
-                box-shadow: none;
             }
             
             .main {
@@ -481,169 +541,56 @@
 
     <main class="main">
         <div class="container">
-            <article class="article">
-                <header class="article-header">
-                    <h1 class="article-title">Modern Web Development with Jetpack Compose</h1>
-                    <div class="article-meta">
-                        <span class="meta-item">
-                            <svg class="meta-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                            </svg>
-                            July 12, 2025
-                        </span>
-                        <span class="meta-item">
-                            <svg class="meta-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                            5 min read
-                        </span>
-                        <span class="meta-item">
-                            <svg class="meta-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                            </svg>
-                            Xml2Compose Team
-                        </span>
-                    </div>
-                </header>
+            <header class="blog-header">
+                <h1 class="blog-title">技术博客</h1>
+                <p class="blog-subtitle">探索Android开发、Jetpack Compose和XML转换的最新技术文章，分享最佳实践和开发经验</p>
+            </header>
 
-                <div class="article-content">
-                    <p>Jetpack Compose is Android's modern toolkit for building native UI. It simplifies and accelerates UI development on Android with less code, powerful tools, and intuitive Kotlin APIs.</p>
-
-                    <p>In this comprehensive guide, we'll explore how to migrate your existing XML layouts to Jetpack Compose, covering best practices, common patterns, and real-world examples.</p>
-
-                    <h2>Why Migrate to Jetpack Compose?</h2>
-
-                    <p>Before diving into the technical details, let's understand why Jetpack Compose is becoming the preferred choice for Android developers:</p>
-
-                    <ul style="margin: 1rem 0; padding-left: 2rem; color: var(--text-secondary);">
-                        <li style="margin: 0.5rem 0;">Less code compared to XML layouts</li>
-                        <li style="margin: 0.5rem 0;">Intuitive and declarative API</li>
-                        <li style="margin: 0.5rem 0;">Powerful state management</li>
-                        <li style="margin: 0.5rem 0;">Better performance with smart recomposition</li>
-                        <li style="margin: 0.5rem 0;">Seamless integration with existing code</li>
-                    </ul>
-
-                    <h3>Getting Started</h3>
-
-                    <p>To begin using Jetpack Compose in your project, you'll need to update your app's <code>build.gradle</code> file:</p>
-
-                    <div class="code-block">
-                        <div class="code-header">build.gradle.kts</div>
-                        <pre><code>android {
-    buildFeatures {
-        compose = true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.8"
-    }
-}
-
-dependencies {
-    implementation("androidx.compose.ui:ui:1.5.4")
-    implementation("androidx.compose.material3:material3:1.1.2")
-    implementation("androidx.compose.ui:ui-tooling-preview:1.5.4")
-}</code></pre>
-                    </div>
-
-                    <h3>Basic Example: Converting a Simple Layout</h3>
-
-                    <p>Let's start with a simple example. Here's a traditional XML layout:</p>
-
-                    <div class="code-block">
-                        <div class="code-header">activity_main.xml</div>
-                        <pre><code>&lt;LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp"&gt;
-
-    &lt;TextView
-        android:id="@+id/titleText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello, World!"
-        android:textSize="24sp" /&gt;
-
-    &lt;Button
-        android:id="@+id/actionButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Click Me" /&gt;
-
-&lt;/LinearLayout&gt;</code></pre>
-                    </div>
-
-                    <p>And here's the equivalent in Jetpack Compose:</p>
-
-                    <div class="code-block">
-                        <div class="code-header">MainActivity.kt</div>
-                        <pre><code>@Composable
-fun MainScreen() {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        Text(
-            text = "Hello, World!",
-            fontSize = 24.sp
-        )
-        
-        Button(
-            onClick = { /* Handle click */ }
-        ) {
-            Text("Click Me")
-        }
-    }
-}</code></pre>
-                    </div>
-
-                    <div class="image-container">
-                        <img src="https://via.placeholder.com/672x400/6366f1/ffffff?text=Compose+UI+Preview" alt="Jetpack Compose UI Preview">
-                        <div class="image-caption">Preview of the Compose UI in Android Studio</div>
-                    </div>
-
-                    <h2>Advanced Patterns</h2>
-
-                    <p>As you become more comfortable with Compose, you'll want to explore advanced patterns like state hoisting, custom modifiers, and animation APIs. These patterns help you build more complex and performant UIs.</p>
-
-                    <p>For complex XML layouts with nested views and custom attributes, manual conversion can be time-consuming and error-prone. This is where automated tools can significantly speed up your migration process.</p>
-
-                    <div class="cta-section">
-                        <h3 class="cta-title">Ready to Convert Your Layouts?</h3>
-                        <p class="cta-description">Try our AI-powered XML to Compose converter and migrate your layouts in seconds!</p>
-                        <div class="cta-buttons">
-                            <a href="/converter" class="btn btn-primary">
-                                <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M13 7h-2v4H7v2h4v4h2v-4h4v-2h-4V7zm-1-5C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
+            <div class="blog-grid">
+                <a href="blog/jetpack-compose-migration.html" class="blog-card">
+                    <div class="blog-card-image" style="background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem; font-weight: 600;">Jetpack Compose</div>
+                    <div class="blog-card-content">
+                        <h3 class="blog-card-title">从XML到Jetpack Compose：现代Android UI开发指南</h3>
+                        <p class="blog-card-excerpt">深入了解如何将传统的XML布局迁移到Jetpack Compose，包含最佳实践、常见模式和实际案例。探索声明式UI开发的强大功能。</p>
+                        <div class="blog-card-meta">
+                            <span class="blog-card-date">
+                                <svg class="meta-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                                 </svg>
-                                Try Converter Now
-                            </a>
-                            <a href="/docs" class="btn btn-secondary">
-                                View Documentation
-                            </a>
+                                2025年1月15日
+                            </span>
+                            <span class="blog-card-readtime">
+                                <svg class="meta-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                8分钟阅读
+                            </span>
                         </div>
                     </div>
+                </a>
 
-                    <h3>Best Practices</h3>
-
-                    <p>When migrating to Compose, keep these best practices in mind:</p>
-
-                    <ol style="margin: 1rem 0; padding-left: 2rem; color: var(--text-secondary);">
-                        <li style="margin: 0.5rem 0;">Start with small, isolated components</li>
-                        <li style="margin: 0.5rem 0;">Use preview annotations for rapid development</li>
-                        <li style="margin: 0.5rem 0;">Follow the single source of truth principle for state</li>
-                        <li style="margin: 0.5rem 0;">Leverage Compose's animation APIs for smooth transitions</li>
-                        <li style="margin: 0.5rem 0;">Test your composables with the Compose testing framework</li>
-                    </ol>
-
-                    <h2>Conclusion</h2>
-
-                    <p>Jetpack Compose represents a paradigm shift in Android UI development. While the initial learning curve might seem steep, the long-term benefits in terms of productivity, maintainability, and performance make it a worthwhile investment.</p>
-
-                    <p>Whether you're starting a new project or migrating an existing one, Compose offers a modern, efficient way to build beautiful Android apps. And with tools like our XML to Compose converter, the migration process has never been easier.</p>
-                </div>
-            </article>
+                <a href="blog/xml-layout-optimization.html" class="blog-card">
+                    <div class="blog-card-image" style="background: linear-gradient(135deg, #ec4899 0%, #f59e0b 100%); display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem; font-weight: 600;">XML优化</div>
+                    <div class="blog-card-content">
+                        <h3 class="blog-card-title">Android XML布局性能优化：提升应用响应速度的实用技巧</h3>
+                        <p class="blog-card-excerpt">学习如何优化Android XML布局以提升应用性能。涵盖布局层次优化、ViewStub使用、约束布局最佳实践等关键技术。</p>
+                        <div class="blog-card-meta">
+                            <span class="blog-card-date">
+                                <svg class="meta-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                </svg>
+                                2025年1月10日
+                            </span>
+                            <span class="blog-card-readtime">
+                                <svg class="meta-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                6分钟阅读
+                            </span>
+                        </div>
+                    </div>
+                </a>
+            </div>
         </div>
     </main>
 
@@ -660,32 +607,6 @@ fun MainScreen() {
         </div>
     </footer>
 
-    <button class="export-button" id="exportButton">
-        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
-        </svg>
-        Export as PNG
-    </button>
 
-    <script>
-        document.getElementById('exportButton').addEventListener('click', function() {
-            const button = this;
-            button.style.display = 'none';
-            
-            html2canvas(document.body, {
-                scale: 2,
-                logging: false,
-                useCORS: true,
-                backgroundColor: '#ffffff'
-            }).then(canvas => {
-                button.style.display = 'flex';
-                
-                const link = document.createElement('a');
-                link.download = 'xml2compose-article.png';
-                link.href = canvas.toDataURL();
-                link.click();
-            });
-        });
-    </script>
 </body>
 </html>
