@@ -1,3 +1,4 @@
+<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,13 +8,17 @@
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-    
       gtag('config', 'G-F2G7TSB6Q6');
     </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>xml2compose.dev | Convert Android XML to Jetpack Compose</title>
     <meta name="description" content="The ultimate tool for developers to automatically convert Android XML layout files into clean, modern Jetpack Compose code. Sign up for launch notifications!">
+    <meta name="keywords" content="Android, XML, Jetpack Compose, Converter, UI, Layout, Tool, Migration">
+    <meta property="og:title" content="xml2compose.dev | Convert Android XML to Jetpack Compose">
+    <meta property="og:description" content="Automatically convert Android XML layouts to Jetpack Compose code. Try it now!">
+    <meta property="og:url" content="https://xml2compose.dev">
+    <meta property="og:type" content="website">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
@@ -33,6 +38,54 @@
       }
     }
     </script>
+    <style>
+    /* 优化 feedback 输入框和按钮的对齐 */
+    .feedback-section form {
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        margin-top: 12px;
+    }
+    .feedback-section textarea {
+        flex: 1 1 250px;
+        min-width: 220px;
+        max-width: 100%;
+        min-height: 48px;
+        padding: 10px;
+        font-size: 1rem;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        resize: vertical;
+        box-sizing: border-box;
+    }
+    .feedback-section button {
+        flex: 0 0 auto;
+        height: 48px;
+        padding: 0 24px;
+        font-size: 1rem;
+        border-radius: 6px;
+        border: none;
+        background: #3b82f6;
+        color: #fff;
+        cursor: pointer;
+        transition: background 0.2s;
+        margin-top: 0;
+    }
+    .feedback-section button:hover {
+        background: #2563eb;
+    }
+    @media (max-width: 600px) {
+        .feedback-section form {
+            flex-direction: column;
+            gap: 8px;
+        }
+        .feedback-section button {
+            width: 100%;
+            height: 44px;
+        }
+    }
+    </style>
 </head>
 <body>
     <header>
@@ -45,8 +98,13 @@
                     <li><a href="index.html">Home</a></li>
                     <li><a href="converter.html">Converter</a></li>
                     <li><a href="blog.html">Blog</a></li>
+                    <li><a href="#faq">FAQ</a></li>
                 </ul>
             </nav>
+            <div class="lang-switch">
+                <button onclick="switchLang('en')">EN</button>
+                <button onclick="switchLang('zh')">中文</button>
+            </div>
         </div>
     </header>
 
@@ -55,28 +113,56 @@
             <div class="hero">
                 <h1>Convert Android XML to Jetpack Compose</h1>
                 <p class="subtitle">The ultimate tool for developers to automatically convert Android XML layout files into clean, modern Jetpack Compose code.</p>
+                <!-- GIF 展示已移除 -->
                 <div class="code-comparison-container">
-                        <div class="code-box">
-                            <h3>Android XML</h3>
-                            <pre><code>&lt;LinearLayout ...&gt;
+                    <div class="code-box">
+                        <h3>Android XML</h3>
+                        <pre><code>&lt;LinearLayout ...&gt;
     &lt;TextView
         android:text="Hello, World!" /&gt;
     &lt;Button
         android:text="Click Me" /&gt;
 &lt;/LinearLayout&gt;</code></pre>
-                        </div>
-                        <div class="arrow-indicator">→</div>
-                        <div class="code-box compose">
-                            <h3>Jetpack Compose</h3>
-                            <pre><code>Column {
+                    </div>
+                    <div class="arrow-indicator">→</div>
+                    <div class="code-box compose">
+                        <h3>Jetpack Compose</h3>
+                        <pre><code>Column {
     Text("Hello, World!")
     Button(onClick = {}) {
         Text("Click Me")
     }
 }</code></pre>
+                    </div>
+                </div>
+                <div class="more-examples">
+                    <h4>More Examples</h4>
+                    <div class="examples-list">
+                        <div>
+                            <strong>ConstraintLayout</strong>
+                            <pre><code>&lt;ConstraintLayout ...&gt;
+    &lt;ImageView ... /&gt;
+    &lt;TextView ... /&gt;
+&lt;/ConstraintLayout&gt;</code></pre>
+                            <pre><code>ConstraintLayout {
+    val (image, text) = createRefs()
+    Image(..., modifier = Modifier.constrainAs(image) { ... })
+    Text(..., modifier = Modifier.constrainAs(text) { ... })
+}</code></pre>
+                        </div>
+                        <div>
+                            <strong>RecyclerView</strong>
+                            <pre><code>&lt;RecyclerView ... /&gt;</code></pre>
+                            <pre><code>LazyColumn {
+    items(itemsList) { item ->
+        // Item content
+    }
+}</code></pre>
                         </div>
                     </div>
-                    <a href="converter.html" class="button primary-button">Try the Converter Now!</a>
+                </div>
+                <a href="converter.html" class="button primary-button pulse">Try the Converter Now!</a>
+                <p class="cta-desc">No registration required. Instantly convert your layouts!</p>
             </div>
         </div>
     </main>
@@ -86,19 +172,56 @@
             <h2>About xml2compose</h2>
             <p>xml2compose is a powerful tool designed to streamline the transition from traditional Android XML layouts to the modern, declarative UI framework, Jetpack Compose. Our mission is to save developers countless hours of manual conversion, reduce boilerplate code, and help teams adopt Compose faster and more efficiently.</p>
             <p>Whether you're migrating a large, existing project or just starting a new one, xml2compose provides an intuitive and reliable solution to bring your UI development into the future.</p>
+            <p>Developed by a team of experienced Android engineers passionate about developer productivity and open source.</p>
+        </div>
+    </section>
+
+    <section id="faq" class="faq-section">
+        <div class="container">
+            <h2>Frequently Asked Questions</h2>
+            <ul>
+                <li>
+                    <strong>What XML layouts are supported?</strong>
+                    <p>Most common layouts and widgets are supported, including LinearLayout, ConstraintLayout, FrameLayout, TextView, Button, ImageView, RecyclerView, and more.</p>
+                </li>
+                <li>
+                    <strong>Is my data safe?</strong>
+                    <p>Yes. Uploaded XML files are processed securely and never stored. We respect your privacy.</p>
+                </li>
+                <li>
+                    <strong>How accurate is the conversion?</strong>
+                    <p>Our tool aims for high fidelity, but always review the output and adjust for project-specific needs.</p>
+                </li>
+                <li>
+                    <strong>Can I contribute or give feedback?</strong>
+                    <p>Absolutely! Visit our <a href="https://github.com/your-repo" target="_blank">GitHub</a> or use the feedback form below.</p>
+                </li>
+            </ul>
         </div>
     </section>
 
     <section id="contact" class="form-container">
         <div class="container">
             <h2>Get notified when we launch!</h2>
-            <form id="contact-form" action="https://formspree.io/f/your_form_id" method="POST">
+            <form id="contact-form" action="https://formspree.io/f/your_form_id" method="POST" autocomplete="off">
                 <div class="form-group">
                     <input type="email" name="email" placeholder="Enter your email address" required>
                     <button type="submit">Notify Me</button>
                 </div>
             </form>
             <p id="form-message"></p>
+            <p class="privacy-note">We respect your privacy. Your email will only be used for launch notifications.</p>
+        </div>
+    </section>
+
+    <section id="feedback" class="feedback-section">
+        <div class="container">
+            <h2>Feedback & Suggestions</h2>
+            <form id="feedback-form" action="https://formspree.io/f/your_feedback_form_id" method="POST">
+                <textarea name="feedback" placeholder="Your feedback or suggestions..." required></textarea>
+                <button type="submit">Send Feedback</button>
+            </form>
+            <p id="feedback-message"></p>
         </div>
     </section>
 
@@ -106,18 +229,89 @@
         <div class="container">
             <div class="social-links">
                 <a href="https://twitter.com/intent/tweet?url=https%3A%2F%2Fxml2compose.dev&text=Check%20out%20xml2compose.dev%2C%20the%20tool%20to%20convert%20Android%20XML%20to%20Jetpack%20Compose!" target="_blank" aria-label="Share on Twitter">
+                    <!-- Twitter SVG -->
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
                 </a>
                 <a href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fxml2compose.dev" target="_blank" aria-label="Share on LinkedIn">
+                    <!-- LinkedIn SVG -->
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M20.5 2h-17A1.5 1.5 0 0 0 2 3.5v17A1.5 1.5 0 0 0 3.5 22h17a1.5 1.5 0 0 0 1.5-1.5v-17A1.5 1.5 0 0 0 20.5 2zM8 19H5v-9h3zM6.5 8.25A1.75 1.75 0 1 1 8.25 6.5 1.75 1.75 0 0 1 6.5 8.25zM19 19h-3v-4.75c0-1.4-1.2-2.5-2.5-2.5S11 12.85 11 14.25V19h-3v-9h2.9v1.3a3.5 3.5 0 0 1 3.1-1.8C18.4 9.5 19 11.4 19 13.5z"/></svg>
                 </a>
                 <a href="https://github.com/your-repo" target="_blank" aria-label="View on GitHub">
+                    <!-- GitHub SVG -->
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.168 6.839 9.49.5.092.682-.217.682-.482 0-.237-.009-.868-.014-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.031-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.378.203 2.398.1 2.65.64.7 1.03 1.595 1.03 2.688 0 3.848-2.338 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.001 10.001 0 0 0 22 12c0-5.523-4.477-10-10-10z"/></svg>
+                </a>
+                <a href="https://t.me/your-telegram" target="_blank" aria-label="Join Telegram">
+                    <!-- Telegram SVG -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M9.04 16.62l-.39 3.67c.56 0 .8-.24 1.09-.53l2.62-2.5 5.44 3.98c1 .55 1.72.26 1.97-.92l3.58-16.77c.32-1.48-.54-2.06-1.5-1.7L2.2 9.27c-1.45.56-1.43 1.36-.25 1.72l4.6 1.44 10.7-6.74c.5-.32.96-.14.58.18"/></svg>
                 </a>
             </div>
             <p>&copy; 2025 xml2compose.dev. All rights reserved.</p>
         </div>
     </footer>
-    <script src="script.js"></script>
+    <script>
+    // Language switcher (simple demo)
+    function switchLang(lang) {
+        alert('Language switching is a demo. Implement i18n for full support.');
+    }
+
+    // Notify Me form feedback
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('contact-form');
+        const msg = document.getElementById('form-message');
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const email = form.querySelector('input[name="email"]').value;
+                if (!email.match(/^[^@]+@[^@]+\.[^@]+$/)) {
+                    msg.textContent = 'Please enter a valid email address.';
+                    msg.style.color = 'red';
+                    return;
+                }
+                fetch(form.action, {
+                    method: 'POST',
+                    body: new FormData(form),
+                    headers: { 'Accept': 'application/json' }
+                }).then(response => {
+                    if (response.ok) {
+                        msg.textContent = 'Subscription successful! We will notify you at launch.';
+                        msg.style.color = 'green';
+                        form.reset();
+                    } else {
+                        msg.textContent = 'Submission failed. Please try again later.';
+                        msg.style.color = 'red';
+                    }
+                }).catch(() => {
+                    msg.textContent = 'Network error. Please try again.';
+                    msg.style.color = 'red';
+                });
+            });
+        }
+        // Feedback form
+        const feedbackForm = document.getElementById('feedback-form');
+        const feedbackMsg = document.getElementById('feedback-message');
+        if (feedbackForm) {
+            feedbackForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                fetch(feedbackForm.action, {
+                    method: 'POST',
+                    body: new FormData(feedbackForm),
+                    headers: { 'Accept': 'application/json' }
+                }).then(response => {
+                    if (response.ok) {
+                        feedbackMsg.textContent = 'Thank you for your feedback!';
+                        feedbackMsg.style.color = 'green';
+                        feedbackForm.reset();
+                    } else {
+                        feedbackMsg.textContent = 'Failed to send feedback. Please try again.';
+                        feedbackMsg.style.color = 'red';
+                    }
+                }).catch(() => {
+                    feedbackMsg.textContent = 'Network error. Please try again.';
+                    feedbackMsg.style.color = 'red';
+                });
+            });
+        }
+    });
+    </script>
 </body>
 </html>

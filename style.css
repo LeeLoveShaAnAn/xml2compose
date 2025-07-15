@@ -1,19 +1,25 @@
 :root {
-    /* Apple-inspired color palette */
-    --primary-color: #007AFF;
-    --primary-dark: #0056CC;
-    --secondary-color: #8E8E93;
-    --background-color: #ffffff;
-    --surface-color: #F2F2F7;
-    --surface-elevated: #ffffff;
-    --text-color: #1D1D1F;
-    --text-secondary: #86868B;
-    --text-light: #8E8E93;
-    --border-color: #D1D1D6;
-    --shadow-light: rgba(0, 0, 0, 0.04);
-    --shadow-medium: rgba(0, 0, 0, 0.08);
-    --shadow-strong: rgba(0, 0, 0, 0.12);
-    --font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
+    /* Modern color palette - consistent with blog.html */
+    --primary-color: #6366f1;
+    --primary-dark: #4f46e5;
+    --secondary-color: #8b5cf6;
+    --accent-color: #ec4899;
+    --bg-primary: #ffffff;
+    --bg-secondary: #f8fafc;
+    --bg-tertiary: #f1f5f9;
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --text-muted: #64748b;
+    --border-color: #e2e8f0;
+    --border-light: #f1f5f9;
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    --gradient-accent: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     --border-radius: 12px;
     --border-radius-small: 8px;
     --spacing-xs: 0.5rem;
@@ -21,6 +27,26 @@
     --spacing-md: 1.5rem;
     --spacing-lg: 2rem;
     --spacing-xl: 3rem;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --primary-color: #818cf8;
+        --primary-dark: #6366f1;
+        --secondary-color: #a78bfa;
+        --accent-color: #f472b6;
+        --bg-primary: #0f172a;
+        --bg-secondary: #1e293b;
+        --bg-tertiary: #334155;
+        --text-primary: #f8fafc;
+        --text-secondary: #cbd5e1;
+        --text-muted: #94a3b8;
+        --border-color: #334155;
+        --border-light: #475569;
+        --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        --gradient-accent: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    }
 }
 
 @keyframes breathing {
@@ -35,8 +61,8 @@ html {
 
 body {
     font-family: var(--font-family);
-    background-color: var(--background-color);
-    color: var(--text-color);
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
     margin: 0;
     text-align: center;
     line-height: 1.6;
@@ -52,14 +78,14 @@ body {
 }
 
 header {
-    background-color: rgba(255, 255, 255, 0.8);
+    background-color: var(--bg-primary);
     backdrop-filter: saturate(180%) blur(20px);
     border-bottom: 1px solid var(--border-color);
     padding: var(--spacing-md) 0;
     position: sticky;
     top: 0;
     z-index: 100;
-    box-shadow: 0 1px 0 0 var(--shadow-light);
+    box-shadow: var(--shadow-sm);
 }
 
 header .container {
@@ -77,7 +103,7 @@ header .logo .logo-text {
 
 header .logo .logo-text a {
     text-decoration: none;
-    color: var(--text-color);
+    color: var(--text-primary);
     transition: color 0.3s ease;
 }
 
@@ -104,7 +130,7 @@ header nav a {
 }
 
 header nav a:hover {
-    color: var(--text-color);
+    color: var(--text-primary);
 }
 
 header nav a::after {
@@ -129,7 +155,7 @@ main#home {
 .hero h1 {
     font-size: clamp(2.5rem, 5vw, 4rem);
     font-weight: 700;
-    color: var(--text-color);
+    color: var(--text-primary);
     margin: 0 0 var(--spacing-md);
     letter-spacing: -0.04em;
     line-height: 1.1;
@@ -149,7 +175,7 @@ main#home {
 
 
 .about-section {
-    background-color: var(--surface-color);
+    background-color: var(--bg-secondary);
     padding: calc(var(--spacing-xl) * 2) 0;
     text-align: left;
 }
@@ -160,7 +186,7 @@ main#home {
     text-align: center;
     margin-top: 0;
     margin-bottom: var(--spacing-xl);
-    color: var(--text-color);
+    color: var(--text-primary);
     letter-spacing: -0.02em;
 }
 
@@ -181,7 +207,7 @@ main#home {
     font-weight: 600;
     margin-top: 0;
     margin-bottom: var(--spacing-lg);
-    color: var(--text-color);
+    color: var(--text-primary);
     letter-spacing: -0.02em;
 }
 
@@ -200,8 +226,8 @@ input[type="email"] {
     border-radius: var(--border-radius);
     font-size: 1rem;
     font-family: var(--font-family);
-    background-color: var(--surface-elevated);
-    color: var(--text-color);
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
     min-width: 0;
     transition: all 0.3s ease;
 }
@@ -230,7 +256,7 @@ button[type="submit"] {
 button[type="submit"]:hover {
     background-color: var(--primary-dark);
     transform: translateY(-2px);
-    box-shadow: 0 4px 16px var(--shadow-strong);
+    box-shadow: var(--shadow-lg);
 }
 
 #form-message {
@@ -248,7 +274,7 @@ button[type="submit"]:hover {
 }
 
 footer {
-    background-color: var(--surface-color);
+    background-color: var(--bg-secondary);
     padding: var(--spacing-xl) 0;
     color: var(--text-secondary);
     font-size: 0.875rem;
@@ -270,7 +296,7 @@ footer {
 
 .social-links a:hover {
     color: var(--primary-color);
-    background-color: var(--surface-elevated);
+    background-color: var(--bg-primary);
     transform: translateY(-2px);
 }
 
@@ -306,16 +332,16 @@ footer {
 }
 
 .blog-item {
-    background-color: var(--surface-color);
+    background-color: var(--bg-primary);
     border-radius: 8px;
     padding: 1.5rem;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    box-shadow: var(--shadow-sm);
     transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 }
 
 .blog-item:hover {
     transform: translateY(-5px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    box-shadow: var(--shadow-md);
 }
 
 .blog-item h3 {
@@ -336,7 +362,7 @@ footer {
 
 .blog-meta {
     font-size: 0.875rem;
-    color: var(--text-light);
+    color: var(--text-muted);
     margin-bottom: 1rem;
 }
 
@@ -363,10 +389,10 @@ footer {
 
 /* Article specific styles */
 article {
-    background-color: var(--background-color);
+    background-color: var(--bg-primary);
     padding: 2rem;
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    box-shadow: var(--shadow-sm);
     margin-top: 2rem;
 }
 
@@ -425,20 +451,20 @@ article a:hover {
 }
 
 .code-box {
-    background-color: var(--surface-elevated);
-    color: var(--text-color);
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
     border: 1px solid var(--border-color);
     border-radius: var(--border-radius);
     padding: var(--spacing-lg);
     width: 45%;
-    box-shadow: 0 4px 20px var(--shadow-light);
+    box-shadow: var(--shadow-md);
     text-align: left;
     transition: all 0.3s ease;
 }
 
 .code-box:hover {
     transform: translateY(-4px);
-    box-shadow: 0 8px 32px var(--shadow-medium);
+    box-shadow: var(--shadow-lg);
 }
 
 .code-box h3 {
@@ -456,8 +482,8 @@ article a:hover {
     font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
     font-size: 0.875rem;
     line-height: 1.6;
-    color: var(--text-color);
-    background-color: var(--surface-color);
+    color: var(--text-primary);
+    background-color: var(--bg-secondary);
     padding: var(--spacing-md);
     border-radius: var(--border-radius-small);
     overflow-x: auto;
@@ -471,8 +497,8 @@ article a:hover {
 }
 
 .code-box.compose {
-    background: linear-gradient(135deg, var(--surface-elevated) 0%, #f8f9ff 100%);
-    border-color: rgba(0, 122, 255, 0.2);
+    background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+    border-color: rgba(99, 102, 241, 0.2);
 }
 
 @media (max-width: 768px) {
@@ -498,7 +524,7 @@ article a:hover {
     text-decoration: none;
     transition: all 0.3s ease;
     margin-top: var(--spacing-xl);
-    box-shadow: 0 2px 8px var(--shadow-medium);
+    box-shadow: var(--shadow-md);
     letter-spacing: -0.01em;
 }
 
@@ -511,13 +537,13 @@ article a:hover {
 .primary-button:hover {
     background-color: var(--primary-dark);
     transform: translateY(-2px);
-    box-shadow: 0 4px 16px var(--shadow-strong);
+    box-shadow: var(--shadow-lg);
 }
 
 .header {
     padding: 1rem 0;
-    background: var(--background-color);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    background: var(--bg-primary);
+    box-shadow: var(--shadow-sm);
 }
 
 .nav-link {

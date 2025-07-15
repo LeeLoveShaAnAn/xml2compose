@@ -1,5 +1,6 @@
+<!-- filename: converter.html -->
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-F2G7TSB6Q6"></script>
@@ -7,7 +8,6 @@
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-    
       gtag('config', 'G-F2G7TSB6Q6');
     </script>
     <meta charset="UTF-8">
@@ -16,38 +16,159 @@
     <meta name="description" content="实时、准确地将安卓XML布局文件转换为简洁、现代的Jetpack Compose代码。无需安装，一键复制，加速你的迁移进程。">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Source+Code+Pro:wght@400;500&display=swap" rel="stylesheet">
-    <!-- highlight.js styles for code highlighting -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Source+Code+Pro:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
-    <link rel="stylesheet" href="style.css">
     <style>
-        /* Converter-specific styles */
+        :root {
+            /* Modern color palette - consistent with blog.html */
+            --primary-color: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary-color: #8b5cf6;
+            --accent-color: #ec4899;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --bg-tertiary: #f1f5f9;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --border-light: #f1f5f9;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-accent: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --border-radius: 1rem;
+            --border-radius-small: 0.5rem;
+            --spacing-xs: 0.5rem;
+            --spacing-sm: 1rem;
+            --spacing-md: 1.5rem;
+            --spacing-lg: 2.5rem;
+            --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            --code-font: 'Source Code Pro', 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
+            --focus-ring: 0 0 0 3px rgba(99,102,241,0.3);
+        }
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --primary-color: #818cf8;
+                --primary-dark: #6366f1;
+                --secondary-color: #a78bfa;
+                --accent-color: #f472b6;
+                --bg-primary: #0f172a;
+                --bg-secondary: #1e293b;
+                --bg-tertiary: #334155;
+                --text-primary: #f8fafc;
+                --text-secondary: #cbd5e1;
+                --text-muted: #94a3b8;
+                --border-color: #334155;
+                --border-light: #475569;
+                --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+                --gradient-accent: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            }
+        }
+        html { scroll-behavior: smooth; }
         body {
+            min-height: 100vh;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: var(--font-family);
+            margin: 0;
             display: flex;
             flex-direction: column;
-            height: 100vh;
-            text-align: left;
         }
-        
-        .converter-container {
+        header {
+            background: var(--bg-primary);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow-sm);
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--spacing-md);
             display: flex;
-            flex-grow: 1;
-            overflow: hidden;
+            align-items: center;
+            justify-content: space-between;
+            height: 4.5rem;
+        }
+        .logo-text a {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary-color);
+            text-decoration: none;
+            letter-spacing: -0.03em;
+            transition: color 0.2s;
+        }
+        .logo-text a:hover { color: var(--secondary-color);}
+        nav ul {
+            display: flex;
             gap: var(--spacing-sm);
-            padding: var(--spacing-md);
+            list-style: none;
+            margin: 0;
+            padding: 0;
         }
-        
+        nav ul li a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: var(--border-radius-small);
+            transition: background 0.2s, color 0.2s;
+        }
+        nav ul li a:hover, nav ul li a.active {
+            color: var(--primary-color);
+            background: var(--bg-secondary);
+        }
+        #convert-btn {
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            color: #fff;
+            border: none;
+            border-radius: var(--border-radius-small);
+            font-size: 1rem;
+            font-weight: 700;
+            font-family: var(--font-family);
+            cursor: pointer;
+            transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 2px 8px var(--shadow-medium);
+        }
+        #convert-btn:hover {
+            background: linear-gradient(90deg, var(--secondary-color), var(--primary-color));
+            transform: translateY(-2px) scale(1.03);
+            box-shadow: var(--shadow-lg);
+        }
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+        main.converter-container {
+            display: flex;
+            flex: 1 1 auto;
+            gap: var(--spacing-lg);
+            padding: var(--spacing-lg) var(--spacing-md) var(--spacing-md);
+            background: var(--bg-secondary);
+            justify-content: center;
+        }
         .editor-pane {
-            width: 50%;
+            width: 48%;
+            min-width: 320px;
             display: flex;
             flex-direction: column;
-            background-color: var(--surface-elevated);
+            background: var(--bg-primary);
             border: 1px solid var(--border-color);
             border-radius: var(--border-radius);
             padding: var(--spacing-md);
-            box-shadow: 0 2px 8px var(--shadow-light);
+            box-shadow: var(--shadow-md);
+            min-height: 480px;
+            max-width: 600px;
         }
-        
         .pane-header {
             display: flex;
             justify-content: space-between;
@@ -56,127 +177,135 @@
             padding-bottom: var(--spacing-xs);
             border-bottom: 1px solid var(--border-color);
         }
-        
         .editor-pane h2 {
             margin: 0;
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--text-color);
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            letter-spacing: -0.01em;
         }
-        
         .pane-actions {
             display: flex;
             gap: var(--spacing-xs);
         }
-        
         .action-btn {
-            background-color: var(--surface-color);
-            color: var(--text-secondary);
+            background: var(--bg-secondary);
+            color: var(--primary-color);
             border: 1px solid var(--border-color);
             border-radius: var(--border-radius-small);
             padding: 0.5rem 1rem;
             font-family: var(--font-family);
-            font-size: 0.875rem;
-            font-weight: 500;
+            font-size: 0.95rem;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: background 0.2s, color 0.2s, border 0.2s, transform 0.2s;
         }
-        
         .action-btn:hover {
-            background-color: var(--primary-color);
-            color: white;
+            background: var(--primary-color);
+            color: #fff;
             border-color: var(--primary-color);
-            transform: translateY(-1px);
+            transform: translateY(-1px) scale(1.04);
         }
-        
         .code-input, #compose-output {
             flex-grow: 1;
-            background-color: var(--surface-color);
+            background: var(--bg-secondary);
             border: 1px solid var(--border-color);
             border-radius: var(--border-radius-small);
             padding: var(--spacing-md);
-            font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
-            font-size: 0.875rem;
-            line-height: 1.6;
-            color: var(--text-color);
+            font-family: var(--code-font);
+            font-size: 1rem;
+            line-height: 1.7;
+            color: var(--text-primary);
             resize: none;
             outline: none;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-            height: 100%;
+            white-space: pre;
+            word-break: break-all;
+            min-height: 260px;
+            max-height: 480px;
             overflow-y: auto;
+            margin-top: var(--spacing-xs);
+            margin-bottom: var(--spacing-xs);
+            transition: border 0.2s, box-shadow 0.2s;
         }
-        
         .code-input:focus {
             border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+            box-shadow: var(--focus-ring);
         }
-        
+        #compose-output {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-small);
+            min-height: 260px;
+            max-height: 480px;
+            font-family: var(--code-font);
+            font-size: 1rem;
+            color: var(--text-primary);
+            margin-top: var(--spacing-xs);
+            margin-bottom: var(--spacing-xs);
+        }
         .faq-section {
-            background-color: var(--surface-color);
+            background: var(--bg-primary);
             border-top: 1px solid var(--border-color);
             padding: var(--spacing-lg) 0;
-            flex-shrink: 0;
         }
-        
+        .faq-section .container {
+            flex-direction: column;
+            align-items: flex-start;
+            height: auto;
+        }
+        .faq-section h2 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: var(--spacing-sm);
+        }
         .faq-item h3 {
             font-size: 1.1rem;
             margin-bottom: var(--spacing-xs);
-            color: var(--text-color);
+            color: var(--text-primary);
         }
-        
         .faq-item p {
             color: var(--text-secondary);
             line-height: 1.6;
             margin: 0;
         }
-        
         .faq-item a {
             color: var(--primary-color);
             text-decoration: none;
         }
-        
         .faq-item a:hover {
             text-decoration: underline;
         }
-        
-        #convert-btn {
-            padding: 0.75rem var(--spacing-md);
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: var(--border-radius-small);
-            font-size: 1rem;
-            font-weight: 600;
-            font-family: var(--font-family);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 8px var(--shadow-medium);
+        /* 复制提示 */
+        .copy-tip {
+            position: absolute;
+            right: 2rem;
+            top: 1.2rem;
+            background: var(--primary-color);
+            color: #fff;
+            padding: 0.3rem 1rem;
+            border-radius: 1rem;
+            font-size: 0.95rem;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+            z-index: 10;
         }
-        
-        #convert-btn:hover {
-            background-color: var(--primary-dark);
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px var(--shadow-strong);
+        .copy-tip.show { opacity: 1; }
+        /* 响应式 */
+        @media (max-width: 1024px) {
+            main.converter-container { flex-direction: column; gap: var(--spacing-md);}
+            .editor-pane { width: 100%; max-width: 100%; min-width: 0;}
         }
-        
-        .header-actions {
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-md);
+        @media (max-width: 600px) {
+            .container { flex-direction: column; height: auto; gap: var(--spacing-xs);}
+            .logo-text a { font-size: 1.2rem;}
+            .editor-pane { padding: var(--spacing-sm);}
+            .pane-header { flex-direction: column; align-items: flex-start; gap: var(--spacing-xs);}
+            .faq-section { padding: var(--spacing-md) 0;}
         }
-        
-        .back-link {
-            text-decoration: none;
-            color: var(--text-secondary);
-            font-weight: 500;
-            font-size: 0.9rem;
-            transition: color 0.3s ease;
-        }
-        
-        .back-link:hover {
-            color: var(--text-color);
-        }
+        /* 可访问性 */
+        :focus-visible { outline: 2px solid var(--primary-color); outline-offset: 2px;}
     </style>
 </head>
 <body>
@@ -192,33 +321,32 @@
                         <li><a href="blog.html">Blog</a></li>
                     </ul>
                 </nav>
-                <button id="convert-btn">Convert</button>
+                <button id="convert-btn" title="将XML转换为Compose">Convert</button>
             </div>
         </div>
     </header>
-
     <main class="converter-container">
-        <div class="editor-pane">
+        <div class="editor-pane" aria-label="Android XML输入区">
             <div class="pane-header">
                 <h2>Android XML</h2>
                 <div class="pane-actions">
-                    <button id="load-sample-btn" class="action-btn">Load Sample</button>
-                    <button id="clear-btn" class="action-btn">Clear</button>
+                    <button id="load-sample-btn" class="action-btn" title="加载示例">Load Sample</button>
+                    <button id="clear-btn" class="action-btn" title="清空输入">Clear</button>
                 </div>
             </div>
-            <textarea id="xml-input" class="code-input" spellcheck="false"></textarea>
+            <textarea id="xml-input" class="code-input" spellcheck="false" aria-label="XML输入"></textarea>
         </div>
-        <div class="editor-pane">
+        <div class="editor-pane" aria-label="Jetpack Compose输出区" style="position:relative;">
             <div class="pane-header">
                 <h2>Jetpack Compose</h2>
                 <div class="pane-actions">
-                    <button id="copy-btn" class="action-btn">Copy Code</button>
+                    <button id="copy-btn" class="action-btn" title="复制代码">Copy Code</button>
                 </div>
             </div>
-            <pre><code id="compose-output" class="language-kotlin"></code></pre>
+            <span class="copy-tip" id="copy-tip">已复制！</span>
+            <pre><code id="compose-output" class="language-kotlin" aria-label="Compose代码"></code></pre>
         </div>
     </main>
-
     <section class="faq-section">
         <div class="container">
             <h2>常见问题 (FAQ)</h2>
@@ -228,11 +356,95 @@
             </div>
         </div>
     </section>
-
-    <!-- highlight.js script -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/xml.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/kotlin.min.js"></script>
-    <script src="converter.js"></script>
+    <script>
+    // 示例代码
+    const sampleXML = `<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Hello, Jetpack Compose!"
+        android:textSize="24sp"/>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Click Me"/>
+</LinearLayout>`;
+
+    const sampleCompose = `Column(
+    modifier = Modifier
+        .fillMaxWidth()
+        .fillMaxHeight()
+        .padding(16.dp)
+) {
+    Text(
+        modifier = Modifier
+            .wrapContentWidth()
+            .wrapContentHeight(),
+        text = "Hello, Jetpack Compose!",
+        fontSize = 24.sp
+    )
+    Button(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+    ) {
+        Text(text = "Click Me")
+    }
+}`;
+
+    // 代码高亮
+    function highlightAll() {
+        document.querySelectorAll('pre code').forEach((block) => {
+            hljs.highlightElement(block);
+        });
+    }
+
+    // 复制功能
+    const copyBtn = document.getElementById('copy-btn');
+    const copyTip = document.getElementById('copy-tip');
+    copyBtn.addEventListener('click', () => {
+        const code = document.getElementById('compose-output').innerText;
+        if (code.trim().length === 0) return;
+        navigator.clipboard.writeText(code).then(() => {
+            copyTip.classList.add('show');
+            setTimeout(() => copyTip.classList.remove('show'), 1200);
+        });
+    });
+
+    // 加载示例
+    document.getElementById('load-sample-btn').addEventListener('click', () => {
+        document.getElementById('xml-input').value = sampleXML;
+        document.getElementById('compose-output').textContent = sampleCompose;
+        highlightAll();
+    });
+
+    // 清空
+    document.getElementById('clear-btn').addEventListener('click', () => {
+        document.getElementById('xml-input').value = '';
+        document.getElementById('compose-output').textContent = '';
+    });
+
+    // 转换按钮（假设有 converter.js 实现，若无则用示例）
+    document.getElementById('convert-btn').addEventListener('click', () => {
+        // 这里应调用实际转换逻辑
+        // 这里只是演示，直接用 sampleCompose
+        document.getElementById('compose-output').textContent = sampleCompose;
+        highlightAll();
+    });
+
+    // 自动高亮
+    document.addEventListener('DOMContentLoaded', highlightAll);
+
+    // 响应式：移动端自动收起FAQ
+    // 可选：FAQ折叠功能
+    </script>
 </body>
 </html>
