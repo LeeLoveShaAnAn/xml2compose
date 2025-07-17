@@ -34,182 +34,161 @@
       "description": "探索Android开发、Jetpack Compose和XML转换的最新技术文章和最佳实践。"
     }
     </script>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
     <style>
-        :root {
-            --primary-color: #6366f1;
-            --secondary-color: #8b5cf6;
-            --accent-color: #ec4899;
-            --text-primary: #1f2937;
-            --text-secondary: #6b7280;
-            --bg-primary: #fff;
-            --bg-secondary: #f9fafb;
-            --bg-tertiary: #f3f4f6;
-            --border-color: #e5e7eb;
-            --shadow-sm: 0 1px 2px 0 rgba(0,0,0,0.05);
-            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
-            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1);
-            --radius-sm: 0.375rem;
-            --radius-md: 0.5rem;
-            --radius-lg: 0.75rem;
-            --transition: all 0.3s cubic-bezier(.4,0,.2,1);
-            --focus-ring: 0 0 0 3px rgba(99,102,241,0.3);
-        }
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --primary-color: #818cf8;
-                --secondary-color: #a78bfa;
-                --accent-color: #f472b6;
-                --text-primary: #f3f4f6;
-                --text-secondary: #a1a1aa;
-                --bg-primary: #18181b;
-                --bg-secondary: #232336;
-                --bg-tertiary: #27272a;
-                --border-color: #27272a;
-            }
-        }
-        html { scroll-behavior: smooth; }
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            font-size: 16px;
-            line-height: 1.7;
-            color: var(--text-primary);
-            background: var(--bg-secondary);
-            min-height: 100vh;
-            transition: var(--transition);
-        }
-        .container {
-            max-width: 48rem;
-            margin: 0 auto;
-            padding: 0 1.5rem;
-        }
-        /* Header */
-        .header {
-            background: var(--bg-primary);
-            border-bottom: 1px solid var(--border-color);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            backdrop-filter: blur(10px);
-            background-color: rgba(255,255,255,0.95);
-            transition: var(--transition);
-        }
-        @media (prefers-color-scheme: dark) {
-            .header { background-color: rgba(24,24,27,0.95);}
-        }
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem 0;
-        }
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 800;
-            color: var(--primary-color);
-            text-decoration: none;
-            letter-spacing: -0.03em;
-            transition: color 0.2s;
-        }
-        .logo:focus-visible { outline: none; box-shadow: var(--focus-ring);}
-        .logo:hover { color: var(--secondary-color);}
-        .nav {
-            display: flex;
-            gap: 2rem;
-            list-style: none;
-        }
-        .nav-link {
-            color: var(--text-secondary);
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 1rem;
-            position: relative;
-            padding: 0.25rem 0;
-            transition: color 0.2s;
-        }
-        .nav-link:focus-visible { outline: none; box-shadow: var(--focus-ring);}
-        .nav-link:hover, .nav-link.active { color: var(--primary-color);}
-        .nav-link::after {
-            content: '';
-            position: absolute;
-            left: 0; right: 0; bottom: -2px;
-            height: 2px;
-            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
-            width: 0;
-            transition: width 0.3s;
-        }
-        .nav-link:hover::after, .nav-link.active::after { width: 100%; }
-        /* Dark mode toggle */
-        .theme-toggle {
-            background: none;
-            border: none;
-            cursor: pointer;
-            margin-left: 1.5rem;
-            font-size: 1.25rem;
-            color: var(--primary-color);
-            transition: color 0.2s;
-        }
-        .theme-toggle:focus-visible { outline: none; box-shadow: var(--focus-ring);}
-        /* Main */
+        /* Blog-specific styles */
         .main {
-            min-height: calc(100vh - 200px);
-            padding: 2rem 0 4rem;
-            margin-top: 0.5rem;
+            min-height: calc(100vh - 64px - 200px);
+            padding: var(--space-8) 0 var(--space-16);
+            position: relative;
+            z-index: 1;
         }
+        
         /* Blog Header */
         .blog-header {
             text-align: center;
-            padding: 5rem 0 4rem;
+            padding: var(--space-20) 0 var(--space-16);
             background: linear-gradient(135deg, var(--bg-tertiary) 0%, var(--bg-primary) 100%);
-            margin-top: -1rem;
-            border-radius: 0 0 2rem 2rem;
+            border-radius: 0 0 var(--radius-2xl) var(--radius-2xl);
+            position: relative;
+            z-index: 1;
         }
+        
         .blog-title {
-            font-size: 3.5rem;
-            font-weight: 800;
-            margin-bottom: 1.5rem;
+            font-size: clamp(var(--text-4xl), 5vw, var(--text-6xl));
+            font-weight: var(--font-bold);
+            margin-bottom: var(--space-6);
             letter-spacing: -0.025em;
             background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
+        
         .blog-subtitle {
-            font-size: 1.375rem;
+            font-size: var(--text-xl);
             color: var(--text-secondary);
             max-width: 700px;
             margin: 0 auto;
-            line-height: 1.6;
+            line-height: var(--leading-relaxed);
         }
+        
         /* Blog Grid */
         .blog-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
-            gap: 2.5rem;
-            margin-top: 4rem;
-            padding: 0 1rem;
+            gap: var(--space-10);
+            margin-top: var(--space-16);
+            padding: 0 var(--space-4);
+            position: relative;
+            z-index: 1;
         }
+        
         /* Blog Card */
         .blog-card {
             background: var(--bg-primary);
-            border-radius: 1.25rem;
+            border-radius: var(--radius-xl);
             box-shadow: var(--shadow-md);
             overflow: hidden;
             text-decoration: none;
             color: inherit;
-            border: 1px solid var(--border-color);
+            border: 1px solid var(--border-secondary);
+            transition: all var(--transition-normal);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .blog-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-xl);
+            z-index: 2;
+        }
+        
+        .blog-card-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, var(--bg-tertiary) 0%, var(--bg-secondary) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-tertiary);
+            font-size: var(--text-sm);
+            font-weight: var(--font-medium);
+        }
+        
+        .blog-card-content {
+            padding: var(--space-6);
+        }
+        
+        .blog-card-title {
+            font-size: var(--text-xl);
+            font-weight: var(--font-bold);
+            color: var(--text-primary);
+            margin-bottom: var(--space-3);
+            line-height: var(--leading-tight);
+        }
+        
+        .blog-card-meta {
+            font-size: var(--text-sm);
+            color: var(--text-tertiary);
+            margin-bottom: var(--space-4);
+        }
+        
+        .blog-card-summary {
+            font-size: var(--text-base);
+            color: var(--text-secondary);
+            line-height: var(--leading-relaxed);
+            margin-bottom: var(--space-4);
+        }
+        
+        .blog-card-read-more {
+            color: var(--primary-color);
+            font-weight: var(--font-semibold);
+            font-size: var(--text-sm);
+            text-decoration: none;
+            transition: color var(--transition-fast);
+        }
+        
+        .blog-card-read-more:hover {
+            color: var(--primary-dark);
+        }
+        
+        @media (max-width: 768px) {
+            .blog-grid {
+                grid-template-columns: 1fr;
+                gap: var(--space-6);
+                padding: 0 var(--space-3);
+            }
+            
+            .blog-header {
+                padding: var(--space-12) 0 var(--space-8);
+            }
+            
+            .blog-title {
+                font-size: var(--text-3xl);
+            }
+            
+            .blog-subtitle {
+                font-size: var(--text-lg);
+            }
+        }
+        
+        /* Additional blog card styles */
+        .blog-card {
             position: relative;
             display: flex;
             flex-direction: column;
             min-height: 100%;
-            transition: var(--transition);
         }
-        .blog-card:focus-visible { outline: none; box-shadow: var(--focus-ring);}
-        .blog-card:hover {
-            transform: translateY(-8px) scale(1.02);
-            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
-            border-color: var(--primary-color);
+        
+        .blog-card:focus-visible { 
+            outline: none; 
+            box-shadow: var(--focus-ring);
         }
+        
         .blog-card::before {
             content: '';
             position: absolute;
@@ -217,145 +196,167 @@
             height: 4px;
             background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             opacity: 0;
-            transition: opacity 0.3s;
+            transition: opacity var(--transition-normal);
         }
-        .blog-card:hover::before { opacity: 1; }
-        .blog-card-image {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.5rem;
-            font-weight: 600;
-            letter-spacing: 0.02em;
-            user-select: none;
+        
+        .blog-card:hover::before { 
+            opacity: 1; 
         }
-        .blog-card-content {
-            padding: 2rem;
-            display: flex;
-            flex-direction: column;
-            flex: 1 1 auto;
-        }
-        .blog-card-title {
-            font-size: 1.375rem;
-            font-weight: 700;
-            margin-bottom: 0.75rem;
-            color: var(--text-primary);
-            line-height: 1.3;
-            transition: color 0.3s;
-        }
-        .blog-card:hover .blog-card-title { color: var(--primary-color);}
+        
         .blog-card-excerpt {
             color: var(--text-secondary);
-            line-height: 1.7;
-            margin-bottom: 1.5rem;
-            font-size: 0.95rem;
+            line-height: var(--leading-relaxed);
+            margin-bottom: var(--space-6);
+            font-size: var(--text-sm);
             flex: 1 1 auto;
         }
-        .blog-card-meta {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-            padding-top: 0.5rem;
-            border-top: 1px solid var(--border-color);
-            margin-top: 0.5rem;
-        }
+        
         .blog-card-date, .blog-card-readtime {
             display: flex;
             align-items: center;
-            gap: 0.375rem;
+            gap: var(--space-1);
         }
+        
         .meta-icon {
             width: 1rem;
             height: 1rem;
             opacity: 0.6;
         }
+        
         /* Footer */
         .footer {
             background: var(--bg-primary);
-            border-top: 1px solid var(--border-color);
-            padding: 4rem 0;
-            margin-top: 6rem;
+            border-top: 1px solid var(--border-secondary);
+            padding: var(--space-16) 0;
+            margin-top: var(--space-24);
+            position: relative;
+            z-index: 1;
         }
+        
         .footer-content {
             text-align: center;
             color: var(--text-secondary);
         }
+        
         .footer-links {
             display: flex;
-            gap: 2rem;
+            gap: var(--space-8);
             justify-content: center;
-            margin-top: 1rem;
+            margin-top: var(--space-4);
             list-style: none;
         }
+        
         .footer-link {
             color: var(--text-secondary);
             text-decoration: none;
-            transition: color 0.2s;
+            transition: color var(--transition-fast);
         }
-        .footer-link:focus-visible { outline: none; box-shadow: var(--focus-ring);}
-        .footer-link:hover { color: var(--primary-color);}
-        /* 响应式 */
-        @media (max-width: 1024px) {
-            .container { max-width: 100%; padding: 0 2rem;}
-            .blog-grid { grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; padding: 0;}
+        
+        .footer-link:focus-visible { 
+            outline: none; 
+            box-shadow: var(--focus-ring);
         }
-        @media (max-width: 768px) {
-            .container { padding: 0 1rem;}
-            .header-content { flex-direction: column; gap: 1rem; padding: 0.75rem 0;}
-            .nav { gap: 1.5rem; font-size: 0.95rem;}
-            .main { padding-top: 1rem;}
-            .blog-header { padding: 3rem 0 2.5rem; border-radius: 0 0 1.5rem 1.5rem;}
-            .blog-title { font-size: 2.75rem; margin-bottom: 1rem;}
-            .blog-subtitle { font-size: 1.125rem; padding: 0 1rem;}
-            .blog-grid { grid-template-columns: 1fr; gap: 1.5rem; margin-top: 2.5rem; padding: 0;}
-            .blog-card-content { padding: 1.5rem;}
-            .blog-card-title { font-size: 1.25rem;}
+        
+        .footer-link:hover { 
+            color: var(--primary-color);
         }
-        @media (max-width: 480px) {
-            .blog-title { font-size: 2.25rem;}
-            .blog-subtitle { font-size: 1rem;}
-            .blog-card-image { height: 120px; font-size: 1.1rem;}
-        }
-        /* 可访问性：焦点可见 */
-        :focus-visible { outline: 2px solid var(--primary-color); outline-offset: 2px;}
-        /* 动画 */
+        
+        /* Animation */
         .fade-in {
             opacity: 0;
             transform: translateY(24px);
             animation: fadeInUp 0.7s cubic-bezier(.4,0,.2,1) forwards;
         }
+        
         @keyframes fadeInUp {
-            to { opacity: 1; transform: none;}
+            to { 
+                opacity: 1; 
+                transform: none;
+            }
         }
-        /* 暗色模式切换动画 */
-        html.theme-transition, body.theme-transition { transition: background 0.3s, color 0.3s;}
+        
+        /* Theme transition */
+        html.theme-transition, 
+        body.theme-transition { 
+            transition: background var(--transition-normal), color var(--transition-normal);
+        }
+        
+        /* Ensure header stays on top */
+        header {
+            z-index: 9999 !important;
+            position: sticky !important;
+            top: 0 !important;
+        }
+        
+        /* Ensure all other elements have lower z-index */
+        body > *:not(header) {
+            z-index: 1;
+        }
+        
+        /* Specific z-index for main content */
+        main, .main {
+            z-index: 1 !important;
+        }
+        
+        /* Language switcher styles */
+        .lang-switch {
+            display: flex;
+            gap: var(--space-2);
+            margin-left: var(--space-4);
+        }
+        
+        .lang-switch button {
+            background: none;
+            border: 1px solid var(--border-secondary);
+            color: var(--text-secondary);
+            padding: var(--space-1) var(--space-3);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: var(--text-sm);
+            font-weight: var(--font-medium);
+            transition: all var(--transition-fast);
+        }
+        
+        .lang-switch button:hover {
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+        
+        .lang-switch button.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        @media (max-width: 768px) {
+            .lang-switch {
+                margin-left: 0;
+                margin-top: var(--space-2);
+            }
+        }
     </style>
 </head>
 <body>
-    <header class="header" role="banner">
+    <header>
         <div class="container">
-            <div class="header-content">
-                <a href="/" class="logo" aria-label="xml2compose.dev主页">xml2compose.dev</a>
-                <nav aria-label="主导航">
-                    <ul class="nav">
-                        <li><a href="index.html" class="nav-link">Home</a></li>
-                        <li><a href="converter.html" class="nav-link">Converter</a></li>
-                        <li><a href="blog.html" class="nav-link active" aria-current="page">Blog</a></li>
-                    </ul>
-                </nav>
-                <button class="theme-toggle" id="theme-toggle" aria-label="切换暗色/亮色模式" title="切换暗色/亮色模式">
-                    <span id="theme-icon" aria-hidden="true">🌙</span>
-                </button>
+            <div class="logo">
+                <div class="logo-text"><a href="index.html">xml2compose.dev</a></div>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="converter.html">Converter</a></li>
+                    <li><a href="blog.html" class="active">Blog</a></li>
+                    <li><a href="#faq">FAQ</a></li>
+                </ul>
+            </nav>
+            <div class="lang-switch">
+                <button onclick="switchLang('en')" class="active">EN</button>
+                <button onclick="switchLang('zh')">中文</button>
             </div>
         </div>
     </header>
+
     <main class="main" id="main-content">
         <div class="container">
             <header class="blog-header fade-in">
@@ -412,47 +413,37 @@
             </section>
         </div>
     </main>
-    <footer class="footer" role="contentinfo">
+
+    <footer>
         <div class="container">
-            <div class="footer-content">
-                <p>&copy; 2025 xml2compose.dev. All rights reserved.</p>
-                <ul class="footer-links">
-                    <li><a href="/privacy" class="footer-link">Privacy Policy</a></li>
-                    <li><a href="/terms" class="footer-link">Terms of Service</a></li>
-                    <li><a href="/contact" class="footer-link">Contact</a></li>
-                </ul>
+            <div class="social-links">
+                <a href="https://twitter.com/intent/tweet?url=https%3A%2F%2Fxml2compose.dev&text=Check%20out%20xml2compose.dev%2C%20the%20tool%20to%20convert%20Android%20XML%20to%20Jetpack%20Compose!" target="_blank" aria-label="Share on Twitter">
+                    <!-- Twitter SVG -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                </a>
+                <a href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fxml2compose.dev" target="_blank" aria-label="Share on LinkedIn">
+                    <!-- LinkedIn SVG -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M20.5 2h-17A1.5 1.5 0 0 0 2 3.5v17A1.5 1.5 0 0 0 3.5 22h17a1.5 1.5 0 0 0 1.5-1.5v-17A1.5 1.5 0 0 0 20.5 2zM8 19H5v-9h3zM6.5 8.25A1.75 1.75 0 1 1 8.25 6.5 1.75 1.75 0 0 1 6.5 8.25zM19 19h-3v-4.75c0-1.4-1.2-2.5-2.5-2.5S11 12.85 11 14.25V19h-3v-9h2.9v1.3a3.5 3.5 0 0 1 3.1-1.8C18.4 9.5 19 11.4 19 13.5z"/></svg>
+                </a>
+                <a href="https://github.com/your-repo" target="_blank" aria-label="View on GitHub">
+                    <!-- GitHub SVG -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.168 6.839 9.49.5.092.682-.217.682-.482 0-.237-.009-.868-.014-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.031-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.378.203 2.398.1 2.65.64.7 1.03 1.595 1.03 2.688 0 3.848-2.338 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.001 10.001 0 0 0 22 12c0-5.523-4.477-10-10-10z"/></svg>
+                </a>
+                <a href="https://t.me/your-telegram" target="_blank" aria-label="Join Telegram">
+                    <!-- Telegram SVG -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M9.04 16.62l-.39 3.67c.56 0 .8-.24 1.09-.53l2.62-2.5 5.44 3.98c1 .55 1.72.26 1.97-.92l3.58-16.77c.32-1.48-.54-2.06-1.5-1.7L2.2 9.27c-1.45.56-1.43 1.36-.25 1.72l4.6 1.44 10.7-6.74c.5-.32.96-.14.58.18"/></svg>
+                </a>
             </div>
+            <p>&copy; 2025 xml2compose.dev. All rights reserved.</p>
         </div>
     </footer>
+    
     <script>
-    // 暗色模式切换
-    const themeToggle = document.getElementById('theme-toggle');
-    const themeIcon = document.getElementById('theme-icon');
-    function setTheme(mode) {
-        document.documentElement.classList.add('theme-transition');
-        setTimeout(()=>document.documentElement.classList.remove('theme-transition'), 400);
-        if(mode === 'dark') {
-            document.documentElement.setAttribute('data-theme', 'dark');
-            themeIcon.textContent = '☀️';
-            localStorage.setItem('theme', 'dark');
-        } else {
-            document.documentElement.setAttribute('data-theme', 'light');
-            themeIcon.textContent = '🌙';
-            localStorage.setItem('theme', 'light');
-        }
+    // Language switcher (simple demo)
+    function switchLang(lang) {
+        alert('Language switching is a demo. Implement i18n for full support.');
     }
-    // 初始化
-    (function(){
-        let theme = localStorage.getItem('theme');
-        if(!theme) {
-            theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-        }
-        setTheme(theme);
-    })();
-    themeToggle.addEventListener('click', ()=>{
-        const current = document.documentElement.getAttribute('data-theme');
-        setTheme(current === 'dark' ? 'light' : 'dark');
-    });
+
     // 卡片动画延迟
     document.querySelectorAll('.fade-in').forEach((el, i) => {
         el.style.animationDelay = (0.1 + i*0.1) + 's';
