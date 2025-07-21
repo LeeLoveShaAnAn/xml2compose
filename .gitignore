@@ -25,3 +25,4 @@ Thumbs.db
 *.backup
 ui-components-test.html
 test-examples.html
+attribute-conversion-test.html

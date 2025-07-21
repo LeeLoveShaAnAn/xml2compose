@@ -444,7 +444,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
         
-        // 处理margin
+        // 处理margin (注意：Compose中margin通过父容器的padding或spacer实现)
         const marginStart = attrs['android:layout_marginStart'] || attrs['android:layout_marginLeft'];
         const marginTop = attrs['android:layout_marginTop'];
         const marginEnd = attrs['android:layout_marginEnd'] || attrs['android:layout_marginRight'];
@@ -454,7 +454,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (margin) {
             const marginValue = parseInt(margin);
             if (!isNaN(marginValue)) {
-                modifierString += `\n${indentStr}.padding(${marginValue}.dp)`;
+                // 在Compose中，margin通过父容器的spacer或padding实现
+                // 这里添加注释提示需要在父容器中处理
+                modifierString += `\n${indentStr}/* TODO: Add margin ${marginValue}dp in parent container */`;
             }
         } else if (marginStart || marginTop || marginEnd || marginBottom) {
             const start = marginStart ? parseInt(marginStart) : 0;
@@ -463,7 +465,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const bottom = marginBottom ? parseInt(marginBottom) : 0;
             
             if (!isNaN(start) || !isNaN(top) || !isNaN(end) || !isNaN(bottom)) {
-                modifierString += `\n${indentStr}.padding(start = ${start || 0}.dp, top = ${top || 0}.dp, end = ${end || 0}.dp, bottom = ${bottom || 0}.dp)`;
+                modifierString += `\n${indentStr}/* TODO: Add margins (start=${start || 0}dp, top=${top || 0}dp, end=${end || 0}dp, bottom=${bottom || 0}dp) in parent container */`;
             }
         }
         
@@ -476,13 +478,39 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
         
-        // 处理背景色
+        // 处理背景
         if (attrs['android:background']) {
             const background = attrs['android:background'];
             if (background.startsWith('#')) {
-                // 处理颜色值
-                const color = background.replace('#', '0xFF');
-                modifierString += `\n${indentStr}.background(Color(${color}))`;
+                // 处理纯色背景
+                let color = background.replace('#', '');
+                if (color.length === 6) {
+                    color = 'FF' + color; // 添加alpha通道
+                }
+                modifierString += `\n${indentStr}.background(Color(0x${color.toUpperCase()}))`;
+            } else if (background.startsWith('@drawable/')) {
+                // 处理图片背景
+                const drawableName = background.replace('@drawable/', '');
+                modifierString += `\n${indentStr}.background(/* TODO: Replace with painterResource(R.drawable.${drawableName}) */)`;
+            } else if (background.startsWith('@color/')) {
+                // 处理颜色资源引用
+                const colorName = background.replace('@color/', '');
+                modifierString += `\n${indentStr}.background(/* TODO: Replace with colorResource(R.color.${colorName}) */)`;
+            } else if (background.includes('gradient')) {
+                // 处理渐变背景（简化处理）
+                modifierString += `\n${indentStr}.background(/* TODO: Implement gradient background using Brush.linearGradient() */)`;
+            }
+        }
+        
+        // 处理背景色（android:backgroundColor）
+        if (attrs['android:backgroundColor']) {
+            const backgroundColor = attrs['android:backgroundColor'];
+            if (backgroundColor.startsWith('#')) {
+                let color = backgroundColor.replace('#', '');
+                if (color.length === 6) {
+                    color = 'FF' + color;
+                }
+                modifierString += `\n${indentStr}.background(Color(0x${color.toUpperCase()}))`;
             }
         }
         
@@ -501,7 +529,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (attrs['android:layout_gravity']) {
             const gravity = attrs['android:layout_gravity'];
             // 这个需要在父容器中处理，这里只是标记
-            // 实际实现需要在parseNode中根据父容器类型处理
+            modifierString += `\n${indentStr}/* TODO: Apply layout_gravity '${gravity}' in parent container */`;
+        }
+        
+        // 处理重力对齐（主要用于TextView等组件内部对齐）
+        if (attrs['android:gravity']) {
+            const gravity = attrs['android:gravity'];
+            modifierString += `\n${indentStr}/* TODO: Apply gravity '${gravity}' - use textAlign for Text or Arrangement/Alignment for layouts */`;
         }
         
         // 处理点击事件
@@ -512,6 +546,71 @@ document.addEventListener('DOMContentLoaded', () => {
         // 处理启用/禁用状态
         if (attrs['android:enabled'] === 'false') {
             modifierString += `\n${indentStr}.alpha(0.6f)`; // 视觉上表示禁用状态
+        }
+        
+        // 处理焦点
+        if (attrs['android:focusable'] === 'true') {
+            modifierString += `\n${indentStr}.focusable()`;
+        }
+        
+        // 处理旋转
+        if (attrs['android:rotation']) {
+            const rotation = parseFloat(attrs['android:rotation']);
+            if (!isNaN(rotation)) {
+                modifierString += `\n${indentStr}.rotate(${rotation}f)`;
+            }
+        }
+        
+        // 处理缩放
+        if (attrs['android:scaleX'] || attrs['android:scaleY']) {
+            const scaleX = attrs['android:scaleX'] ? parseFloat(attrs['android:scaleX']) : 1.0;
+            const scaleY = attrs['android:scaleY'] ? parseFloat(attrs['android:scaleY']) : 1.0;
+            if (!isNaN(scaleX) && !isNaN(scaleY)) {
+                modifierString += `\n${indentStr}.scale(scaleX = ${scaleX}f, scaleY = ${scaleY}f)`;
+            }
+        }
+        
+        // 处理透明度
+        if (attrs['android:alpha']) {
+            const alpha = parseFloat(attrs['android:alpha']);
+            if (!isNaN(alpha)) {
+                modifierString += `\n${indentStr}.alpha(${alpha}f)`;
+            }
+        }
+        
+        // 处理最小宽度和高度
+        if (attrs['android:minWidth']) {
+            const minWidth = parseInt(attrs['android:minWidth']);
+            if (!isNaN(minWidth)) {
+                modifierString += `\n${indentStr}.widthIn(min = ${minWidth}.dp)`;
+            }
+        }
+        
+        if (attrs['android:minHeight']) {
+            const minHeight = parseInt(attrs['android:minHeight']);
+            if (!isNaN(minHeight)) {
+                modifierString += `\n${indentStr}.heightIn(min = ${minHeight}.dp)`;
+            }
+        }
+        
+        // 处理最大宽度和高度
+        if (attrs['android:maxWidth']) {
+            const maxWidth = parseInt(attrs['android:maxWidth']);
+            if (!isNaN(maxWidth)) {
+                modifierString += `\n${indentStr}.widthIn(max = ${maxWidth}.dp)`;
+            }
+        }
+        
+        if (attrs['android:maxHeight']) {
+            const maxHeight = parseInt(attrs['android:maxHeight']);
+            if (!isNaN(maxHeight)) {
+                modifierString += `\n${indentStr}.heightIn(max = ${maxHeight}.dp)`;
+            }
+        }
+        
+        // 处理边框
+        if (attrs['android:background'] && attrs['android:background'].includes('stroke')) {
+            modifierString += `\n${indentStr}.border(/* TODO: Extract stroke width and color from drawable */)`;
         }
         
         return modifierString;
@@ -537,11 +636,14 @@ document.addEventListener('DOMContentLoaded', () => {
         hljs.highlightElement(composeOutput);
     };
 
-    convertBtn.addEventListener('click', performConversion);
-    copyBtn.addEventListener('click', copyToClipboard);
-    clearBtn.addEventListener('click', clearInputs);
-    loadSampleBtn.addEventListener('click', loadSample);
+    // 只在元素存在时绑定事件监听器
+    if (convertBtn) convertBtn.addEventListener('click', performConversion);
+    if (copyBtn) copyBtn.addEventListener('click', copyToClipboard);
+    if (clearBtn) clearBtn.addEventListener('click', clearInputs);
+    if (loadSampleBtn) loadSampleBtn.addEventListener('click', loadSample);
 
-    // Load the sample and convert on initial page load
-    loadSample();
+    // 只在主转换页面加载示例
+    if (loadSampleBtn && xmlInput && composeOutput) {
+        loadSample();
+    }
 });
