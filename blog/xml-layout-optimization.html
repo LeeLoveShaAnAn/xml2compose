@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-F2G7TSB6Q6"></script>
@@ -11,8 +11,8 @@
     </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Android XML布局性能优化：提升应用响应速度的实用技巧 - xml2compose.dev</title>
-    <meta name="description" content="学习如何优化Android XML布局以提升应用性能。涵盖布局层次优化、ViewStub使用、约束布局最佳实践等关键技术。">
+    <title>Android XML Layout Performance Optimization: Practical Tips to Boost App Responsiveness - xml2compose.dev</title>
+    <meta name="description" content="Learn how to optimize Android XML layouts to improve app performance. Covers layout hierarchy optimization, ViewStub usage, ConstraintLayout best practices, and other key techniques.">
     
     <!-- Favicon -->
     <link rel="icon" href="../favicon.ico" type="image/x-icon">
@@ -20,8 +20,8 @@
     <!-- SEO Meta Tags -->
     <link rel="canonical" href="https://xml2compose.dev/blog/xml-layout-optimization.html">
     <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
-    <meta property="og:title" content="Android XML布局性能优化：提升应用响应速度的实用技巧">
-    <meta property="og:description" content="学习如何优化Android XML布局以提升应用性能。涵盖布局层次优化、ViewStub使用、约束布局最佳实践等关键技术。">
+    <meta property="og:title" content="Android XML Layout Performance Optimization: Practical Tips to Boost App Responsiveness">
+    <meta property="og:description" content="Learn how to optimize Android XML layouts to improve app performance. Covers layout hierarchy optimization, ViewStub usage, ConstraintLayout best practices, and other key techniques.">
     <meta property="og:image" content="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&h=630&fit=crop">
     <meta property="og:url" content="https://xml2compose.dev/blog/xml-layout-optimization.html">
     <meta property="og:type" content="article">
@@ -273,9 +273,9 @@
             </div>
             <nav>
                 <ul>
-                    <li><a href="../index.html">首页</a></li>
-                    <li><a href="../converter.html">转换器</a></li>
-                    <li><a href="../blog.html">博客</a></li>
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="../converter.html">Converter</a></li>
+                    <li><a href="../blog.html">Blog</a></li>
                 </ul>
             </nav>
         </div>
@@ -287,60 +287,60 @@
                 <svg class="back-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
                 </svg>
-                返回博客列表
+Back to Blog List
             </a>
             
             <article class="article">
                 <header class="article-header">
-                    <h1 class="article-title">Android XML布局性能优化：提升应用响应速度的实用技巧</h1>
+                    <h1 class="article-title">Android XML Layout Performance Optimization: Practical Tips to Boost App Responsiveness</h1>
                     <div class="article-meta">
                         <span class="meta-item">
                             <svg class="meta-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                             </svg>
-                            2025年1月10日
+                            January 10, 2025
                         </span>
                         <span class="meta-item">
                             <svg class="meta-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                             </svg>
-                            6分钟阅读
+                            6 min read
                         </span>
                         <span class="meta-item">
                             <svg class="meta-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                             </svg>
-                            xml2compose团队
+                            xml2compose Team
                         </span>
                     </div>
                 </header>
 
                 <div class="article-content">
-                    <p>Android应用的性能很大程度上取决于UI布局的效率。即使在Jetpack Compose时代，了解XML布局优化仍然非常重要，因为许多现有应用仍在使用XML布局，而且这些优化原理同样适用于现代UI开发。</p>
+                    <p>The performance of Android applications largely depends on the efficiency of UI layouts. Even in the Jetpack Compose era, understanding XML layout optimization remains crucial, as many existing applications still use XML layouts, and these optimization principles apply equally to modern UI development.</p>
 
                     <div class="tip-box">
-                        <p><strong>提示：</strong>本文介绍的优化技巧不仅适用于XML布局，其中的性能原理同样可以应用到Jetpack Compose开发中。</p>
+                        <p><strong>Tip:</strong> The optimization techniques introduced in this article apply not only to XML layouts, but the performance principles can also be applied to Jetpack Compose development.</p>
                     </div>
 
-                    <h2>布局性能的重要性</h2>
+                    <h2>The Importance of Layout Performance</h2>
 
-                    <p>Android应用的流畅度直接影响用户体验。当布局过于复杂或设计不当时，会导致：</p>
+                    <p>The smoothness of Android applications directly affects user experience. When layouts are overly complex or poorly designed, they can lead to:</p>
 
                     <ul style="margin: 1rem 0; padding-left: 2rem; color: var(--text-secondary);">
-                        <li style="margin: 0.5rem 0;">UI渲染卡顿，影响用户交互</li>
-                        <li style="margin: 0.5rem 0;">电池消耗增加</li>
-                        <li style="margin: 0.5rem 0;">应用启动时间延长</li>
-                        <li style="margin: 0.5rem 0;">内存使用增加</li>
+                        <li style="margin: 0.5rem 0;">UI rendering lag, affecting user interaction</li>
+                        <li style="margin: 0.5rem 0;">Increased battery consumption</li>
+                        <li style="margin: 0.5rem 0;">Extended app startup time</li>
+                        <li style="margin: 0.5rem 0;">Increased memory usage</li>
                     </ul>
 
-                    <h2>布局层次优化</h2>
+                    <h2>Layout Hierarchy Optimization</h2>
 
-                    <h3>减少嵌套层级</h3>
+                    <h3>Reducing Nesting Levels</h3>
 
-                    <p>过深的布局嵌套是性能杀手。每增加一层嵌套，系统就需要额外的测量和绘制时间。</p>
+                    <p>Deep layout nesting is a performance killer. Each additional nesting level requires extra measurement and drawing time from the system.</p>
 
                     <div class="code-block">
-                        <div class="code-header">❌ 不推荐：过度嵌套</div>
+                        <div class="code-header">❌ Not Recommended: Excessive Nesting</div>
                         <pre><code>&lt;LinearLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -360,12 +360,12 @@
             &lt;TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="标题" /&gt;
+                android:text="Title" /&gt;
                 
             &lt;TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="副标题" /&gt;
+                android:text="Subtitle" /&gt;
                 
         &lt;/LinearLayout&gt;
         
@@ -380,7 +380,7 @@
                     </div>
 
                     <div class="code-block">
-                        <div class="code-header">✅ 推荐：使用ConstraintLayout</div>
+                        <div class="code-header">✅ Recommended: Using ConstraintLayout</div>
                         <pre><code>&lt;androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -390,7 +390,7 @@
         android:id="@+id/title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="标题"
+        android:text="Title"
         android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintTop_toTopOf="parent"
@@ -401,7 +401,7 @@
         android:id="@+id/subtitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="副标题"
+        android:text="Subtitle"
         android:textSize="14sp"
         app:layout_constraintTop_toBottomOf="@+id/title"
         app:layout_constraintStart_toStartOf="parent"
@@ -419,9 +419,9 @@
 &lt;/androidx.constraintlayout.widget.ConstraintLayout&gt;</code></pre>
                     </div>
 
-                    <h3>使用merge标签</h3>
+                    <h3>Using merge Tags</h3>
 
-                    <p>当你的自定义View或include的布局根元素与父布局类型相同时，使用<code>&lt;merge&gt;</code>标签可以减少一层不必要的嵌套。</p>
+                    <p>When the root element of your custom View or included layout is the same type as the parent layout, using <code>&lt;merge&gt;</code> tags can reduce one unnecessary level of nesting.</p>
 
                     <div class="code-block">
                         <div class="code-header">custom_button.xml</div>
@@ -441,12 +441,12 @@
 &lt;/merge&gt;</code></pre>
                     </div>
 
-                    <h2>ViewStub：延迟加载的利器</h2>
+                    <h2>ViewStub: A Powerful Tool for Lazy Loading</h2>
 
-                    <p><code>ViewStub</code>是一个轻量级的View，它可以延迟加载布局，直到真正需要时才进行inflate操作。这对于条件显示的UI元素特别有用。</p>
+                    <p><code>ViewStub</code> is a lightweight View that can delay loading layouts until they are actually needed for inflate operations. This is particularly useful for conditionally displayed UI elements.</p>
 
                     <div class="code-block">
-                        <div class="code-header">使用ViewStub</div>
+                        <div class="code-header">Using ViewStub</div>
                         <pre><code>&lt;ViewStub
     android:id="@+id/error_layout_stub"
     android:layout_width="match_parent"
@@ -456,36 +456,36 @@
                     </div>
 
                     <div class="code-block">
-                        <div class="code-header">在代码中使用</div>
-                        <pre><code>// 只有在需要显示错误时才inflate布局
+                        <div class="code-header">Using in Code</div>
+                        <pre><code>// Only inflate layout when error needs to be displayed
 if (hasError) {
     ViewStub errorStub = findViewById(R.id.error_layout_stub);
     if (errorStub != null) {
         View errorLayout = errorStub.inflate();
-        // 配置错误布局
+        // Configure error layout
     }
 }</code></pre>
                     </div>
 
-                    <h2>RecyclerView优化</h2>
+                    <h2>RecyclerView Optimization</h2>
 
-                    <h3>ViewHolder模式</h3>
+                    <h3>ViewHolder Pattern</h3>
 
-                    <p>确保正确实现ViewHolder模式，避免在<code>onBindViewHolder</code>中进行昂贵的操作：</p>
+                    <p>Ensure proper implementation of the ViewHolder pattern and avoid expensive operations in <code>onBindViewHolder</code>:</p>
 
                     <div class="code-block">
-                        <div class="code-header">优化的RecyclerView Adapter</div>
+                        <div class="code-header">Optimized RecyclerView Adapter</div>
                         <pre><code>public class OptimizedAdapter extends RecyclerView.Adapter&lt;OptimizedAdapter.ViewHolder&gt; {
     
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Item item = items.get(position);
         
-        // ✅ 好的做法：简单的数据绑定
+        // ✅ Good practice: Simple data binding
         holder.titleText.setText(item.getTitle());
         holder.subtitleText.setText(item.getSubtitle());
         
-        // ❌ 避免：复杂的计算或网络请求
+        // ❌ Avoid: Complex calculations or network requests
         // String formattedDate = formatComplexDate(item.getDate());
         // loadImageFromNetwork(item.getImageUrl(), holder.imageView);
     }
@@ -505,36 +505,36 @@ if (hasError) {
 }</code></pre>
                     </div>
 
-                    <h3>设置固定尺寸</h3>
+                    <h3>Setting Fixed Size</h3>
 
-                    <p>如果RecyclerView的尺寸不会因为adapter内容变化而改变，设置<code>setHasFixedSize(true)</code>可以提升性能：</p>
+                    <p>If the RecyclerView's size won't change due to adapter content changes, setting <code>setHasFixedSize(true)</code> can improve performance:</p>
 
                     <div class="code-block">
-                        <div class="code-header">RecyclerView优化</div>
+                        <div class="code-header">RecyclerView Optimization</div>
                         <pre><code>recyclerView.setHasFixedSize(true);
 recyclerView.setLayoutManager(new LinearLayoutManager(this));
 recyclerView.setAdapter(adapter);</code></pre>
                     </div>
 
-                    <h2>图片和资源优化</h2>
+                    <h2>Image and Resource Optimization</h2>
 
-                    <h3>使用合适的图片格式</h3>
+                    <h3>Using Appropriate Image Formats</h3>
 
                     <div class="warning-box">
-                        <p><strong>注意：</strong>大尺寸图片是导致内存溢出(OOM)的主要原因之一。始终使用适当尺寸的图片资源。</p>
+                        <p><strong>Note:</strong> Large-sized images are one of the main causes of Out of Memory (OOM) errors. Always use appropriately sized image resources.</p>
                     </div>
 
                     <ul style="margin: 1rem 0; padding-left: 2rem; color: var(--text-secondary);">
-                        <li style="margin: 0.5rem 0;">使用WebP格式减少文件大小</li>
-                        <li style="margin: 0.5rem 0;">提供多种密度的图片资源(mdpi, hdpi, xhdpi等)</li>
-                        <li style="margin: 0.5rem 0;">使用Vector Drawable替代位图图标</li>
-                        <li style="margin: 0.5rem 0;">考虑使用图片加载库如Glide或Picasso</li>
+                        <li style="margin: 0.5rem 0;">Use WebP format to reduce file size</li>
+                        <li style="margin: 0.5rem 0;">Provide multiple density image resources (mdpi, hdpi, xhdpi, etc.)</li>
+                        <li style="margin: 0.5rem 0;">Use Vector Drawable instead of bitmap icons</li>
+                        <li style="margin: 0.5rem 0;">Consider using image loading libraries like Glide or Picasso</li>
                     </ul>
 
-                    <h3>Vector Drawable优化</h3>
+                    <h3>Vector Drawable Optimization</h3>
 
                     <div class="code-block">
-                        <div class="code-header">优化的Vector Drawable</div>
+                        <div class="code-header">Optimized Vector Drawable</div>
                         <pre><code>&lt;vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="24dp"
     android:height="24dp"
@@ -549,52 +549,52 @@ recyclerView.setAdapter(adapter);</code></pre>
 &lt;/vector&gt;</code></pre>
                     </div>
 
-                    <h2>性能测试和监控</h2>
+                    <h2>Performance Testing and Monitoring</h2>
 
-                    <h3>使用Layout Inspector</h3>
+                    <h3>Using Layout Inspector</h3>
 
-                    <p>Android Studio的Layout Inspector可以帮助你：</p>
-
-                    <ul style="margin: 1rem 0; padding-left: 2rem; color: var(--text-secondary);">
-                        <li style="margin: 0.5rem 0;">可视化布局层次结构</li>
-                        <li style="margin: 0.5rem 0;">识别过度绘制区域</li>
-                        <li style="margin: 0.5rem 0;">分析布局性能瓶颈</li>
-                        <li style="margin: 0.5rem 0;">检查View的属性和尺寸</li>
-                    </ul>
-
-                    <h3>GPU渲染分析</h3>
-
-                    <p>在开发者选项中启用"GPU渲染模式分析"，可以实时监控应用的渲染性能：</p>
+                    <p>Android Studio's Layout Inspector can help you:</p>
 
                     <ul style="margin: 1rem 0; padding-left: 2rem; color: var(--text-secondary);">
-                        <li style="margin: 0.5rem 0;">绿线：16ms基准线(60fps)</li>
-                        <li style="margin: 0.5rem 0;">蓝色：绘制时间</li>
-                        <li style="margin: 0.5rem 0;">红色：处理时间</li>
-                        <li style="margin: 0.5rem 0;">橙色：交换缓冲区时间</li>
+                        <li style="margin: 0.5rem 0;">Visualize layout hierarchy</li>
+                        <li style="margin: 0.5rem 0;">Identify overdraw areas</li>
+                        <li style="margin: 0.5rem 0;">Analyze layout performance bottlenecks</li>
+                        <li style="margin: 0.5rem 0;">Check View properties and dimensions</li>
                     </ul>
 
-                    <h2>现代化迁移建议</h2>
+                    <h3>GPU Rendering Analysis</h3>
 
-                    <p>虽然XML布局优化很重要，但考虑逐步迁移到Jetpack Compose可以获得更好的性能和开发体验：</p>
+                    <p>Enable "GPU Rendering Profile" in Developer Options to monitor your app's rendering performance in real-time:</p>
+
+                    <ul style="margin: 1rem 0; padding-left: 2rem; color: var(--text-secondary);">
+                        <li style="margin: 0.5rem 0;">Green line: 16ms baseline (60fps)</li>
+                        <li style="margin: 0.5rem 0;">Blue: Draw time</li>
+                        <li style="margin: 0.5rem 0;">Red: Process time</li>
+                        <li style="margin: 0.5rem 0;">Orange: Swap buffers time</li>
+                    </ul>
+
+                    <h2>Modern Migration Recommendations</h2>
+
+                    <p>While XML layout optimization is important, consider gradually migrating to Jetpack Compose for better performance and development experience:</p>
 
                     <ol style="margin: 1rem 0; padding-left: 2rem; color: var(--text-secondary);">
-                        <li style="margin: 0.5rem 0;">从简单的UI组件开始迁移</li>
-                        <li style="margin: 0.5rem 0;">使用我们的XML到Compose转换器加速迁移</li>
-                        <li style="margin: 0.5rem 0;">在新功能中优先使用Compose</li>
-                        <li style="margin: 0.5rem 0;">保持现有XML布局的优化</li>
+                        <li style="margin: 0.5rem 0;">Start migrating from simple UI components</li>
+                        <li style="margin: 0.5rem 0;">Use our XML to Compose converter to accelerate migration</li>
+                        <li style="margin: 0.5rem 0;">Prioritize Compose for new features</li>
+                        <li style="margin: 0.5rem 0;">Maintain optimization of existing XML layouts</li>
                     </ol>
 
                     <div class="tip-box">
-                        <p><strong>专业提示：</strong>Jetpack Compose的声明式特性和智能重组机制可以自动处理许多传统XML布局中需要手动优化的性能问题。</p>
+                        <p><strong>Pro Tip:</strong> Jetpack Compose's declarative nature and smart recomposition mechanism can automatically handle many performance issues that require manual optimization in traditional XML layouts.</p>
                     </div>
 
-                    <h2>总结</h2>
+                    <h2>Conclusion</h2>
 
-                    <p>XML布局优化是提升Android应用性能的重要手段。通过减少布局层次、合理使用ViewStub、优化RecyclerView和图片资源，可以显著改善应用的响应速度和用户体验。</p>
+                    <p>XML layout optimization is an important means to improve Android app performance. By reducing layout hierarchy, properly using ViewStub, optimizing RecyclerView and image resources, you can significantly improve app responsiveness and user experience.</p>
 
-                    <p>同时，随着Jetpack Compose的成熟，建议在新项目中优先考虑使用Compose，并逐步将现有项目迁移到这个现代化的UI框架。</p>
+                    <p>Meanwhile, with the maturity of Jetpack Compose, it's recommended to prioritize Compose in new projects and gradually migrate existing projects to this modern UI framework.</p>
 
-                    <p>记住，性能优化是一个持续的过程，需要结合实际的性能测试数据来指导优化方向。始终以用户体验为中心，选择最适合你项目的优化策略。</p>
+                    <p>Remember, performance optimization is an ongoing process that requires combining actual performance test data to guide optimization direction. Always center on user experience and choose the optimization strategy that best fits your project.</p>
                 </div>
             </article>
         </div>
@@ -602,7 +602,7 @@ recyclerView.setAdapter(adapter);</code></pre>
 
     <footer>
         <div class="container">
-            <p>&copy; 2025 xml2compose.dev. 保留所有权利。</p>
+            <p>&copy; 2025 xml2compose.dev. All rights reserved.</p>
         </div>
     </footer>
 </body>
