@@ -26,3 +26,19 @@ Thumbs.db
 ui-components-test.html
 test-examples.html
 attribute-conversion-test.html
+
+# 第三阶段功能页面（暂不开放）
+visual-preview-test.html
+interactive-editor-test.html
+local-storage-test.html
+performance-optimization-test.html
+advanced-parsing-test.html
+
+# 第四阶段功能页面（暂不开放）
+ai-assistant.html
+collaboration.html
+enterprise-integration.html
+analytics-dashboard.html
+plugin-ecosystem.html
+mobile-app.html
+PHASE_4_PLAN.md
