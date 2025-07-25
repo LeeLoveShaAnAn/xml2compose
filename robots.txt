@@ -1,0 +1,20 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://xml2compose.dev/sitemap.xml
+
+# Disallow crawling of temporary or test files
+Disallow: /*test*.html
+Disallow: /*.tmp
+Disallow: /temp/
+Disallow: /cache/
+
+# Allow important pages
+Allow: /index.html
+Allow: /converter.html
+Allow: /blog.html
+Allow: /blog/
+
+# Crawl delay (optional)
+Crawl-delay: 1
