@@ -57,10 +57,15 @@
             padding: var(--space-20) 0 var(--space-16);
             background: linear-gradient(135deg, var(--bg-tertiary) 0%, var(--bg-primary) 100%);
             border-radius: 0 0 var(--radius-2xl) var(--radius-2xl);
+            transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+            transform: translateY(0);
+            opacity: 1;
         }
         
         .blog-header.scrolled {
-            display: none;
+            transform: translateY(-100%);
+            opacity: 0;
+            pointer-events: none;
         }
         
         .blog-title {
@@ -416,6 +421,52 @@
                         </div>
                     </div>
                 </a>
+                <a href="blog/compose-state-management.html" class="blog-card fade-in" style="animation-delay:0.3s" tabindex="0">
+                    <div class="blog-card-image" style="background: linear-gradient(135deg, #059669 0%, #0891b2 100%); color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.3); font-weight: 600;">
+                        State Management
+                    </div>
+                    <div class="blog-card-content">
+                        <h3 class="blog-card-title">Mastering State Management in Jetpack Compose</h3>
+                        <p class="blog-card-excerpt">Deep dive into Jetpack Compose state management patterns, from basic remember to advanced state hoisting and ViewModel integration. Learn best practices for building reactive UIs.</p>
+                        <div class="blog-card-meta">
+                            <span class="blog-card-date">
+                                <svg class="meta-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                </svg>
+                                January 20, 2025
+                            </span>
+                            <span class="blog-card-readtime">
+                                <svg class="meta-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                10 min read
+                            </span>
+                        </div>
+                    </div>
+                </a>
+                <a href="blog/compose-animations.html" class="blog-card fade-in" style="animation-delay:0.4s" tabindex="0">
+                    <div class="blog-card-image" style="background: linear-gradient(135deg, #7c2d12 0%, #dc2626 100%); color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.3); font-weight: 600;">
+                        Animations
+                    </div>
+                    <div class="blog-card-content">
+                        <h3 class="blog-card-title">Advanced Animation Techniques in Jetpack Compose</h3>
+                        <p class="blog-card-excerpt">Master Jetpack Compose animations with comprehensive examples covering transitions, gestures, and complex animation sequences. Create engaging user experiences.</p>
+                        <div class="blog-card-meta">
+                            <span class="blog-card-date">
+                                <svg class="meta-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                </svg>
+                                January 22, 2025
+                            </span>
+                            <span class="blog-card-readtime">
+                                <svg class="meta-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                12 min read
+                            </span>
+                        </div>
+                    </div>
+                </a>
             </section>
         </div>
     </main>
@@ -455,22 +506,37 @@
         el.style.animationDelay = (0.1 + i*0.1) + 's';
     });
     
-    // 滚动时隐藏博客标题
+    // 修复后的JavaScript - 添加防抖和更智能的滚动检测
     let lastScrollTop = 0;
+    let scrollTimeout;
     const blogHeader = document.querySelector('.blog-header');
-    
-    window.addEventListener('scroll', function() {
+    const SCROLL_THRESHOLD = 150; // 增加阈值，减少敏感度
+    const SCROLL_DELTA = 10; // 最小滚动距离
+
+    function handleScroll() {
         const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const scrollDelta = Math.abs(scrollTop - lastScrollTop);
         
-        if (scrollTop > lastScrollTop && scrollTop > 100) {
-            // 向下滚动且超过100px时隐藏标题
+        // 只有在滚动距离足够大时才处理
+        if (scrollDelta < SCROLL_DELTA) {
+            return;
+        }
+        
+        if (scrollTop > SCROLL_THRESHOLD && scrollTop > lastScrollTop) {
+            // 向下滚动且超过阈值时隐藏标题
             blogHeader.classList.add('scrolled');
-        } else if (scrollTop < lastScrollTop) {
-            // 向上滚动时显示标题
+        } else if (scrollTop < lastScrollTop || scrollTop <= SCROLL_THRESHOLD) {
+            // 向上滚动或滚动到顶部时显示标题
             blogHeader.classList.remove('scrolled');
         }
         
         lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+    }
+
+    // 使用防抖优化滚动性能
+    window.addEventListener('scroll', function() {
+        clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(handleScroll, 10);
     });
     </script>
 </body>
