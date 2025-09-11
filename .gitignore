@@ -1,7 +1,7 @@
 # 开发规划文档（不提交到版本控制）
 DEVELOPMENT_PLAN.md
 roadmap.md
-*.md
+*.plan.md
 
 # 临时文件
 *.tmp
