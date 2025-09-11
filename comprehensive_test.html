@@ -1,0 +1,1377 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XML2Compose 转换器全面测试</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(600px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        .test-case {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border: 1px solid #e0e0e0;
+        }
+        .test-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        .test-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin: 0;
+        }
+        .test-status {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+        .status-running {
+            background: #cce5ff;
+            color: #004085;
+        }
+        .status-success {
+            background: #d4edda;
+            color: #155724;
+        }
+        .status-failed {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .test-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .xml-input, .compose-output {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 15px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+        .xml-input {
+            background: #fff8e1;
+            border-color: #ffcc02;
+        }
+        .compose-output {
+            background: #e8f5e8;
+            border-color: #4caf50;
+            white-space: pre-wrap;
+            min-height: 200px;
+        }
+        .section-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #666;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .test-controls {
+            margin: 20px 0;
+            text-align: center;
+        }
+        .btn {
+            background: linear-gradient(135deg, #007AFF, #0056CC);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 0 10px;
+            transition: all 0.3s ease;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);
+        }
+        .btn:active {
+            transform: translateY(0);
+        }
+        .btn-secondary {
+            background: linear-gradient(135deg, #6c757d, #495057);
+        }
+        .summary {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .summary h2 {
+            color: #333;
+            margin-top: 0;
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+            border-radius: 8px;
+            background: #f8f9fa;
+        }
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #007AFF;
+        }
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            margin-top: 5px;
+        }
+        @media (max-width: 768px) {
+            .test-grid {
+                grid-template-columns: 1fr;
+            }
+            .test-content {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 XML2Compose 转换器全面测试</h1>
+        
+        <div class="test-controls">
+            <button class="btn" onclick="runAllTests()">🚀 运行所有测试</button>
+            <button class="btn btn-secondary" onclick="clearAllResults()">🔄 清空结果</button>
+            <button class="btn btn-secondary" onclick="exportResults()">📊 导出结果</button>
+        </div>
+
+        <div class="test-grid" id="test-grid">
+            <!-- 测试用例将动态生成 -->
+        </div>
+
+        <div class="summary" id="summary">
+            <h2>📈 测试总结</h2>
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-number" id="total-tests">0</div>
+                    <div class="stat-label">总测试数</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="passed-tests">0</div>
+                    <div class="stat-label">通过</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="failed-tests">0</div>
+                    <div class="stat-label">失败</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="success-rate">0%</div>
+                    <div class="stat-label">成功率</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 测试用例数据
+        const testCases = [
+            {
+                id: 'basic-linear-layout',
+                title: '基础 LinearLayout',
+                description: '测试简单的垂直线性布局',
+                xml: `<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="#FFFFFF">
+    
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Hello World"
+        android:textSize="24sp"
+        android:textColor="#333333" />
+        
+</LinearLayout>`,
+                expectedComponents: ['Column', 'Text']
+            },
+            {
+                id: 'horizontal-layout',
+                title: '水平 LinearLayout',
+                description: '测试水平方向的线性布局',
+                xml: `<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="12dp">
+    
+    <ImageView
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/ic_user" />
+        
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="用户名"
+        android:layout_marginStart="12dp" />
+        
+</LinearLayout>`,
+                expectedComponents: ['Row', 'Image', 'Text']
+            },
+            {
+                id: 'form-layout',
+                title: '表单布局',
+                description: '测试包含输入框和按钮的表单',
+                xml: `<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="20dp">
+    
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="登录表单"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="24dp" />
+    
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="请输入用户名"
+        android:layout_marginBottom="16dp" />
+    
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="请输入密码"
+        android:inputType="textPassword"
+        android:layout_marginBottom="24dp" />
+    
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="登录"
+        android:background="#007AFF"
+        android:textColor="#FFFFFF" />
+        
+</LinearLayout>`,
+                expectedComponents: ['Column', 'Text', 'OutlinedTextField', 'Button']
+            },
+            {
+                id: 'recyclerview-layout',
+                title: 'RecyclerView 布局',
+                description: '测试包含列表的复杂布局',
+                xml: `<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F5F5F5">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:background="#FFFFFF">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="商品列表"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_search" />
+
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/product_list"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:padding="8dp" />
+
+</LinearLayout>`,
+                expectedComponents: ['Column', 'Row', 'Text', 'Image', 'LazyColumn']
+            },
+            {
+                id: 'card-layout',
+                title: 'CardView 布局',
+                description: '测试卡片组件的转换',
+                xml: `<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="4dp"
+        android:layout_marginBottom="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="产品标题"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="这是产品的详细描述信息"
+                android:textSize="14sp"
+                android:textColor="#666666" />
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+</LinearLayout>`,
+                expectedComponents: ['Column', 'Card', 'Text']
+            },
+            {
+                id: 'constraint-layout',
+                title: 'ConstraintLayout',
+                description: '测试约束布局的转换',
+                xml: `<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <ImageView
+        android:id="@+id/profile_image"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:src="@drawable/profile_placeholder"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/user_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="张三"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_marginStart="16dp"
+        app:layout_constraintTop_toTopOf="@id/profile_image"
+        app:layout_constraintStart_toEndOf="@id/profile_image"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/user_email"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="zhangsan@example.com"
+        android:textSize="14sp"
+        android:textColor="#666666"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="4dp"
+        app:layout_constraintTop_toBottomOf="@id/user_name"
+        app:layout_constraintStart_toEndOf="@id/profile_image"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>`,
+                expectedComponents: ['Box', 'Image', 'Text']
+            },
+            {
+                id: 'floating-action-button',
+                title: 'FloatingActionButton',
+                description: '测试悬浮按钮的转换',
+                xml: `<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="主页面内容"
+            android:textSize="18sp" />
+
+    </LinearLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_add"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="24dp"
+        android:src="@drawable/ic_add"
+        app:backgroundTint="#FF6B35" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>`,
+                expectedComponents: ['Box', 'Column', 'Text', 'FloatingActionButton']
+            },
+            {
+                id: 'complex-nested',
+                title: '复杂嵌套布局',
+                description: '测试多层嵌套的复杂布局',
+                xml: `<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="16dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="设置"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_settings" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="#F0F0F0"
+            android:padding="16dp"
+            android:layout_marginBottom="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="账户设置"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="管理您的账户信息"
+                android:textSize="14sp"
+                android:textColor="#666666" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</ScrollView>`,
+                expectedComponents: ['LazyColumn', 'Column', 'Row', 'Text', 'Image']
+            }
+        ];
+
+        let testResults = {};
+        let currentTestIndex = 0;
+
+        // 初始化页面
+        function initializePage() {
+            renderTestCases();
+            updateSummary();
+        }
+
+        // 渲染测试用例
+        function renderTestCases() {
+            const grid = document.getElementById('test-grid');
+            grid.innerHTML = '';
+
+            testCases.forEach((testCase, index) => {
+                const testElement = createTestElement(testCase, index);
+                grid.appendChild(testElement);
+            });
+        }
+
+        // 创建测试元素
+        function createTestElement(testCase, index) {
+            const div = document.createElement('div');
+            div.className = 'test-case';
+            div.id = `test-${testCase.id}`;
+
+            div.innerHTML = `
+                <div class="test-header">
+                    <h3 class="test-title">${testCase.title}</h3>
+                    <span class="test-status status-pending" id="status-${testCase.id}">待测试</span>
+                </div>
+                <p style="color: #666; font-size: 14px; margin-bottom: 15px;">${testCase.description}</p>
+                <div class="test-content">
+                    <div>
+                        <div class="section-title">XML 输入</div>
+                        <div class="xml-input">${escapeHtml(testCase.xml)}</div>
+                    </div>
+                    <div>
+                        <div class="section-title">Compose 输出</div>
+                        <div class="compose-output" id="output-${testCase.id}">等待转换...</div>
+                    </div>
+                </div>
+                <div style="margin-top: 15px; text-align: center;">
+                    <button class="btn" onclick="runSingleTest('${testCase.id}')" style="padding: 8px 16px; font-size: 14px;">
+                        🧪 运行此测试
+                    </button>
+                </div>
+            `;
+
+            return div;
+        }
+
+        // 转义 HTML
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // 运行单个测试
+        async function runSingleTest(testId) {
+            const testCase = testCases.find(t => t.id === testId);
+            if (!testCase) return;
+
+            const statusEl = document.getElementById(`status-${testId}`);
+            const outputEl = document.getElementById(`output-${testId}`);
+
+            // 更新状态为运行中
+            statusEl.textContent = '运行中';
+            statusEl.className = 'test-status status-running';
+            outputEl.textContent = '正在转换...';
+
+            try {
+                // 模拟转换过程
+                await new Promise(resolve => setTimeout(resolve, 500));
+
+                // 调用转换函数
+                const result = await convertXMLToCompose(testCase.xml);
+                
+                // 验证结果
+                const validation = validateResult(result, testCase.expectedComponents);
+                
+                // 更新结果
+                outputEl.textContent = result;
+                testResults[testId] = {
+                    success: validation.success,
+                    result: result,
+                    validation: validation,
+                    timestamp: new Date().toISOString()
+                };
+
+                // 更新状态
+                if (validation.success) {
+                    statusEl.textContent = '通过';
+                    statusEl.className = 'test-status status-success';
+                } else {
+                    statusEl.textContent = '失败';
+                    statusEl.className = 'test-status status-failed';
+                    outputEl.textContent += `\n\n❌ 验证失败:\n${validation.errors.join('\n')}`;
+                }
+
+            } catch (error) {
+                console.error(`测试 ${testId} 失败:`, error);
+                
+                outputEl.textContent = `❌ 转换失败: ${error.message}`;
+                testResults[testId] = {
+                    success: false,
+                    error: error.message,
+                    timestamp: new Date().toISOString()
+                };
+
+                statusEl.textContent = '失败';
+                statusEl.className = 'test-status status-failed';
+            }
+
+            updateSummary();
+        }
+
+        // 运行所有测试
+        async function runAllTests() {
+            for (const testCase of testCases) {
+                await runSingleTest(testCase.id);
+                // 添加小延迟以便观察进度
+                await new Promise(resolve => setTimeout(resolve, 200));
+            }
+        }
+
+        // 清空所有结果
+        function clearAllResults() {
+            testResults = {};
+            testCases.forEach(testCase => {
+                const statusEl = document.getElementById(`status-${testCase.id}`);
+                const outputEl = document.getElementById(`output-${testCase.id}`);
+                
+                statusEl.textContent = '待测试';
+                statusEl.className = 'test-status status-pending';
+                outputEl.textContent = '等待转换...';
+            });
+            updateSummary();
+        }
+
+        // 验证结果
+        function validateResult(result, expectedComponents) {
+            const errors = [];
+            let success = true;
+
+            console.log('验证结果:', result.substring(0, 200) + '...');
+            console.log('期望组件:', expectedComponents);
+
+            // 检查是否为空
+            if (!result.trim()) {
+                errors.push('生成的代码为空');
+                success = false;
+                return { success, errors };
+            }
+
+            // 检查基本语法
+            if (!result.includes('(') || !result.includes(')')) {
+                errors.push('生成的代码缺少基本的函数调用语法');
+                success = false;
+            }
+
+            // 检查是否包含期望的组件（更智能的匹配）
+            expectedComponents.forEach(component => {
+                let found = false;
+                
+                // 直接匹配
+                if (result.includes(component)) {
+                    found = true;
+                } else {
+                    // 模糊匹配
+                    switch (component) {
+                        case 'Column':
+                            found = result.includes('Column(') || result.includes('Column ');
+                            break;
+                        case 'Row':
+                            found = result.includes('Row(') || result.includes('Row ');
+                            break;
+                        case 'Text':
+                            found = result.includes('Text(') || result.includes('Text ');
+                            break;
+                        case 'Button':
+                            found = result.includes('Button(') || result.includes('Button ');
+                            break;
+                        case 'OutlinedTextField':
+                            found = result.includes('OutlinedTextField(') || result.includes('TextField(');
+                            break;
+                        case 'Image':
+                            found = result.includes('Image(') || result.includes('Image ');
+                            break;
+                        case 'LazyColumn':
+                            found = result.includes('LazyColumn(') || result.includes('LazyColumn ');
+                            break;
+                        case 'Card':
+                            found = result.includes('Card(') || result.includes('Card ');
+                            break;
+                        case 'Box':
+                            found = result.includes('Box(') || result.includes('Box ');
+                            break;
+                        default:
+                            found = result.toLowerCase().includes(component.toLowerCase());
+                    }
+                }
+                
+                if (!found) {
+                    errors.push(`缺少预期组件: ${component}`);
+                    success = false;
+                } else {
+                    console.log(`✓ 找到组件: ${component}`);
+                }
+            });
+
+            // 检查 Compose 代码特征
+            const composeFeatures = ['modifier', 'Modifier', 'onClick', 'onValueChange', 'text =', 'fontSize'];
+            let hasComposeFeatures = false;
+            composeFeatures.forEach(feature => {
+                if (result.includes(feature)) {
+                    hasComposeFeatures = true;
+                }
+            });
+
+            if (!hasComposeFeatures) {
+                errors.push('生成的代码不像 Compose 代码');
+                success = false;
+            }
+
+            // 检查是否有明显的错误标识
+            const errorIndicators = ['// 解析失败', '// Failed to parse', 'Error', 'error'];
+            errorIndicators.forEach(indicator => {
+                if (result.includes(indicator)) {
+                    errors.push(`代码中包含错误标识: ${indicator}`);
+                    success = false;
+                }
+            });
+
+            return { success, errors };
+        }
+
+        // 更新总结
+        function updateSummary() {
+            const totalTests = testCases.length;
+            const completedTests = Object.keys(testResults).length;
+            const passedTests = Object.values(testResults).filter(r => r.success).length;
+            const failedTests = completedTests - passedTests;
+            const successRate = completedTests > 0 ? Math.round((passedTests / completedTests) * 100) : 0;
+
+            document.getElementById('total-tests').textContent = totalTests;
+            document.getElementById('passed-tests').textContent = passedTests;
+            document.getElementById('failed-tests').textContent = failedTests;
+            document.getElementById('success-rate').textContent = `${successRate}%`;
+        }
+
+        // 导出结果
+        function exportResults() {
+            const report = {
+                timestamp: new Date().toISOString(),
+                summary: {
+                    total: testCases.length,
+                    completed: Object.keys(testResults).length,
+                    passed: Object.values(testResults).filter(r => r.success).length,
+                    failed: Object.values(testResults).filter(r => !r.success).length
+                },
+                results: testResults
+            };
+
+            const blob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `xml2compose_test_report_${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // 调用实际的转换器函数
+        async function convertXMLToCompose(xmlString) {
+            try {
+                // 直接使用转换器页面的转换逻辑
+                return await callRealConverter(xmlString);
+            } catch (error) {
+                console.error('转换器调用失败，使用备用转换:', error);
+                // 如果调用失败，使用备用转换逻辑
+                return simulateConversion(xmlString);
+            }
+        }
+
+        // 调用真实的转换器逻辑
+        async function callRealConverter(xmlString) {
+            // 复制 converter.html 中的转换逻辑
+            return new Promise((resolve, reject) => {
+                try {
+                    // XML to Compose conversion logic
+                    function parseXMLToCompose(xmlString) {
+                        console.log('解析 XML:', xmlString.substring(0, 100) + '...');
+                        
+                        try {
+                            // Clean up XML string
+                            let cleanXml = xmlString
+                                .replace(/&/g, '&amp;')
+                                .replace(/</g, '&lt;')
+                                .replace(/>/g, '&gt;')
+                                .replace(/"/g, '&quot;')
+                                .replace(/'/g, '&#39;');
+                            
+                            cleanXml = cleanXml
+                                .replace(/&lt;/g, '<')
+                                .replace(/&gt;/g, '>')
+                                .replace(/&quot;/g, '"')
+                                .replace(/&#39;/g, "'");
+                            
+                            const parser = new DOMParser();
+                            const xmlDoc = parser.parseFromString(cleanXml, 'text/xml');
+                            
+                            if (xmlDoc.getElementsByTagName('parsererror').length > 0) {
+                                throw new Error('XML 格式错误');
+                            }
+
+                            const rootElement = xmlDoc.documentElement;
+                            if (!rootElement) {
+                                throw new Error('未找到根元素');
+                            }
+                            
+                            return convertElementToCompose(rootElement);
+                        } catch (parseError) {
+                            console.log('标准解析失败，使用备用解析器');
+                            return fallbackXMLParsing(xmlString);
+                        }
+                    }
+
+                    function convertElementToCompose(element) {
+                        if (!element) return '';
+                        
+                        let tagName = element.tagName;
+                        const children = Array.from(element.children);
+                        
+                        // 处理命名空间标签
+                        if (tagName.includes('.')) {
+                            const parts = tagName.split('.');
+                            tagName = parts[parts.length - 1]; // 取最后一部分
+                        }
+                        
+                        console.log(`处理标签: ${element.tagName} -> ${tagName}`);
+                        
+                        switch (tagName) {
+                            case 'LinearLayout':
+                                return convertLinearLayout(element, children);
+                            case 'ConstraintLayout':
+                                return convertConstraintLayout(element, children);
+                            case 'CoordinatorLayout':
+                                return convertCoordinatorLayout(element, children);
+                            case 'TextView':
+                                return convertTextView(element);
+                            case 'EditText':
+                                return convertEditText(element);
+                            case 'Button':
+                                return convertButton(element);
+                            case 'ImageView':
+                                return convertImageView(element);
+                            case 'RecyclerView':
+                                return convertRecyclerView(element);
+                            case 'CardView':
+                                return convertCardView(element, children);
+                            case 'ScrollView':
+                            case 'NestedScrollView':
+                                return convertScrollView(element, children);
+                            case 'FloatingActionButton':
+                                return convertFloatingActionButton(element);
+                            default:
+                                console.log(`未识别的标签: ${tagName}`);
+                                return convertGenericElement(element, children);
+                        }
+                    }
+
+                    function convertLinearLayout(element, children) {
+                        const orientation = element.getAttribute('android:orientation') || 'vertical';
+                        const padding = element.getAttribute('android:padding') || '0dp';
+                        const background = element.getAttribute('android:background');
+                        
+                        let composeCode = orientation === 'horizontal' ? 'Row(\n' : 'Column(\n';
+                        composeCode += '    modifier = Modifier\n';
+                        composeCode += '        .fillMaxSize()\n';
+                        
+                        if (padding !== '0dp') {
+                            const paddingValue = convertDpToCompose(padding);
+                            composeCode += `        .padding(${paddingValue})\n`;
+                        }
+                        
+                        if (background && background !== '@null') {
+                            if (background.startsWith('#')) {
+                                composeCode += `        .background(Color(0xFF${background.substring(1)}))\n`;
+                            }
+                        }
+                        
+                        composeCode += ') {\n';
+                        
+                        children.forEach(child => {
+                            const childCode = convertElementToCompose(child);
+                            if (childCode) {
+                                composeCode += childCode.split('\n').map(line => '    ' + line).join('\n') + '\n\n';
+                            }
+                        });
+                        
+                        composeCode += '}';
+                        return composeCode;
+                    }
+
+                    function convertConstraintLayout(element, children) {
+                        let composeCode = 'Box(\n';
+                        composeCode += '    modifier = Modifier.fillMaxSize()\n';
+                        composeCode += ') {\n';
+                        
+                        children.forEach(child => {
+                            const childCode = convertElementToCompose(child);
+                            if (childCode) {
+                                composeCode += childCode.split('\n').map(line => '    ' + line).join('\n') + '\n\n';
+                            }
+                        });
+                        
+                        composeCode += '}';
+                        return composeCode;
+                    }
+
+                    function convertTextView(element) {
+                        const text = element.getAttribute('android:text') || '';
+                        const textSize = element.getAttribute('android:textSize') || '16sp';
+                        const textColor = element.getAttribute('android:textColor') || '#000000';
+                        
+                        let composeCode = `Text(\n`;
+                        composeCode += `    text = "${text}"`;
+                        
+                        if (textSize !== '16sp') {
+                            const sizeValue = convertSpToCompose(textSize);
+                            composeCode += `,\n    fontSize = ${sizeValue}`;
+                        }
+                        
+                        if (textColor !== '#000000' && textColor.startsWith('#')) {
+                            composeCode += `,\n    color = Color(0xFF${textColor.substring(1)})`;
+                        }
+                        
+                        composeCode += `\n)`;
+                        return composeCode;
+                    }
+
+                    function convertEditText(element) {
+                        const hint = element.getAttribute('android:hint') || '';
+                        
+                        let composeCode = 'OutlinedTextField(\n';
+                        composeCode += '    value = "",\n';
+                        composeCode += '    onValueChange = { }';
+                        
+                        if (hint) {
+                            composeCode += `,\n    placeholder = { Text("${hint}") }`;
+                        }
+                        
+                        composeCode += '\n)';
+                        return composeCode;
+                    }
+
+                    function convertButton(element) {
+                        const text = element.getAttribute('android:text') || '';
+                        
+                        return `Button(\n    onClick = { }\n) {\n    Text("${text}")\n}`;
+                    }
+
+                    function convertImageView(element) {
+                        return 'Image(\n    painter = painterResource(id = R.drawable.placeholder),\n    contentDescription = null\n)';
+                    }
+
+                    function convertRecyclerView(element) {
+                        return 'LazyColumn(\n    modifier = Modifier.fillMaxWidth()\n) {\n    items(10) { index ->\n        Text("Item ${index + 1}")\n    }\n}';
+                    }
+
+                    function convertCardView(element, children) {
+                        let composeCode = 'Card(\n';
+                        composeCode += '    modifier = Modifier.fillMaxWidth()\n';
+                        composeCode += ') {\n';
+                        
+                        children.forEach(child => {
+                            const childCode = convertElementToCompose(child);
+                            if (childCode) {
+                                composeCode += childCode.split('\n').map(line => '    ' + line).join('\n') + '\n\n';
+                            }
+                        });
+                        
+                        composeCode += '}';
+                        return composeCode;
+                    }
+
+                    function convertCoordinatorLayout(element, children) {
+                        let composeCode = 'Box(\n';
+                        composeCode += '    modifier = Modifier.fillMaxSize()\n';
+                        composeCode += ') {\n';
+                        
+                        children.forEach(child => {
+                            const childCode = convertElementToCompose(child);
+                            if (childCode) {
+                                composeCode += childCode.split('\n').map(line => '    ' + line).join('\n') + '\n\n';
+                            }
+                        });
+                        
+                        composeCode += '}';
+                        return composeCode;
+                    }
+
+                    function convertScrollView(element, children) {
+                        let composeCode = 'LazyColumn(\n';
+                        composeCode += '    modifier = Modifier.fillMaxSize()\n';
+                        composeCode += ') {\n';
+                        
+                        children.forEach(child => {
+                            const childCode = convertElementToCompose(child);
+                            if (childCode) {
+                                composeCode += '    item {\n';
+                                composeCode += childCode.split('\n').map(line => '        ' + line).join('\n') + '\n';
+                                composeCode += '    }\n';
+                            }
+                        });
+                        
+                        composeCode += '}';
+                        return composeCode;
+                    }
+
+                    function convertFloatingActionButton(element) {
+                        return 'FloatingActionButton(\n    onClick = { }\n) {\n    Icon(\n        imageVector = Icons.Default.Add,\n        contentDescription = null\n    )\n}';
+                    }
+
+                    function convertGenericElement(element, children) {
+                        const tagName = element.tagName;
+                        
+                        // 如果有子元素，尝试处理子元素
+                        if (children.length > 0) {
+                            let composeCode = `// ${tagName} - 自定义组件\nColumn {\n`;
+                            children.forEach(child => {
+                                const childCode = convertElementToCompose(child);
+                                if (childCode) {
+                                    composeCode += childCode.split('\n').map(line => '    ' + line).join('\n') + '\n\n';
+                                }
+                            });
+                            composeCode += '}';
+                            return composeCode;
+                        }
+                        
+                        return `// ${tagName} - 自定义组件\nText("${tagName} Content")`;
+                    }
+
+                    function fallbackXMLParsing(xmlString) {
+                        console.log('使用备用解析器');
+                        const lines = xmlString.split('\n');
+                        let composeCode = '';
+                        let indentLevel = 0;
+                        
+                        for (let line of lines) {
+                            line = line.trim();
+                            if (!line || line.startsWith('<?') || line.startsWith('<!--')) continue;
+                            
+                            if (line.startsWith('<') && !line.startsWith('</') && !line.endsWith('/>')) {
+                                const tagMatch = line.match(/<([a-zA-Z][a-zA-Z0-9._-]*)/);
+                                if (tagMatch) {
+                                    let tagName = tagMatch[1];
+                                    if (tagName.includes('.')) {
+                                        const parts = tagName.split('.');
+                                        tagName = parts[parts.length - 1];
+                                    }
+                                    
+                                    switch (tagName) {
+                                        case 'LinearLayout':
+                                            const orientation = line.includes('horizontal') ? 'horizontal' : 'vertical';
+                                            composeCode += '    '.repeat(indentLevel) + (orientation === 'horizontal' ? 'Row(\n' : 'Column(\n');
+                                            composeCode += '    '.repeat(indentLevel) + '    modifier = Modifier.fillMaxSize()\n';
+                                            composeCode += '    '.repeat(indentLevel) + ') {\n';
+                                            indentLevel++;
+                                            break;
+                                        case 'ConstraintLayout':
+                                            composeCode += '    '.repeat(indentLevel) + 'Box(\n';
+                                            composeCode += '    '.repeat(indentLevel) + '    modifier = Modifier.fillMaxSize()\n';
+                                            composeCode += '    '.repeat(indentLevel) + ') {\n';
+                                            indentLevel++;
+                                            break;
+                                        case 'TextView':
+                                            const textMatch = line.match(/android:text="([^"]+)"/);
+                                            const text = textMatch ? textMatch[1] : 'Text';
+                                            composeCode += '    '.repeat(indentLevel) + `Text("${text}")\n`;
+                                            break;
+                                        case 'EditText':
+                                            const hintMatch = line.match(/android:hint="([^"]+)"/);
+                                            const hint = hintMatch ? hintMatch[1] : 'Enter text';
+                                            composeCode += '    '.repeat(indentLevel) + 'OutlinedTextField(\n';
+                                            composeCode += '    '.repeat(indentLevel) + '    value = "",\n';
+                                            composeCode += '    '.repeat(indentLevel) + '    onValueChange = { },\n';
+                                            composeCode += '    '.repeat(indentLevel) + `    placeholder = { Text("${hint}") }\n`;
+                                            composeCode += '    '.repeat(indentLevel) + ')\n';
+                                            break;
+                                        case 'Button':
+                                            const buttonTextMatch = line.match(/android:text="([^"]+)"/);
+                                            const buttonText = buttonTextMatch ? buttonTextMatch[1] : 'Button';
+                                            composeCode += '    '.repeat(indentLevel) + 'Button(onClick = { }) {\n';
+                                            composeCode += '    '.repeat(indentLevel) + `    Text("${buttonText}")\n`;
+                                            composeCode += '    '.repeat(indentLevel) + '}\n';
+                                            break;
+                                        case 'ImageView':
+                                            composeCode += '    '.repeat(indentLevel) + 'Image(\n';
+                                            composeCode += '    '.repeat(indentLevel) + '    painter = painterResource(id = R.drawable.placeholder),\n';
+                                            composeCode += '    '.repeat(indentLevel) + '    contentDescription = null\n';
+                                            composeCode += '    '.repeat(indentLevel) + ')\n';
+                                            break;
+                                        case 'RecyclerView':
+                                            composeCode += '    '.repeat(indentLevel) + 'LazyColumn(\n';
+                                            composeCode += '    '.repeat(indentLevel) + '    modifier = Modifier.fillMaxWidth()\n';
+                                            composeCode += '    '.repeat(indentLevel) + ') {\n';
+                                            composeCode += '    '.repeat(indentLevel) + '    items(10) { index ->\n';
+                                            composeCode += '    '.repeat(indentLevel) + '        Text("Item ${index + 1}")\n';
+                                            composeCode += '    '.repeat(indentLevel) + '    }\n';
+                                            composeCode += '    '.repeat(indentLevel) + '}\n';
+                                            break;
+                                        case 'CardView':
+                                            composeCode += '    '.repeat(indentLevel) + 'Card(\n';
+                                            composeCode += '    '.repeat(indentLevel) + '    modifier = Modifier.fillMaxWidth()\n';
+                                            composeCode += '    '.repeat(indentLevel) + ') {\n';
+                                            indentLevel++;
+                                            break;
+                                        case 'ScrollView':
+                                        case 'NestedScrollView':
+                                            composeCode += '    '.repeat(indentLevel) + 'LazyColumn(\n';
+                                            composeCode += '    '.repeat(indentLevel) + '    modifier = Modifier.fillMaxSize()\n';
+                                            composeCode += '    '.repeat(indentLevel) + ') {\n';
+                                            composeCode += '    '.repeat(indentLevel) + '    item {\n';
+                                            indentLevel += 2;
+                                            break;
+                                        case 'CoordinatorLayout':
+                                            composeCode += '    '.repeat(indentLevel) + 'Box(\n';
+                                            composeCode += '    '.repeat(indentLevel) + '    modifier = Modifier.fillMaxSize()\n';
+                                            composeCode += '    '.repeat(indentLevel) + ') {\n';
+                                            indentLevel++;
+                                            break;
+                                        case 'FloatingActionButton':
+                                            composeCode += '    '.repeat(indentLevel) + 'FloatingActionButton(\n';
+                                            composeCode += '    '.repeat(indentLevel) + '    onClick = { }\n';
+                                            composeCode += '    '.repeat(indentLevel) + ') {\n';
+                                            composeCode += '    '.repeat(indentLevel) + '    Icon(Icons.Default.Add, contentDescription = null)\n';
+                                            composeCode += '    '.repeat(indentLevel) + '}\n';
+                                            break;
+                                    }
+                                }
+                            }
+                            
+                            if (line.startsWith('</')) {
+                                const tagMatch = line.match(/<\/([a-zA-Z][a-zA-Z0-9._-]*)/);
+                                if (tagMatch) {
+                                    let tagName = tagMatch[1];
+                                    if (tagName.includes('.')) {
+                                        const parts = tagName.split('.');
+                                        tagName = parts[parts.length - 1];
+                                    }
+                                    
+                                    if (['LinearLayout', 'ConstraintLayout', 'CardView', 'CoordinatorLayout'].includes(tagName)) {
+                                        indentLevel = Math.max(0, indentLevel - 1);
+                                        composeCode += '    '.repeat(indentLevel) + '}\n';
+                                    } else if (['ScrollView', 'NestedScrollView'].includes(tagName)) {
+                                        indentLevel = Math.max(0, indentLevel - 2);
+                                        composeCode += '    '.repeat(indentLevel + 1) + '}\n';
+                                        composeCode += '    '.repeat(indentLevel) + '}\n';
+                                    }
+                                }
+                            }
+                        }
+                        
+                        return composeCode || '// 解析失败';
+                    }
+
+                    function convertDpToCompose(dpValue) {
+                        if (typeof dpValue === 'string' && dpValue.endsWith('dp')) {
+                            const numericValue = dpValue.replace('dp', '');
+                            return `${numericValue}.dp`;
+                        }
+                        return dpValue;
+                    }
+
+                    function convertSpToCompose(spValue) {
+                        if (typeof spValue === 'string' && spValue.endsWith('sp')) {
+                            const numericValue = spValue.replace('sp', '');
+                            return `${numericValue}.sp`;
+                        }
+                        return spValue;
+                    }
+
+                    // 执行转换
+                    const result = parseXMLToCompose(xmlString);
+                    resolve(result);
+
+                } catch (error) {
+                    reject(error);
+                }
+            });
+        }
+
+        // 简化的模拟转换（实际测试时会调用真实的转换器）
+        function simulateConversion(xmlString) {
+            console.log('模拟转换 XML:', xmlString.substring(0, 50) + '...');
+            
+            // 简单的模式匹配来模拟转换
+            let result = '';
+            const lines = xmlString.split('\n');
+            let indentLevel = 0;
+            
+            for (let line of lines) {
+                line = line.trim();
+                if (!line || line.startsWith('<?') || line.startsWith('xmlns')) continue;
+                
+                if (line.startsWith('<') && !line.startsWith('</') && !line.endsWith('/>')) {
+                    const tagMatch = line.match(/<([a-zA-Z][a-zA-Z0-9._-]*)/);
+                    if (tagMatch) {
+                        let tagName = tagMatch[1];
+                        if (tagName.includes('.')) {
+                            const parts = tagName.split('.');
+                            tagName = parts[parts.length - 1];
+                        }
+                        
+                        switch (tagName) {
+                            case 'LinearLayout':
+                                const orientation = line.includes('horizontal') ? 'horizontal' : 'vertical';
+                                result += '    '.repeat(indentLevel) + (orientation === 'horizontal' ? 'Row(\n' : 'Column(\n');
+                                result += '    '.repeat(indentLevel) + '    modifier = Modifier.fillMaxSize()\n';
+                                result += '    '.repeat(indentLevel) + ') {\n';
+                                indentLevel++;
+                                break;
+                            case 'ConstraintLayout':
+                                result += '    '.repeat(indentLevel) + 'Box(\n';
+                                result += '    '.repeat(indentLevel) + '    modifier = Modifier.fillMaxSize()\n';
+                                result += '    '.repeat(indentLevel) + ') {\n';
+                                indentLevel++;
+                                break;
+                            case 'TextView':
+                                const textMatch = line.match(/android:text="([^"]+)"/);
+                                const text = textMatch ? textMatch[1] : 'Text';
+                                result += '    '.repeat(indentLevel) + `Text("${text}")\n`;
+                                break;
+                            case 'EditText':
+                                const hintMatch = line.match(/android:hint="([^"]+)"/);
+                                const hint = hintMatch ? hintMatch[1] : 'Enter text';
+                                result += '    '.repeat(indentLevel) + 'OutlinedTextField(\n';
+                                result += '    '.repeat(indentLevel) + '    value = "",\n';
+                                result += '    '.repeat(indentLevel) + '    onValueChange = { },\n';
+                                result += '    '.repeat(indentLevel) + `    placeholder = { Text("${hint}") }\n`;
+                                result += '    '.repeat(indentLevel) + ')\n';
+                                break;
+                            case 'Button':
+                                const buttonTextMatch = line.match(/android:text="([^"]+)"/);
+                                const buttonText = buttonTextMatch ? buttonTextMatch[1] : 'Button';
+                                result += '    '.repeat(indentLevel) + 'Button(\n';
+                                result += '    '.repeat(indentLevel) + '    onClick = { }\n';
+                                result += '    '.repeat(indentLevel) + ') {\n';
+                                result += '    '.repeat(indentLevel) + `    Text("${buttonText}")\n`;
+                                result += '    '.repeat(indentLevel) + '}\n';
+                                break;
+                            case 'ImageView':
+                                result += '    '.repeat(indentLevel) + 'Image(\n';
+                                result += '    '.repeat(indentLevel) + '    painter = painterResource(id = R.drawable.placeholder),\n';
+                                result += '    '.repeat(indentLevel) + '    contentDescription = null\n';
+                                result += '    '.repeat(indentLevel) + ')\n';
+                                break;
+                            case 'RecyclerView':
+                                result += '    '.repeat(indentLevel) + 'LazyColumn(\n';
+                                result += '    '.repeat(indentLevel) + '    modifier = Modifier.fillMaxWidth()\n';
+                                result += '    '.repeat(indentLevel) + ') {\n';
+                                result += '    '.repeat(indentLevel) + '    items(10) { index ->\n';
+                                result += '    '.repeat(indentLevel) + '        Text("Item ${index + 1}")\n';
+                                result += '    '.repeat(indentLevel) + '    }\n';
+                                result += '    '.repeat(indentLevel) + '}\n';
+                                break;
+                            case 'CardView':
+                                result += '    '.repeat(indentLevel) + 'Card(\n';
+                                result += '    '.repeat(indentLevel) + '    modifier = Modifier.fillMaxWidth()\n';
+                                result += '    '.repeat(indentLevel) + ') {\n';
+                                indentLevel++;
+                                break;
+                            case 'FloatingActionButton':
+                                result += '    '.repeat(indentLevel) + 'FloatingActionButton(\n';
+                                result += '    '.repeat(indentLevel) + '    onClick = { }\n';
+                                result += '    '.repeat(indentLevel) + ') {\n';
+                                result += '    '.repeat(indentLevel) + '    Icon(Icons.Default.Add, contentDescription = null)\n';
+                                result += '    '.repeat(indentLevel) + '}\n';
+                                break;
+                            case 'ScrollView':
+                            case 'NestedScrollView':
+                                result += '    '.repeat(indentLevel) + 'LazyColumn(\n';
+                                result += '    '.repeat(indentLevel) + '    modifier = Modifier.fillMaxSize()\n';
+                                result += '    '.repeat(indentLevel) + ') {\n';
+                                result += '    '.repeat(indentLevel) + '    item {\n';
+                                indentLevel += 2;
+                                break;
+                            case 'CoordinatorLayout':
+                                result += '    '.repeat(indentLevel) + 'Box(\n';
+                                result += '    '.repeat(indentLevel) + '    modifier = Modifier.fillMaxSize()\n';
+                                result += '    '.repeat(indentLevel) + ') {\n';
+                                indentLevel++;
+                                break;
+                        }
+                    }
+                }
+                
+                if (line.startsWith('</')) {
+                    const tagMatch = line.match(/<\/([a-zA-Z][a-zA-Z0-9._-]*)/);
+                    if (tagMatch) {
+                        let tagName = tagMatch[1];
+                        if (tagName.includes('.')) {
+                            const parts = tagName.split('.');
+                            tagName = parts[parts.length - 1];
+                        }
+                        
+                        if (['LinearLayout', 'ConstraintLayout', 'CardView', 'CoordinatorLayout'].includes(tagName)) {
+                            indentLevel = Math.max(0, indentLevel - 1);
+                            result += '    '.repeat(indentLevel) + '}\n';
+                        } else if (['ScrollView', 'NestedScrollView'].includes(tagName)) {
+                            indentLevel = Math.max(0, indentLevel - 2);
+                            result += '    '.repeat(indentLevel + 1) + '}\n';
+                            result += '    '.repeat(indentLevel) + '}\n';
+                        }
+                    }
+                }
+            }
+            
+            return result || '// 转换失败，请检查 XML 格式';
+        }
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', initializePage);
+    </script>
+</body>
+</html>

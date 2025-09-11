@@ -1,0 +1,1296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-F2G7TSB6Q6"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-F2G7TSB6Q6');
+    </script>
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2819959179592334" 
+      crossorigin="anonymous"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XML to Jetpack Compose Converter | xml2compose.dev</title>
+    <meta name="description" content="Convert Android XML layouts to Jetpack Compose code instantly. Real-time conversion with syntax highlighting and copy functionality.">
+    <link rel="canonical" href="https://xml2compose.dev/converter.html">
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Converter page specific styles */
+        body {
+            background: var(--bg-secondary);
+        }
+        
+        .converter-hero {
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+            padding: var(--space-12) 0 var(--space-8);
+            text-align: center;
+            border-bottom: 1px solid var(--border-secondary);
+        }
+        
+        .converter-hero h1 {
+            font-size: var(--text-4xl);
+            font-weight: var(--font-bold);
+            color: var(--text-primary);
+            margin: 0 0 var(--space-4);
+            letter-spacing: -0.02em;
+        }
+        
+        .converter-hero p {
+            font-size: var(--text-lg);
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto var(--space-8);
+            line-height: var(--leading-relaxed);
+        }
+        
+        .convert-button {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            border-radius: var(--radius-md);
+            padding: var(--space-4) var(--space-8);
+            font-size: var(--text-lg);
+            font-weight: var(--font-semibold);
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            box-shadow: var(--shadow-md);
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+        
+        .convert-button:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .convert-button:active {
+            transform: translateY(0);
+        }
+        
+        .converter-main {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: var(--space-8) var(--space-4);
+        }
+        
+        .converter-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-8);
+            margin-bottom: var(--space-12);
+        }
+        
+        .editor-panel {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-secondary);
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            transition: all var(--transition-normal);
+        }
+        
+        .editor-panel:hover {
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .panel-header {
+            background: var(--bg-tertiary);
+            padding: var(--space-4) var(--space-6);
+            border-bottom: 1px solid var(--border-secondary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .panel-title {
+            font-size: var(--text-lg);
+            font-weight: var(--font-semibold);
+            color: var(--text-primary);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+        
+        .panel-icon {
+            width: 20px;
+            height: 20px;
+            opacity: 0.7;
+        }
+        
+        .panel-actions {
+            display: flex;
+            gap: var(--space-2);
+        }
+        
+        .action-button {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-secondary);
+            border-radius: var(--radius-sm);
+            padding: var(--space-2) var(--space-3);
+            font-size: var(--text-sm);
+            font-weight: var(--font-medium);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+        
+        .action-button:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            transform: translateY(-1px);
+        }
+        
+        .action-button.primary {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        .action-button.primary:hover {
+            background: var(--primary-dark);
+            border-color: var(--primary-dark);
+        }
+        
+        .code-editor {
+            padding: var(--space-6);
+            min-height: 400px;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+        
+        .code-input {
+            width: 100%;
+            height: 100%;
+            min-height: 350px;
+            background: transparent;
+            border: none;
+            outline: none;
+            font-family: var(--font-mono);
+            font-size: var(--text-sm);
+            line-height: var(--leading-relaxed);
+            color: var(--text-primary);
+            resize: none;
+            padding: 0;
+        }
+        
+        .code-input::placeholder {
+            color: var(--text-tertiary);
+        }
+        
+        .code-output {
+            font-family: var(--font-mono);
+            font-size: var(--text-sm);
+            line-height: var(--leading-relaxed);
+            color: var(--text-primary);
+            background: transparent;
+            margin: 0;
+            padding: 0;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 350px;
+            color: var(--text-tertiary);
+            text-align: center;
+        }
+        
+        .empty-state-icon {
+            width: 48px;
+            height: 48px;
+            margin-bottom: var(--space-4);
+            opacity: 0.5;
+        }
+        
+        .empty-state-text {
+            font-size: var(--text-base);
+            margin-bottom: var(--space-2);
+        }
+        
+        .empty-state-hint {
+            font-size: var(--text-sm);
+            color: var(--text-quaternary);
+        }
+        
+        .status-bar {
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-secondary);
+            padding: var(--space-3) var(--space-6);
+            font-size: var(--text-sm);
+            color: var(--text-tertiary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--text-tertiary);
+        }
+        
+        .status-dot.success {
+            background: var(--success-color);
+        }
+        
+        .status-dot.error {
+            background: var(--error-color);
+        }
+        
+        .copy-notification {
+            position: fixed;
+            top: var(--space-8);
+            right: var(--space-8);
+            background: var(--success-color);
+            color: white;
+            padding: var(--space-3) var(--space-6);
+            border-radius: var(--radius-md);
+            font-size: var(--text-sm);
+            font-weight: var(--font-medium);
+            box-shadow: var(--shadow-lg);
+            transform: translateX(100%);
+            opacity: 0;
+            transition: all var(--transition-normal);
+            z-index: 1000;
+        }
+        
+        .copy-notification.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        
+        .features-section {
+            background: var(--bg-primary);
+            padding: var(--space-12) 0;
+            border-top: 1px solid var(--border-secondary);
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--space-6);
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--space-4);
+        }
+        
+        .feature-card {
+            text-align: center;
+            padding: var(--space-6);
+        }
+        
+        .feature-icon {
+            width: 40px;
+            height: 40px;
+            margin: 0 auto var(--space-4);
+            color: var(--primary-color);
+        }
+        
+        .feature-title {
+            font-size: var(--text-lg);
+            font-weight: var(--font-semibold);
+            color: var(--text-primary);
+            margin-bottom: var(--space-2);
+        }
+        
+        .feature-description {
+            color: var(--text-secondary);
+            line-height: var(--leading-relaxed);
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .converter-grid {
+                grid-template-columns: 1fr;
+                gap: var(--space-6);
+            }
+            
+            .converter-hero h1 {
+                font-size: var(--text-3xl);
+            }
+            
+            .converter-hero p {
+                font-size: var(--text-base);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .converter-hero {
+                padding: var(--space-8) 0 var(--space-6);
+            }
+            
+            .converter-hero h1 {
+                font-size: var(--text-2xl);
+            }
+            
+            .converter-main {
+                padding: var(--space-6) var(--space-3);
+            }
+            
+            .panel-header {
+                flex-direction: column;
+                gap: var(--space-3);
+                align-items: flex-start;
+            }
+            
+            .panel-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .code-editor {
+                padding: var(--space-4);
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+                padding: 0 var(--space-3);
+            }
+        }
+        
+        /* Dark mode specific adjustments */
+        @media (prefers-color-scheme: dark) {
+            .converter-hero {
+                background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+            }
+        }
+        \n        /* Enhanced UI Components */\n        .notification {\n            position: fixed;\n            top: 20px;\n            right: 20px;\n            max-width: 400px;\n            padding: 16px;\n            border-radius: 8px;\n            box-shadow: 0 4px 12px rgba(0,0,0,0.15);\n            z-index: 1000;\n            animation: slideInRight 0.3s ease-out;\n        }\n        \n        .notification-info {\n            background: #e0f2fe;\n            border-left: 4px solid #0288d1;\n            color: #01579b;\n        }\n        \n        .notification-success {\n            background: #e8f5e8;\n            border-left: 4px solid #4caf50;\n            color: #2e7d32;\n        }\n        \n        .notification-warning {\n            background: #fff3e0;\n            border-left: 4px solid #ff9800;\n            color: #ef6c00;\n        }\n        \n        .notification-error {\n            background: #ffebee;\n            border-left: 4px solid #f44336;\n            color: #c62828;\n        }\n        \n        #loading-overlay {\n            position: fixed;\n            top: 0;\n            left: 0;\n            width: 100%;\n            height: 100%;\n            background: rgba(0,0,0,0.5);\n            display: none;\n            align-items: center;\n            justify-content: center;\n            z-index: 2000;\n        }\n        \n        .loading-spinner {\n            background: white;\n            padding: 30px;\n            border-radius: 12px;\n            text-align: center;\n            box-shadow: 0 8px 32px rgba(0,0,0,0.3);\n        }\n        \n        .spinner {\n            width: 40px;\n            height: 40px;\n            border: 4px solid #f3f3f3;\n            border-top: 4px solid #007acc;\n            border-radius: 50%;\n            animation: spin 1s linear infinite;\n            margin: 0 auto 16px;\n        }\n        \n        @keyframes slideInRight {\n            from {\n                transform: translateX(100%);\n                opacity: 0;\n            }\n            to {\n                transform: translateX(0);\n                opacity: 1;\n            }\n        }\n        \n        @keyframes spin {\n            0% { transform: rotate(0deg); }\n            100% { transform: rotate(360deg); }\n        }\n    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo-text">
+                <a href="index.html">xml2compose.dev</a>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="converter.html" class="active">Converter</a></li>
+                    <li><a href="blog.html">Blog</a></li>
+                    <li><a href="index.html#faq">FAQ</a></li>
+                </ul>
+            </nav>
+            <div class="lang-switch">
+                <button onclick="switchLang('en')" class="active">EN</button>
+                <button onclick="switchLang('zh')">中文</button>
+            </div>
+        </div>
+    </header>
+
+    <section class="converter-hero">
+        <div class="container">
+            <h1>XML to Jetpack Compose Converter</h1>
+            <p>Transform your Android XML layouts into modern Jetpack Compose code instantly. Simply paste your XML and get clean, readable Compose code.</p>
+            <button class="convert-button" id="convert-btn">
+                <svg class="panel-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
+                </svg>
+                Convert Now
+            </button>
+        </div>
+    </section>
+
+    <main class="converter-main">
+        <div class="converter-grid">
+            <!-- XML Input Panel -->
+            <div class="editor-panel">
+                <div class="panel-header">
+                    <h2 class="panel-title">
+                        <svg class="panel-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
+                        </svg>
+                        Android XML
+                    </h2>
+                    <div class="panel-actions">
+                        <button class="action-button" id="load-sample-btn">Load Sample</button>
+                        <button class="action-button" id="clear-input-btn">Clear</button>
+                    </div>
+                </div>
+                <div class="code-editor">
+                    <textarea 
+                        class="code-input" 
+                        id="xml-input" 
+                        placeholder="Paste your Android XML layout here...
+                        
+For example:
+<LinearLayout
+    xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;
+    android:layout_width=&quot;match_parent&quot;
+    android:layout_height=&quot;match_parent&quot;
+    android:orientation=&quot;vertical&quot;
+    android:padding=&quot;16dp&quot;>
+    
+    <TextView
+        android:layout_width=&quot;wrap_content&quot;
+        android:layout_height=&quot;wrap_content&quot;
+        android:text=&quot;Hello World!&quot;
+        android:textSize=&quot;24sp&quot; />
+        
+</LinearLayout>"
+                        spellcheck="false"
+                        aria-label="XML Input"
+                    ></textarea>
+                </div>
+                <div class="status-bar">
+                    <div class="status-indicator">
+                        <div class="status-dot" id="input-status"></div>
+                        <span id="input-status-text">Ready for input</span>
+                    </div>
+                    <span id="input-lines">0 lines</span>
+                </div>
+            </div>
+
+            <!-- Compose Output Panel -->
+            <div class="editor-panel">
+                <div class="panel-header">
+                    <h2 class="panel-title">
+                        <svg class="panel-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        </svg>
+                        Jetpack Compose
+                    </h2>
+                    <div class="panel-actions">
+                        <button class="action-button primary" id="copy-btn">Copy Code</button>
+                        <button class="action-button" id="download-btn">Download</button>
+                    </div>
+                </div>
+                <div class="code-editor">
+                    <div class="empty-state" id="empty-state">
+                        <svg class="empty-state-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        </svg>
+                        <div class="empty-state-text">Your Compose code will appear here</div>
+                        <div class="empty-state-hint">Click "Convert Now" to transform your XML</div>
+                    </div>
+                    <pre class="code-output" id="compose-output" style="display: none;"></pre>
+                </div>
+                <div class="status-bar">
+                    <div class="status-indicator">
+                        <div class="status-dot" id="output-status"></div>
+                        <span id="output-status-text">Waiting for conversion</span>
+                    </div>
+                    <span id="output-lines">0 lines</span>
+                </div>
+            </div>
+        </div>
+
+        <section class="features-section">
+            <div class="features-grid">
+                <div class="feature-card">
+                    <svg class="feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                    </svg>
+                    <h3 class="feature-title">Instant Conversion</h3>
+                    <p class="feature-description">Convert XML layouts to Compose code in real-time with intelligent parsing and optimization.</p>
+                </div>
+                <div class="feature-card">
+                    <svg class="feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
+                    </svg>
+                    <h3 class="feature-title">Clean Code Output</h3>
+                    <p class="feature-description">Generated code follows Compose best practices with proper formatting and structure.</p>
+                </div>
+                <div class="feature-card">
+                    <svg class="feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                    </svg>
+                    <h3 class="feature-title">Mobile Friendly</h3>
+                    <p class="feature-description">Works perfectly on all devices with responsive design and touch-friendly interface.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div class="copy-notification" id="copy-notification">
+        Code copied to clipboard!
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/xml.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/kotlin.min.js"></script>
+    <script>
+        // Sample XML and Compose code
+        const sampleXML = `<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="#FFFFFF">
+    
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Welcome to Jetpack Compose!"
+        android:textSize="24sp"
+        android:textColor="#000000"
+        android:layout_marginBottom="16dp" />
+    
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter your name"
+        android:layout_marginBottom="16dp" />
+    
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Click Me"
+        android:background="#007AFF" />
+        
+</LinearLayout>`;
+
+        const sampleCompose = `Column(
+    modifier = Modifier
+        .fillMaxSize()
+        .padding(16.dp)
+        .background(Color.White)
+) {
+    Text(
+        text = "Welcome to Jetpack Compose!",
+        fontSize = 24.sp,
+        color = Color.Black,
+        modifier = Modifier.padding(bottom = 16.dp)
+    )
+    
+    OutlinedTextField(
+        value = "",
+        onValueChange = { },
+        placeholder = { Text("Enter your name") },
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 16.dp)
+    )
+    
+    Button(
+        onClick = { },
+        colors = ButtonDefaults.buttonColors(
+            backgroundColor = Color(0xFF007AFF)
+        ),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Text("Click Me")
+    }
+}`;
+
+        // DOM elements
+        const xmlInput = document.getElementById('xml-input');
+        const composeOutput = document.getElementById('compose-output');
+        const emptyState = document.getElementById('empty-state');
+        const convertBtn = document.getElementById('convert-btn');
+        const copyBtn = document.getElementById('copy-btn');
+        const loadSampleBtn = document.getElementById('load-sample-btn');
+        const clearInputBtn = document.getElementById('clear-input-btn');
+        const downloadBtn = document.getElementById('download-btn');
+        const copyNotification = document.getElementById('copy-notification');
+        const inputStatus = document.getElementById('input-status');
+        const inputStatusText = document.getElementById('input-status-text');
+        const outputStatus = document.getElementById('output-status');
+        const outputStatusText = document.getElementById('output-status-text');
+        const inputLines = document.getElementById('input-lines');
+        const outputLines = document.getElementById('output-lines');
+
+        // Update status indicators
+        function updateInputStatus() {
+            const lines = xmlInput.value.split('\n').length;
+            inputLines.textContent = `${lines} lines`;
+            
+            if (xmlInput.value.trim()) {
+                inputStatus.className = 'status-dot success';
+                inputStatusText.textContent = 'XML ready';
+            } else {
+                inputStatus.className = 'status-dot';
+                inputStatusText.textContent = 'Ready for input';
+            }
+        }
+
+        function updateOutputStatus(hasContent) {
+            if (hasContent) {
+                const lines = composeOutput.textContent.split('\n').length;
+                outputLines.textContent = `${lines} lines`;
+                outputStatus.className = 'status-dot success';
+                outputStatusText.textContent = 'Conversion complete';
+            } else {
+                outputLines.textContent = '0 lines';
+                outputStatus.className = 'status-dot';
+                outputStatusText.textContent = 'Waiting for conversion';
+            }
+        }
+
+        // Show copy notification
+        function showCopyNotification() {
+            copyNotification.classList.add('show');
+            setTimeout(() => {
+                copyNotification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Convert XML to Compose with enhanced features
+        function convertXMLToCompose() {
+            const xmlContent = xmlInput.value.trim();
+            if (!xmlContent) {
+                showNotification('请先输入XML代码！', 'warning');
+                return;
+            }
+
+            // Show loading state
+            showLoadingState(true);
+            
+            try {
+                console.log('开始转换XML:', xmlContent.substring(0, 100) + '...');
+                const startTime = performance.now();
+                
+                // Parse XML and convert to Compose with enhanced logic
+                const result = parseXMLToComposeEnhanced(xmlContent);
+                const composeCode = result.code;
+                const imports = result.imports;
+                const warnings = result.warnings;
+                
+                const endTime = performance.now();
+                console.log(`转换完成，耗时: ${(endTime - startTime).toFixed(2)}ms`);
+                
+                // Display the generated code with imports
+                displayConversionResult(composeCode, imports, warnings);
+                
+                updateOutputStatus(true, `转换成功 (${(endTime - startTime).toFixed(0)}ms)`);
+                
+                // Show warnings if any
+                if (warnings.length > 0) {
+                    showWarnings(warnings);
+                }
+                
+            } catch (error) {
+                console.error('转换错误:', error);
+                showNotification(`转换失败: ${error.message}`, 'error');
+                updateOutputStatus(false, '转换失败');
+            } finally {
+                showLoadingState(false);
+            }
+        }
+
+        // Enhanced XML to Compose conversion with imports and warnings
+        function parseXMLToComposeEnhanced(xmlString) {
+            console.log('开始增强解析:', xmlString.substring(0, 100) + '...');
+            
+            const result = {
+                code: '',
+                imports: new Set(),
+                warnings: []
+            };
+            
+            try {
+                // Smart XML preprocessing
+                const cleanXml = preprocessXML(xmlString);
+                console.log('预处理完成:', cleanXml.substring(0, 100) + '...');
+                
+                // Try multiple parsing strategies
+                let xmlDoc;
+                let parseMethod = 'DOMParser';
+                
+                try {
+                    const parser = new DOMParser();
+                    xmlDoc = parser.parseFromString(cleanXml, 'text/xml');
+                    
+                    if (xmlDoc.getElementsByTagName('parsererror').length > 0) {
+                        throw new Error('DOMParser failed');
+                    }
+                } catch (domError) {
+                    console.log('DOMParser失败，尝试正则解析...');
+                    parseMethod = 'Regex';
+                    return parseWithRegexEnhanced(xmlString, result);
+                }
+
+                const rootElement = xmlDoc.documentElement;
+                if (!rootElement) {
+                    throw new Error('未找到根元素');
+                }
+                
+                console.log(`使用${parseMethod}成功解析根元素:`, rootElement.tagName);
+                
+                // Convert with context tracking
+                const conversionContext = {
+                    depth: 0,
+                    parentType: null,
+                    imports: result.imports,
+                    warnings: result.warnings
+                };
+                
+                result.code = convertElementToComposeEnhanced(rootElement, conversionContext);
+                
+                // Add essential imports
+                addEssentialImports(result.imports, result.code);
+                
+                return result;
+                
+            } catch (parseError) {
+                console.error('增强解析失败:', parseError);
+                result.warnings.push(`解析警告: ${parseError.message}`);
+                
+                // Ultimate fallback
+                console.log('使用终极备用解析器...');
+                return parseWithRegexEnhanced(xmlString, result);
+            }
+        }
+
+        // Smart XML preprocessing\n        function preprocessXML(xmlString) {\n            let processed = xmlString\n                // Remove XML declaration and namespace declarations that might cause issues\n                .replace(/<\\?xml[^>]*\\?>/g, '')\n                // Handle self-closing tags consistently\n                .replace(/<([^>]+)\\s*\\/>/g, '<$1></$1>')\n                // Clean up whitespace\n                .replace(/\\s+/g, ' ')\n                .trim();\n            \n            // Extract and normalize namespace prefixes\n            processed = processed.replace(/xmlns:[^=]*=\"[^\"]*\"/g, '');\n            processed = processed.replace(/\\s+/g, ' ');\n            \n            return processed;\n        }\n        \n        // Enhanced regex-based parsing\n        function parseWithRegexEnhanced(xmlString, result) {\n            console.log('\u4f7f\u7528\u589e\u5f3a\u6b63\u5219\u89e3\u6790\u5668...');\n            \n            const conversionContext = {\n                depth: 0,\n                parentType: null,\n                imports: result.imports,\n                warnings: result.warnings\n            };\n            \n            try {\n                const elements = extractElementsWithRegex(xmlString);\n                if (elements.length === 0) {\n                    throw new Error('\u672a\u627e\u5230\u6709\u6548\u7684XML\u5143\u7d20');\n                }\n                \n                result.code = convertElementsToCompose(elements, conversionContext);\n                addEssentialImports(result.imports, result.code);\n                \n                return result;\n            } catch (regexError) {\n                console.error('\u6b63\u5219\u89e3\u6790\u5931\u8d25:', regexError);\n                result.warnings.push(`\u6b63\u5219\u89e3\u6790\u8b66\u544a: ${regexError.message}`);\n                result.code = generateFallbackCompose(xmlString);\n                return result;\n            }\n        }\n        \n        // Extract XML elements using enhanced regex\n        function extractElementsWithRegex(xmlString) {\n            const elements = [];\n            const tagPattern = /<(\\/?[\\w\\.:-]+)([^>]*)>/g;\n            let match;\n            \n            while ((match = tagPattern.exec(xmlString)) !== null) {\n                const tagName = match[1];\n                const attributes = match[2];\n                \n                if (!tagName.startsWith('/')) {\n                    // Opening tag\n                    const element = {\n                        tagName: tagName,\n                        attributes: parseAttributesFromString(attributes),\n                        children: [],\n                        textContent: ''\n                    };\n                    elements.push(element);\n                }\n            }\n            \n            return elements;\n        }\n        \n        // Parse attributes from string\n        function parseAttributesFromString(attrString) {\n            const attributes = {};\n            const attrPattern = /([\\w:]+)\\s*=\\s*[\"']([^\"']*)[\"']/g;\n            let match;\n            \n            while ((match = attrPattern.exec(attrString)) !== null) {\n                attributes[match[1]] = match[2];\n            }\n            \n            return attributes;\n        }\n        \n        // Convert extracted elements to Compose\n        function convertElementsToCompose(elements, context) {\n            if (elements.length === 0) return '// No elements found';\n            \n            const rootElement = elements[0];\n            return convertSingleElementToCompose(rootElement, context);\n        }\n        \n        // Generate fallback Compose code\n        function generateFallbackCompose(xmlString) {\n            console.log('\u751f\u6210\u5907\u7528Compose\u4ee3\u7801...');\n            \n            // Try to identify basic structure\n            if (xmlString.includes('LinearLayout')) {\n                return `Column(\n    modifier = Modifier.fillMaxSize()\n) {\n    Text(\"\u7531\u4e8eXML\u590d\u6742\u6027\uff0c\u4ec5\u663e\u793a\u57fa\u672c\u7ed3\u6784\")\n    Text(\"\u8bf7\u624b\u52a8\u4f18\u5316\u4ee3\u7801\")\n}`;\n            } else if (xmlString.includes('ConstraintLayout')) {\n                return `Box(\n    modifier = Modifier.fillMaxSize()\n) {\n    Text(\"\u7531\u4e8eXML\u590d\u6742\u6027\uff0c\u4ec5\u663e\u793a\u57fa\u672c\u7ed3\u6784\")\n}`;\n            } else {\n                return `Column {\n    Text(\"\u65e0\u6cd5\u89e3\u6790\u7684XML\u7ed3\u6784\")\n    Text(\"\u8bf7\u68c0\u67e5XML\u683c\u5f0f\u662f\u5426\u6b63\u786e\")\n}`;\n            }\n        }\n        \n        // Add essential imports based on generated code\n        function addEssentialImports(imports, code) {\n            // Always add basic Compose imports\n            imports.add('androidx.compose.foundation.layout.*');\n            imports.add('androidx.compose.material3.*');\n            imports.add('androidx.compose.runtime.*');\n            imports.add('androidx.compose.ui.Modifier');\n            \n            // Add conditional imports based on code content\n            if (code.includes('LazyColumn') || code.includes('LazyRow')) {\n                imports.add('androidx.compose.foundation.lazy.*');\n            }\n            if (code.includes('Image')) {\n                imports.add('androidx.compose.foundation.Image');\n                imports.add('androidx.compose.ui.res.painterResource');\n            }\n            if (code.includes('Card')) {\n                imports.add('androidx.compose.material3.Card');\n                imports.add('androidx.compose.material3.CardDefaults');\n            }\n            if (code.includes('FloatingActionButton')) {\n                imports.add('androidx.compose.material3.FloatingActionButton');\n            }\n            if (code.includes('TabRow') || code.includes('Tab')) {\n                imports.add('androidx.compose.material3.TabRow');\n                imports.add('androidx.compose.material3.Tab');\n            }\n            if (code.includes('HorizontalPager')) {\n                imports.add('androidx.compose.foundation.pager.*');\n            }\n            if (code.includes('Color(')) {\n                imports.add('androidx.compose.ui.graphics.Color');\n            }\n            if (code.includes('.dp') || code.includes('.sp')) {\n                imports.add('androidx.compose.ui.unit.dp');\n                imports.add('androidx.compose.ui.unit.sp');\n            }\n        }\n        \n        // Fallback XML parsing for complex cases (legacy support)
+        function fallbackXMLParsing(xmlString) {
+            console.log('Using fallback parser for:', xmlString.substring(0, 100) + '...');
+            
+            // Simple regex-based parsing as fallback
+            const lines = xmlString.split('\n');
+            let composeCode = '';
+            let indentLevel = 0;
+            
+            for (let line of lines) {
+                line = line.trim();
+                if (!line) continue;
+                
+                // Check for opening tags
+                if (line.startsWith('<') && !line.startsWith('</') && !line.endsWith('/>')) {
+                    const tagMatch = line.match(/<(\w+)/);
+                    if (tagMatch) {
+                        const tagName = tagMatch[1];
+                        console.log('Fallback parsing tag:', tagName);
+                        
+                        switch (tagName) {
+                            case 'LinearLayout':
+                                composeCode += 'Column(\n';
+                                composeCode += '    modifier = Modifier.fillMaxSize()\n';
+                                composeCode += ') {\n';
+                                indentLevel++;
+                                break;
+                            case 'ConstraintLayout':
+                                composeCode += 'Box(\n';
+                                composeCode += '    modifier = Modifier.fillMaxSize()\n';
+                                composeCode += ') {\n';
+                                indentLevel++;
+                                break;
+                            case 'TextView':
+                                const textMatch = line.match(/android:text="([^"]+)"/);
+                                const text = textMatch ? textMatch[1] : 'Text';
+                                composeCode += '    '.repeat(indentLevel) + `Text("${text}")\n`;
+                                break;
+                            case 'EditText':
+                                const hintMatch = line.match(/android:hint="([^"]+)"/);
+                                const hint = hintMatch ? hintMatch[1] : 'Enter text';
+                                composeCode += '    '.repeat(indentLevel) + `OutlinedTextField(\n`;
+                                composeCode += '    '.repeat(indentLevel) + `    value = "",\n`;
+                                composeCode += '    '.repeat(indentLevel) + `    onValueChange = { },\n`;
+                                composeCode += '    '.repeat(indentLevel) + `    placeholder = { Text("${hint}") }\n`;
+                                composeCode += '    '.repeat(indentLevel) + `)\n`;
+                                break;
+                            case 'Button':
+                                const buttonTextMatch = line.match(/android:text="([^"]+)"/);
+                                const buttonText = buttonTextMatch ? buttonTextMatch[1] : 'Button';
+                                composeCode += '    '.repeat(indentLevel) + `Button(onClick = { }) {\n`;
+                                composeCode += '    '.repeat(indentLevel) + `    Text("${buttonText}")\n`;
+                                composeCode += '    '.repeat(indentLevel) + `}\n`;
+                                break;
+                            case 'RecyclerView':
+                                composeCode += '    '.repeat(indentLevel) + `LazyColumn(\n`;
+                                composeCode += '    '.repeat(indentLevel) + `    modifier = Modifier.fillMaxWidth()\n`;
+                                composeCode += '    '.repeat(indentLevel) + `) {\n`;
+                                composeCode += '    '.repeat(indentLevel) + `    items(10) { index ->\n`;
+                                composeCode += '    '.repeat(indentLevel) + `        Text("Item \${index + 1}")\n`;
+                                composeCode += '    '.repeat(indentLevel) + `    }\n`;
+                                composeCode += '    '.repeat(indentLevel) + `}\n`;
+                                break;
+                            case 'CardView':
+                                composeCode += '    '.repeat(indentLevel) + `Card(\n`;
+                                composeCode += '    '.repeat(indentLevel) + `    modifier = Modifier.fillMaxWidth()\n`;
+                                composeCode += '    '.repeat(indentLevel) + `) {\n`;
+                                indentLevel++;
+                                break;
+                            default:
+                                composeCode += '    '.repeat(indentLevel) + `// ${tagName} component\n`;
+                                composeCode += '    '.repeat(indentLevel) + `Text("${tagName} Content")\n`;
+                        }
+                    }
+                }
+                
+                // Check for closing tags
+                if (line.startsWith('</')) {
+                    const tagMatch = line.match(/<\/(\w+)/);
+                    if (tagMatch) {
+                        const tagName = tagMatch[1];
+                        if (['LinearLayout', 'ConstraintLayout', 'CardView'].includes(tagName)) {
+                            indentLevel = Math.max(0, indentLevel - 1);
+                            composeCode += '    '.repeat(indentLevel) + '}\n';
+                        }
+                    }
+                }
+            }
+            
+            console.log('Fallback parsing result:', composeCode);
+            return composeCode || '// Failed to parse XML. Please check the format.';
+        }
+
+        // Enhanced element conversion with context\n        function convertElementToComposeEnhanced(element, context) {\n            if (!element) {\n                console.warn('Element is null or undefined');\n                return '';\n            }\n            \n            let tagName = element.tagName;\n            const attributes = element.attributes || {};\n            const children = Array.from(element.children || []);\n            \n            // 处理命名空间标签\n            const originalTagName = tagName;\n            if (tagName.includes('.')) {\n                const parts = tagName.split('.');\n                tagName = parts[parts.length - 1]; // 取最后一部分\n                context.warnings.push(`检测到命名空间标签: ${originalTagName} -> ${tagName}`);\n            }\n            \n            console.log(`[深度${context.depth}] 转换元素:`, originalTagName, '->', tagName, 'with', children.length, 'children');\n            \n            // Create child context\n            const childContext = {\n                ...context,\n                depth: context.depth + 1,\n                parentType: tagName\n            };\n            \n            // Enhanced conversion with context awareness\n            let result = '';\n            switch (tagName) {\n                case 'LinearLayout':\n                    result = convertLinearLayoutEnhanced(element, children, childContext);\n                    break;\n                case 'ConstraintLayout':\n                    result = convertConstraintLayoutEnhanced(element, children, childContext);\n                    break;\n                case 'CoordinatorLayout':\n                    result = convertCoordinatorLayoutEnhanced(element, children, childContext);\n                    break;\n                case 'TextView':\n                    result = convertTextViewEnhanced(element, childContext);\n                    break;\n                case 'EditText':\n                    result = convertEditTextEnhanced(element, childContext);\n                    break;\n                case 'Button':\n                    result = convertButtonEnhanced(element, childContext);\n                    break;\n                case 'ImageView':\n                    result = convertImageViewEnhanced(element, childContext);\n                    break;\n                case 'RecyclerView':\n                    result = convertRecyclerViewEnhanced(element, childContext);\n                    break;\n                case 'CardView':\n                    result = convertCardViewEnhanced(element, children, childContext);\n                    break;\n                case 'TabLayout':\n                    result = convertTabLayoutEnhanced(element, childContext);\n                    break;\n                case 'ViewPager2':\n                    result = convertViewPager2Enhanced(element, childContext);\n                    break;\n                case 'FloatingActionButton':\n                    result = convertFloatingActionButtonEnhanced(element, childContext);\n                    break;\n                case 'NestedScrollView':\n                case 'ScrollView':\n                    result = convertScrollViewEnhanced(element, children, childContext);\n                    break;\n                case 'FragmentContainerView':\n                    result = convertFragmentContainerViewEnhanced(element, childContext);\n                    break;\n                default:\n                    console.log('未知标签:', tagName, '使用通用转换器');\n                    result = convertGenericElementEnhanced(element, children, childContext);\n                    context.warnings.push(`未识别的组件类型: ${tagName}，使用通用转换`);\n            }\n            \n            return result;\n        }\n        \n        // Convert single element (for regex parsing)\n        function convertSingleElementToCompose(element, context) {\n            const mockElement = {\n                tagName: element.tagName,\n                attributes: element.attributes,\n                children: element.children || [],\n                getAttribute: function(name) {\n                    return this.attributes[name] || null;\n                }\n            };\n            \n            return convertElementToComposeEnhanced(mockElement, context);\n        }\n        \n        // Legacy conversion function (for compatibility)\n        function convertElementToCompose(element) {
+            if (!element) {
+                console.warn('Element is null or undefined');
+                return '';
+            }
+            
+            let tagName = element.tagName;
+            const attributes = element.attributes;
+            const children = Array.from(element.children);
+            
+            // 处理命名空间标签
+            if (tagName.includes('.')) {
+                const parts = tagName.split('.');
+                tagName = parts[parts.length - 1]; // 取最后一部分
+            }
+            
+            console.log('Converting element:', element.tagName, '->', tagName, 'with', children.length, 'children');
+            
+            // Handle different XML elements
+            switch (tagName) {
+                case 'LinearLayout':
+                    return convertLinearLayout(element, children);
+                case 'ConstraintLayout':
+                    return convertConstraintLayout(element, children);
+                case 'CoordinatorLayout':
+                    return convertCoordinatorLayout(element, children);
+                case 'TextView':
+                    return convertTextView(element);
+                case 'EditText':
+                    return convertEditText(element);
+                case 'Button':
+                    return convertButton(element);
+                case 'ImageView':
+                    return convertImageView(element);
+                case 'RecyclerView':
+                    return convertRecyclerView(element);
+                case 'CardView':
+                    return convertCardView(element, children);
+                case 'TabLayout':
+                    return convertTabLayout(element);
+                case 'ViewPager2':
+                    return convertViewPager2(element);
+                case 'FloatingActionButton':
+                    return convertFloatingActionButton(element);
+                case 'NestedScrollView':
+                case 'ScrollView':
+                    return convertNestedScrollView(element, children);
+                case 'FragmentContainerView':
+                    return convertFragmentContainerView(element);
+                default:
+                    console.log('Unknown tag:', tagName, 'using generic converter');
+                    return convertGenericElement(element, children);
+            }
+        }
+
+        function convertLinearLayout(element, children) {
+            const orientation = element.getAttribute('android:orientation') || 'vertical';
+            const padding = element.getAttribute('android:padding') || '0dp';
+            const background = element.getAttribute('android:background');
+            
+            let composeCode = `Column(\n`;
+            if (orientation === 'horizontal') {
+                composeCode = `Row(\n`;
+            }
+            
+            composeCode += `    modifier = Modifier\n`;
+            composeCode += `        .fillMaxSize()\n`;
+            
+            if (padding !== '0dp') {
+                const paddingValue = convertDpToCompose(padding);
+                composeCode += `        .padding(${paddingValue})\n`;
+            }
+            
+            if (background && background !== '@null') {
+                if (background.startsWith('#')) {
+                    composeCode += `        .background(Color(0xFF${background.substring(1)}))\n`;
+                } else {
+                    composeCode += `        .background(Color.${background})\n`;
+                }
+            }
+            
+            composeCode += `) {\n`;
+            
+            // Convert children
+            children.forEach(child => {
+                const childCode = convertElementToCompose(child);
+                if (childCode) {
+                    composeCode += `    ${childCode}\n`;
+                }
+            });
+            
+            composeCode += `}`;
+            return composeCode;
+        }
+
+        function convertConstraintLayout(element, children) {
+            let composeCode = `Box(\n`;
+            composeCode += `    modifier = Modifier\n`;
+            composeCode += `        .fillMaxSize()\n`;
+            
+            const background = element.getAttribute('android:background');
+            if (background && background !== '@null') {
+                if (background.startsWith('#')) {
+                    composeCode += `        .background(Color(0xFF${background.substring(1)}))\n`;
+                } else {
+                    composeCode += `        .background(Color.${background})\n`;
+                }
+            }
+            
+            composeCode += `) {\n`;
+            
+            // Convert children with positioning
+            children.forEach((child, index) => {
+                const childCode = convertElementToCompose(child);
+                if (childCode) {
+                    composeCode += `    ${childCode}\n`;
+                }
+            });
+            
+            composeCode += `}`;
+            return composeCode;
+        }
+
+        function convertTextView(element) {
+            const text = element.getAttribute('android:text') || '';
+            const textSize = element.getAttribute('android:textSize') || '16sp';
+            const textColor = element.getAttribute('android:textColor') || '#000000';
+            const layoutWidth = element.getAttribute('android:layout_width') || 'wrap_content';
+            const layoutHeight = element.getAttribute('android:layout_height') || 'wrap_content';
+            const marginBottom = element.getAttribute('android:layout_marginBottom');
+            
+            let composeCode = `Text(\n`;
+            composeCode += `    text = "${text}",\n`;
+            
+            if (textSize !== '16sp') {
+                const sizeValue = convertSpToCompose(textSize);
+                composeCode += `    fontSize = ${sizeValue},\n`;
+            }
+            
+            if (textColor !== '#000000') {
+                if (textColor.startsWith('#')) {
+                    composeCode += `    color = Color(0xFF${textColor.substring(1)}),\n`;
+                } else {
+                    composeCode += `    color = Color.${textColor},\n`;
+                }
+            }
+            
+            composeCode += `    modifier = Modifier`;
+            
+            if (layoutWidth === 'match_parent') {
+                composeCode += `\n        .fillMaxWidth()`;
+            }
+            
+            if (layoutHeight === 'match_parent') {
+                composeCode += `\n        .fillMaxHeight()`;
+            }
+            
+            if (marginBottom) {
+                const marginValue = convertDpToCompose(marginBottom);
+                composeCode += `\n        .padding(bottom = ${marginValue})`;
+            }
+            
+            composeCode += `\n    )\n`;
+            composeCode += `)`;
+            
+            return composeCode;
+        }
+
+        function convertEditText(element) {
+            const hint = element.getAttribute('android:hint') || '';
+            const layoutWidth = element.getAttribute('android:layout_width') || 'wrap_content';
+            const layoutHeight = element.getAttribute('android:layout_height') || 'wrap_content';
+            const marginBottom = element.getAttribute('android:layout_marginBottom');
+            
+            let composeCode = `OutlinedTextField(\n`;
+            composeCode += `    value = "",\n`;
+            composeCode += `    onValueChange = { },\n`;
+            
+            if (hint) {
+                composeCode += `    placeholder = { Text("${hint}") },\n`;
+            }
+            
+            composeCode += `    modifier = Modifier`;
+            
+            if (layoutWidth === 'match_parent') {
+                composeCode += `\n        .fillMaxWidth()`;
+            }
+            
+            if (layoutHeight === 'match_parent') {
+                composeCode += `\n        .fillMaxHeight()`;
+            }
+            
+            if (marginBottom) {
+                const marginValue = convertDpToCompose(marginBottom);
+                composeCode += `\n        .padding(bottom = ${marginValue})`;
+            }
+            
+            composeCode += `\n    )\n`;
+            composeCode += `)`;
+            
+            return composeCode;
+        }
+
+        function convertButton(element) {
+            const text = element.getAttribute('android:text') || '';
+            const background = element.getAttribute('android:background') || '#007AFF';
+            const layoutWidth = element.getAttribute('android:layout_width') || 'wrap_content';
+            const layoutHeight = element.getAttribute('android:layout_height') || 'wrap_content';
+            
+            let composeCode = `Button(\n`;
+            composeCode += `    onClick = { },\n`;
+            
+            if (background && background !== '@null') {
+                if (background.startsWith('#')) {
+                    composeCode += `    colors = ButtonDefaults.buttonColors(\n`;
+                    composeCode += `        backgroundColor = Color(0xFF${background.substring(1)})\n`;
+                    composeCode += `    ),\n`;
+                }
+            }
+            
+            composeCode += `    modifier = Modifier`;
+            
+            if (layoutWidth === 'match_parent') {
+                composeCode += `\n        .fillMaxWidth()`;
+            }
+            
+            if (layoutHeight === 'match_parent') {
+                composeCode += `\n        .fillMaxHeight()`;
+            }
+            
+            composeCode += `\n    )\n`;
+            composeCode += `) {\n`;
+            composeCode += `    Text("${text}")\n`;
+            composeCode += `}`;
+            
+            return composeCode;
+        }
+
+        function convertImageView(element) {
+            const src = element.getAttribute('android:src') || '';
+            const layoutWidth = element.getAttribute('android:layout_width') || 'wrap_content';
+            const layoutHeight = element.getAttribute('android:layout_height') || 'wrap_content';
+            const scaleType = element.getAttribute('android:scaleType') || 'centerCrop';
+            
+            let composeCode = `Image(\n`;
+            composeCode += `    painter = painterResource(id = ${src}),\n`;
+            composeCode += `    contentDescription = null,\n`;
+            composeCode += `    contentScale = ContentScale.${scaleType.charAt(0).toUpperCase() + scaleType.slice(1)},\n`;
+            composeCode += `    modifier = Modifier`;
+            
+            if (layoutWidth !== 'wrap_content') {
+                const widthValue = convertDpToCompose(layoutWidth);
+                composeCode += `\n        .width(${widthValue})`;
+            }
+            
+            if (layoutHeight !== 'wrap_content') {
+                const heightValue = convertDpToCompose(layoutHeight);
+                composeCode += `\n        .height(${heightValue})`;
+            }
+            
+            composeCode += `\n    )\n`;
+            composeCode += `)`;
+            
+            return composeCode;
+        }
+
+        function convertRecyclerView(element) {
+            const id = element.getAttribute('android:id') || '';
+            const layoutWidth = element.getAttribute('android:layout_width') || 'match_parent';
+            const layoutHeight = element.getAttribute('android:layout_height') || 'wrap_content';
+            
+            let composeCode = `LazyColumn(\n`;
+            composeCode += `    modifier = Modifier`;
+            
+            if (layoutWidth === 'match_parent') {
+                composeCode += `\n        .fillMaxWidth()`;
+            }
+            
+            if (layoutHeight === 'match_parent') {
+                composeCode += `\n        .fillMaxHeight()`;
+            }
+            
+            composeCode += `\n    ) {\n`;
+            composeCode += `    items(10) { index ->\n`;
+            composeCode += `        Text("Item \${index + 1}")\n`;
+            composeCode += `    }\n`;
+            composeCode += `}`;
+            
+            return composeCode;
+        }
+
+        function convertCardView(element, children) {
+            const cornerRadius = element.getAttribute('app:cardCornerRadius') || '8dp';
+            const elevation = element.getAttribute('app:cardElevation') || '2dp';
+            
+            let composeCode = `Card(\n`;
+            composeCode += `    modifier = Modifier.fillMaxWidth(),\n`;
+            composeCode += `    elevation = CardDefaults.cardElevation(\n`;
+            composeCode += `        defaultElevation = ${convertDpToCompose(elevation)}\n`;
+            composeCode += `    ),\n`;
+            composeCode += `    shape = RoundedCornerShape(${convertDpToCompose(cornerRadius)})\n`;
+            composeCode += `) {\n`;
+            
+            // Convert children
+            children.forEach(child => {
+                const childCode = convertElementToCompose(child);
+                if (childCode) {
+                    composeCode += `    ${childCode}\n`;
+                }
+            });
+            
+            composeCode += `}`;
+            return composeCode;
+        }
+
+        function convertTabLayout(element) {
+            return `TabRow(\n    selectedTabIndex = 0\n) {\n    Tab(\n        selected = true,\n        onClick = { }\n    ) {\n        Text("Tab 1")\n    }\n    Tab(\n        selected = false,\n        onClick = { }\n    ) {\n        Text("Tab 2")\n    }\n}`;
+        }
+
+        function convertViewPager2(element) {
+            return `HorizontalPager(\n    pageCount = 3\n) { page ->\n    Text("Page \${page + 1}")\n}`;
+        }
+
+        function convertFloatingActionButton(element) {
+            const src = element.getAttribute('android:src') || '';
+            const backgroundTint = element.getAttribute('app:backgroundTint') || '#007AFF';
+            
+            let composeCode = `FloatingActionButton(\n`;
+            composeCode += `    onClick = { },\n`;
+            composeCode += `    containerColor = Color(0xFF${backgroundTint.substring(1)})\n`;
+            composeCode += `) {\n`;
+            composeCode += `    Icon(\n`;
+            composeCode += `        painter = painterResource(id = ${src}),\n`;
+            composeCode += `        contentDescription = null,\n`;
+            composeCode += `        tint = Color.White\n`;
+            composeCode += `    )\n`;
+            composeCode += `}`;
+            
+            return composeCode;
+        }
+
+        function convertNestedScrollView(element, children) {
+            let composeCode = `LazyColumn(\n`;
+            composeCode += `    modifier = Modifier.fillMaxSize()\n`;
+            composeCode += `) {\n`;
+            
+            // Convert children
+            children.forEach(child => {
+                const childCode = convertElementToCompose(child);
+                if (childCode) {
+                    composeCode += `    item {\n`;
+                    composeCode += `        ${childCode}\n`;
+                    composeCode += `    }\n`;
+                }
+            });
+            
+            composeCode += `}`;
+            return composeCode;
+        }
+
+        function convertCoordinatorLayout(element, children) {
+            let composeCode = `Box(\n`;
+            composeCode += `    modifier = Modifier.fillMaxSize()\n`;
+            composeCode += `) {\n`;
+            
+            // Convert children
+            children.forEach(child => {
+                const childCode = convertElementToCompose(child);
+                if (childCode) {
+                    composeCode += `    ${childCode}\n`;
+                }
+            });
+            
+            composeCode += `}`;
+            return composeCode;
+        }
+
+        function convertFragmentContainerView(element) {
+            return `// Fragment container - implement your fragment logic here\nText("Fragment Content")`;
+        }
+
+        function convertGenericElement(element, children) {
+            const tagName = element.tagName;
+            let composeCode = `// ${tagName} - Custom component\n`;
+            composeCode += `Text("${tagName} Content")`;
+            
+            if (children.length > 0) {
+                composeCode += ` {\n`;
+                children.forEach(child => {
+                    const childCode = convertElementToCompose(child);
+                    if (childCode) {
+                        composeCode += `    ${childCode}\n`;
+                    }
+                });
+                composeCode += `}`;
+            }
+            
+            return composeCode;
+        }
+
+        // Utility functions
+        function convertDpToCompose(dpValue) {
+            if (typeof dpValue === 'string' && dpValue.endsWith('dp')) {
+                const numericValue = dpValue.replace('dp', '');
+                return `${numericValue}.dp`;
+            }
+            return dpValue;
+        }
+
+        function convertSpToCompose(spValue) {
+            if (typeof spValue === 'string' && spValue.endsWith('sp')) {
+                const numericValue = spValue.replace('sp', '');
+                return `${numericValue}.sp`;
+            }
+            return spValue;
+        }
+
+        // Language switcher
+        function switchLang(lang) {
+            const buttons = document.querySelectorAll('.lang-switch button');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // In a real app, this would switch the language
+            console.log('Language switched to:', lang);
+        }
+
+        // Event listeners
+        convertBtn.addEventListener('click', convertXMLToCompose);
+        copyBtn.addEventListener('click', copyToClipboard);
+        loadSampleBtn.addEventListener('click', loadSample);
+        clearInputBtn.addEventListener('click', clearInput);
+        downloadBtn.addEventListener('click', downloadCode);
+        xmlInput.addEventListener('input', updateInputStatus);
+
+        // Initialize
+        updateInputStatus();
+        updateOutputStatus(false);
+    </script>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 xml2compose.dev. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>测试转换器</title>
+</head>
+<body>
+    <h1>XML到Compose转换器测试</h1>
+    
+    <div>
+        <h3>输入XML:</h3>
+        <textarea id="xmlInput" rows="10" cols="80">
+<LinearLayout 
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="#FFFFFF">
+    
+    <TextView 
+        android:text="Hello World"
+        android:textSize="24sp"
+        android:textColor="#333333"/>
+        
+    <EditText 
+        android:hint="Enter your name"/>
+        
+    <Button 
+        android:text="Click Me"/>
+        
+</LinearLayout>
+        </textarea>
+    </div>
+    
+    <div>
+        <button onclick="testConvert()">转换</button>
+    </div>
+    
+    <div>
+        <h3>输出Compose:</h3>
+        <pre id="output" style="background: #f5f5f5; padding: 10px; border: 1px solid #ccc;"></pre>
+    </div>
+    
+    <script>
+        function testConvert() {
+            const xmlContent = document.getElementById('xmlInput').value;
+            const output = document.getElementById('output');
+            
+            try {
+                // 简单的测试转换
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(xmlContent, 'text/xml');
+                
+                if (xmlDoc.getElementsByTagName('parsererror').length > 0) {
+                    output.textContent = '❌ XML解析错误';
+                    return;
+                }
+                
+                const rootElement = xmlDoc.documentElement;
+                if (!rootElement) {
+                    output.textContent = '❌ 未找到根元素';
+                    return;
+                }
+                
+                // 基本转换逻辑
+                let result = convertElement(rootElement);
+                
+                // 添加导入语句
+                const imports = [
+                    'import androidx.compose.foundation.layout.*',
+                    'import androidx.compose.material3.*',
+                    'import androidx.compose.runtime.*',
+                    'import androidx.compose.ui.Modifier',
+                    'import androidx.compose.ui.graphics.Color',
+                    'import androidx.compose.ui.unit.dp',
+                    'import androidx.compose.ui.unit.sp'
+                ];
+                
+                const fullCode = imports.join('\n') + '\n\n@Composable\nfun MyComposable() {\n    ' + result.replace(/\n/g, '\n    ') + '\n}';
+                
+                output.textContent = fullCode;
+                
+            } catch (error) {
+                output.textContent = '❌ 转换错误: ' + error.message;
+            }
+        }
+        
+        function convertElement(element) {
+            const tagName = element.tagName;
+            const children = Array.from(element.children);
+            
+            switch (tagName) {
+                case 'LinearLayout':
+                    const orientation = element.getAttribute('android:orientation') || 'vertical';
+                    const composable = orientation === 'horizontal' ? 'Row' : 'Column';
+                    const padding = element.getAttribute('android:padding');
+                    const background = element.getAttribute('android:background');
+                    
+                    let code = `${composable}(\n    modifier = Modifier.fillMaxSize()`;
+                    
+                    if (padding && padding !== '0dp') {
+                        const paddingValue = padding.replace('dp', '.dp');
+                        code += `\n        .padding(${paddingValue})`;
+                    }
+                    
+                    if (background && background.startsWith('#')) {
+                        const hexColor = background.substring(1);
+                        code += `\n        .background(Color(0xFF${hexColor}))`;
+                    }
+                    
+                    code += '\n) {\n';
+                    
+                    children.forEach(child => {
+                        const childCode = convertElement(child);
+                        if (childCode) {
+                            code += '    ' + childCode.replace(/\n/g, '\n    ') + '\n\n';
+                        }
+                    });
+                    
+                    code += '}';
+                    return code;
+                    
+                case 'TextView':
+                    const text = element.getAttribute('android:text') || '';
+                    const textSize = element.getAttribute('android:textSize');
+                    const textColor = element.getAttribute('android:textColor');
+                    
+                    let textCode = `Text(\n    text = "${text}"`;
+                    
+                    if (textSize && textSize !== '16sp') {
+                        const sizeValue = textSize.replace('sp', '.sp');
+                        textCode += `,\n    fontSize = ${sizeValue}`;
+                    }
+                    
+                    if (textColor && textColor.startsWith('#')) {
+                        const hexColor = textColor.substring(1);
+                        textCode += `,\n    color = Color(0xFF${hexColor})`;
+                    }
+                    
+                    textCode += '\n)';
+                    return textCode;
+                    
+                case 'EditText':
+                    const hint = element.getAttribute('android:hint') || '';
+                    return `OutlinedTextField(\n    value = "",\n    onValueChange = { },\n    placeholder = { Text("${hint}") }\n)`;
+                    
+                case 'Button':
+                    const buttonText = element.getAttribute('android:text') || '';
+                    return `Button(onClick = { }) {\n    Text("${buttonText}")\n}`;
+                    
+                default:
+                    return `// 未识别的组件: ${tagName}\nText("${tagName} Content")`;
+            }
+        }
+    </script>
+</body>
+</html>
