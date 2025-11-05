@@ -1,0 +1,26 @@
+{
+  "name": "xml2compose",
+  "version": "1.0.0",
+  "description": "一个现代化的工具，帮助开发者将Android XML布局文件转换为Jetpack Compose代码。",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "keywords": [],
+  "author": "xml2compose.dev Team",
+  "license": "MIT",
+  "dependencies": {
+    "@types/node": "^24.10.0",
+    "@types/react": "^19.2.2",
+    "next": "^14.2.33",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "typescript": "^5.9.3"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "eslint-config-next": "^14.2.33"
+  }
+}

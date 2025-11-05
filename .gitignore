@@ -42,3 +42,8 @@ analytics-dashboard.html
 plugin-ecosystem.html
 mobile-app.html
 PHASE_4_PLAN.md
+
+# 构建与依赖
+.next/
+node_modules/
+.npm-cache/
