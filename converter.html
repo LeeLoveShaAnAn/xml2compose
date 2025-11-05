@@ -14,8 +14,8 @@
       crossorigin="anonymous"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XML to Jetpack Compose Converter | xml2compose.dev</title>
-    <meta name="description" content="Convert Android XML layouts to Jetpack Compose code instantly. Real-time conversion with syntax highlighting and copy functionality.">
+    <title data-i18n="converter.title">XML to Jetpack Compose Converter | xml2compose.dev</title>
+    <meta name="description" content="Convert Android XML layouts to Jetpack Compose code instantly. Real-time conversion with syntax highlighting and copy functionality." data-i18n-content="converter.description">
     <link rel="canonical" href="https://xml2compose.dev/converter.html">
     <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -393,26 +393,45 @@
                 </ul>
             </nav>
             <div class="lang-switch">
-                <button onclick="switchLang('en')" class="active">EN</button>
-                <button onclick="switchLang('zh')">中文</button>
+                <button class="active">EN</button>
+                <button>中文</button>
             </div>
         </div>
     </header>
 
     <section class="converter-hero">
         <div class="container">
-            <h1>XML to Jetpack Compose Converter</h1>
-            <p>Transform your Android XML layouts into modern Jetpack Compose code instantly. Simply paste your XML and get clean, readable Compose code.</p>
+            <h1 data-i18n="converter.title">XML to Jetpack Compose Converter</h1>
+            <p data-i18n="converter.description">Transform your Android XML layouts into modern Jetpack Compose code instantly. Simply paste your XML and get clean, readable Compose code.</p>
             <button class="convert-button" id="convert-btn">
                 <svg class="panel-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
                 </svg>
-                Convert Now
+                <span data-i18n="button.convert">Convert Now</span>
             </button>
         </div>
     </section>
 
     <main class="converter-main">
+        <!-- History Sidebar -->
+        <div class="history-sidebar" id="history-sidebar">
+            <div class="history-header">
+                <h3 data-i18n="history.title">Conversion History</h3>
+                <button class="history-close" id="history-close-btn">×</button>
+            </div>
+            <div class="history-list" id="history-list">
+                <div class="history-empty" data-i18n="history.empty">No history yet</div>
+            </div>
+            <div class="history-actions">
+                <button class="action-button" id="history-clear-btn" data-i18n="history.clear">Clear All</button>
+            </div>
+        </div>
+        <button class="history-toggle" id="history-toggle-btn" title="Show History">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="20" height="20">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+        </button>
+        
         <div class="converter-grid">
             <!-- XML Input Panel -->
             <div class="editor-panel">
@@ -421,11 +440,11 @@
                         <svg class="panel-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
                         </svg>
-                        Android XML
+                        <span data-i18n="converter.xmlLabel">Android XML</span>
                     </h2>
                     <div class="panel-actions">
-                        <button class="action-button" id="load-sample-btn">Load Sample</button>
-                        <button class="action-button" id="clear-input-btn">Clear</button>
+                        <button class="action-button" id="load-sample-btn" data-i18n="button.loadSample">Load Sample</button>
+                        <button class="action-button" id="clear-input-btn" data-i18n="button.clear">Clear</button>
                     </div>
                 </div>
                 <div class="code-editor">
@@ -456,7 +475,7 @@ For example:
                 <div class="status-bar">
                     <div class="status-indicator">
                         <div class="status-dot" id="input-status"></div>
-                        <span id="input-status-text">Ready for input</span>
+                        <span id="input-status-text" data-i18n="status.ready">Ready for input</span>
                     </div>
                     <span id="input-lines">0 lines</span>
                 </div>
@@ -469,11 +488,17 @@ For example:
                         <svg class="panel-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                         </svg>
-                        Jetpack Compose
+                        <span data-i18n="converter.composeLabel">Jetpack Compose</span>
                     </h2>
                     <div class="panel-actions">
-                        <button class="action-button primary" id="copy-btn">Copy Code</button>
-                        <button class="action-button" id="download-btn">Download</button>
+                        <button class="action-button" id="compare-btn" title="Compare codes">
+                            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+                            </svg>
+                            Compare
+                        </button>
+                        <button class="action-button primary" id="copy-btn" data-i18n="button.copy">Copy Code</button>
+                        <button class="action-button" id="download-btn" data-i18n="button.download">Download</button>
                     </div>
                 </div>
                 <div class="code-editor">
@@ -481,15 +506,15 @@ For example:
                         <svg class="empty-state-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                         </svg>
-                        <div class="empty-state-text">Your Compose code will appear here</div>
-                        <div class="empty-state-hint">Click "Convert Now" to transform your XML</div>
+                        <div class="empty-state-text" data-i18n="converter.emptyState">Your Compose code will appear here</div>
+                        <div class="empty-state-hint" data-i18n="converter.emptyHint">Click "Convert Now" to transform your XML</div>
                     </div>
                     <pre class="code-output" id="compose-output" style="display: none;"></pre>
                 </div>
                 <div class="status-bar">
                     <div class="status-indicator">
                         <div class="status-dot" id="output-status"></div>
-                        <span id="output-status-text">Waiting for conversion</span>
+                        <span id="output-status-text" data-i18n="status.waiting">Waiting for conversion</span>
                     </div>
                     <span id="output-lines">0 lines</span>
                 </div>
@@ -530,216 +555,10 @@ For example:
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/xml.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/kotlin.min.js"></script>
-    <script>
-        // Sample XML and Compose code
-        const sampleXML = `<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp"
-    android:background="#FFFFFF">
     
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Welcome to Jetpack Compose!"
-        android:textSize="24sp"
-        android:textColor="#000000"
-        android:layout_marginBottom="16dp" />
+    <!-- Load ES6 Modules -->
+    <script type="module" src="js/main.js"></script>
     
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Enter your name"
-        android:layout_marginBottom="16dp" />
-    
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Click Me"
-        android:background="#007AFF" />
-        
-</LinearLayout>`;
-
-        const sampleCompose = `Column(
-    modifier = Modifier
-        .fillMaxSize()
-        .padding(16.dp)
-        .background(Color.White)
-) {
-    Text(
-        text = "Welcome to Jetpack Compose!",
-        fontSize = 24.sp,
-        color = Color.Black,
-        modifier = Modifier.padding(bottom = 16.dp)
-    )
-    
-    OutlinedTextField(
-        value = "",
-        onValueChange = { },
-        placeholder = { Text("Enter your name") },
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(bottom = 16.dp)
-    )
-    
-    Button(
-        onClick = { },
-        colors = ButtonDefaults.buttonColors(
-            backgroundColor = Color(0xFF007AFF)
-        ),
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Text("Click Me")
-    }
-}`;
-
-        // DOM elements
-        const xmlInput = document.getElementById('xml-input');
-        const composeOutput = document.getElementById('compose-output');
-        const emptyState = document.getElementById('empty-state');
-        const convertBtn = document.getElementById('convert-btn');
-        const copyBtn = document.getElementById('copy-btn');
-        const loadSampleBtn = document.getElementById('load-sample-btn');
-        const clearInputBtn = document.getElementById('clear-input-btn');
-        const downloadBtn = document.getElementById('download-btn');
-        const copyNotification = document.getElementById('copy-notification');
-        const inputStatus = document.getElementById('input-status');
-        const inputStatusText = document.getElementById('input-status-text');
-        const outputStatus = document.getElementById('output-status');
-        const outputStatusText = document.getElementById('output-status-text');
-        const inputLines = document.getElementById('input-lines');
-        const outputLines = document.getElementById('output-lines');
-
-        // Update status indicators
-        function updateInputStatus() {
-            const lines = xmlInput.value.split('\n').length;
-            inputLines.textContent = `${lines} lines`;
-            
-            if (xmlInput.value.trim()) {
-                inputStatus.className = 'status-dot success';
-                inputStatusText.textContent = 'XML ready';
-            } else {
-                inputStatus.className = 'status-dot';
-                inputStatusText.textContent = 'Ready for input';
-            }
-        }
-
-        function updateOutputStatus(hasContent) {
-            if (hasContent) {
-                const lines = composeOutput.textContent.split('\n').length;
-                outputLines.textContent = `${lines} lines`;
-                outputStatus.className = 'status-dot success';
-                outputStatusText.textContent = 'Conversion complete';
-            } else {
-                outputLines.textContent = '0 lines';
-                outputStatus.className = 'status-dot';
-                outputStatusText.textContent = 'Waiting for conversion';
-            }
-        }
-
-        // Show copy notification
-        function showCopyNotification() {
-            copyNotification.classList.add('show');
-            setTimeout(() => {
-                copyNotification.classList.remove('show');
-            }, 3000);
-        }
-
-        // Convert XML to Compose
-        function convertXMLToCompose() {
-            const xmlContent = xmlInput.value.trim();
-            if (!xmlContent) {
-                alert('Please enter some XML code first!');
-                return;
-            }
-
-            // Simple conversion logic (in real app, this would be more sophisticated)
-            composeOutput.textContent = sampleCompose;
-            emptyState.style.display = 'none';
-            composeOutput.style.display = 'block';
-            
-            // Highlight code
-            hljs.highlightElement(composeOutput);
-            
-            updateOutputStatus(true);
-        }
-
-        // Copy code to clipboard
-        async function copyToClipboard() {
-            const code = composeOutput.textContent;
-            if (!code.trim()) {
-                alert('No code to copy!');
-                return;
-            }
-
-            try {
-                await navigator.clipboard.writeText(code);
-                showCopyNotification();
-            } catch (err) {
-                console.error('Failed to copy code:', err);
-                alert('Failed to copy code to clipboard');
-            }
-        }
-
-        // Load sample XML
-        function loadSample() {
-            xmlInput.value = sampleXML;
-            updateInputStatus();
-        }
-
-        // Clear input
-        function clearInput() {
-            xmlInput.value = '';
-            composeOutput.textContent = '';
-            emptyState.style.display = 'flex';
-            composeOutput.style.display = 'none';
-            updateInputStatus();
-            updateOutputStatus(false);
-        }
-
-        // Download code
-        function downloadCode() {
-            const code = composeOutput.textContent;
-            if (!code.trim()) {
-                alert('No code to download!');
-                return;
-            }
-
-            const blob = new Blob([code], { type: 'text/plain' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'compose_code.kt';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        }
-
-        // Language switcher
-        function switchLang(lang) {
-            const buttons = document.querySelectorAll('.lang-switch button');
-            buttons.forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
-            
-            // In a real app, this would switch the language
-            console.log('Language switched to:', lang);
-        }
-
-        // Event listeners
-        convertBtn.addEventListener('click', convertXMLToCompose);
-        copyBtn.addEventListener('click', copyToClipboard);
-        loadSampleBtn.addEventListener('click', loadSample);
-        clearInputBtn.addEventListener('click', clearInput);
-        downloadBtn.addEventListener('click', downloadCode);
-        xmlInput.addEventListener('input', updateInputStatus);
-
-        // Initialize
-        updateInputStatus();
-        updateOutputStatus(false);
-    </script>
 
     <footer>
         <div class="container">

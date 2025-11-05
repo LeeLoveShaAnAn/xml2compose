@@ -194,3 +194,35 @@ xml2compose/
 ---
 
 **xml2compose.dev** - 让Android UI开发更简单、更现代！
+## Web3Forms Configuration
+
+### Quick Setup
+
+1. **Get Access Key**:
+   - Visit [web3forms.com](https://web3forms.com/)
+   - Click "Get Started Free"
+   - Enter your email and verify
+   - Find your Access Key in the email
+
+2. **Configure Project**:
+   ```bash
+   # Configure Access Key
+   node configure-web3forms.js YOUR_ACCESS_KEY
+   
+   # Test configuration
+   node test-web3forms.js
+   ```
+
+3. **Test Forms**:
+   - Start server: `python -m http.server 8000`
+   - Visit `http://localhost:8000`
+   - Test both subscription and feedback forms
+
+### Features
+- ✅ Free unlimited submissions
+- ✅ No spam filtering
+- ✅ Automatic replies
+- ✅ Webhook support
+- ✅ File uploads supported
+
+See [CONFIGURE_WEB3FORMS.md](CONFIGURE_WEB3FORMS.md) for detailed setup instructions.
