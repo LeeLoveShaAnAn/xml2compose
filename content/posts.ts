@@ -194,6 +194,141 @@ class FilterViewModel : ViewModel() {
       },
     ],
   },
+  {
+    slug: 'compose-interoperability-strategy',
+    title: 'Compose 与传统 View 互操作策略：分层解耦实战',
+    description:
+      '讲解如何在多模块工程中渐进式引入 Compose，同时保持与现有 View 层的互操作与性能稳定。',
+    publishedAt: '2025-10-28',
+    updatedAt: '2025-10-28',
+    author: '孙越 · 平台工程师',
+    tags: ['互操作', '多模块', '架构治理'],
+    readingMinutes: 13,
+    sections: [
+      {
+        paragraphs: [
+          '大多数企业级应用都会经历较长的迁移窗口期，Compose 不可能一蹴而就。在并存阶段，我们需要构建清晰的互操作边界，确保宿主模块的生命周期、主题体系与性能指标不被破坏。',
+          '我们建议从“阅读型模块”切入，引入 `ComposeView` 作为桥接容器，并通过统一的 Design System Adapter 将颜色、排版、间距等设计令牌映射到 Compose `MaterialTheme`。',
+        ],
+      },
+      {
+        heading: '模块化拆分原则',
+        list: [
+          '桥接层独立成模块：`ui-interop` 仅负责 View 与 Compose 的交互，避免业务模块直接依赖实现细节；',
+          'Compose 入口保持无状态：通过参数传递数据与回调，将状态托管在 ViewModel 或 UseCase 层；',
+          '对外暴露稳定接口：使用 `@Stable` 数据结构作为边界契约，降低重组带来的 diff 噪音。',
+        ],
+        note: '互操作模块需单独配置 R8 keep 规则，保留 `androidx.compose` 相关类，防止代码压缩阶段误删。',
+      },
+      {
+        heading: '桥接层实现要点',
+        paragraphs: [
+          '如下示例展示了如何在 View 模块中安全托管 Compose，并同步宿主主题与生命周期。我们推荐使用 `ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed` 避免内存泄漏。',
+        ],
+        code: `class ComposeInterstitial @JvmOverloads constructor(
+     context: Context,
+     attrs: AttributeSet? = null
+ ) : FrameLayout(context, attrs) {
+
+     private val composeView = ComposeView(context).apply {
+         setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+     }
+
+     init {
+         addView(composeView)
+     }
+
+     fun render(state: InteropState, onAction: (InteropAction) -> Unit) {
+         composeView.setContent {
+             LegacyThemeAdapter {
+                 InteropScreen(state = state, onAction = onAction)
+             }
+         }
+     }
+ }
+
+ @Stable
+data class InteropState(
+     val title: String,
+     val illustrations: ImmutableList<Illustration>
+ )`,
+      },
+      {
+        heading: '监控与性能回归',
+        paragraphs: [
+          '互操作阶段的性能监控尤为关键。我们在 FrameMetricsAggregator 中记录新旧界面的首帧时间，并借助 `Choreographer.FrameCallback` 捕获掉帧，将指标写入 Grafana。',
+          '当 Compose 模块占比超过 60% 时，可考虑将 `ComposeView` 迁移为完全的 `Activity`/`Fragment` 层级，以减少额外的测量与布局成本。',
+        ],
+      },
+    ],
+  },
+  {
+    slug: 'compose-continuous-delivery',
+    title: '构建 Compose CI/CD 流水线：可视化回归与性能保障',
+    description:
+      '介绍如何在 CI/CD 平台上集成 Compose 专属的可视化回归、无障碍校验与性能基准测试，确保每次发布都可追溯。',
+    publishedAt: '2025-10-12',
+    updatedAt: '2025-10-24',
+    author: '李航 · DevOps 架构师',
+    tags: ['CI/CD', '测试', '性能'],
+    readingMinutes: 14,
+    sections: [
+      {
+        paragraphs: [
+          'Compose 引入后，传统的截图对比与 Espresso 测试难以覆盖声明式特性。我们需要重新设计流水线，将“快速反馈 + 深度基准”结合，构建分层的测试矩阵。',
+          '流水线应包含：静态检查（ktlint、Detekt、Compose Metrics）、可视化回归（Paparazzi 或 Shot）、性能基准（Macrobenchmark）以及无障碍校验（Accessibility Test Framework）。',
+        ],
+      },
+      {
+        heading: '流水线拓扑',
+        list: [
+          'Stage 1 - 静态分析：在 PR 级别运行 `./gradlew lint ktlintCheck detekt`，并开启 Compose Compiler Metrics 输出；',
+          'Stage 2 - 可视化回归：触发 Paparazzi 渲染 Compose 组件快照，将差异图上传至 Artifact；',
+          'Stage 3 - 性能与无障碍：夜间定时运行 Macrobenchmark 与无障碍脚本，结果同步到 DataDog/Grafana；',
+          'Stage 4 - 部署与回滚：构建内部 Beta，配合 Firebase App Distribution 推送给 QA 与业务干系人。',
+        ],
+      },
+      {
+        heading: 'GitHub Actions 实例',
+        paragraphs: [
+          '以下 YAML 片段给出了常见的 GitHub Actions 配置。我们将 Macrobenchmark 与 Paparazzi 拆分成可复用的 job，便于独立扩展并行度。',
+        ],
+        code: `jobs:
+   compose-static-checks:
+     runs-on: ubuntu-latest
+     steps:
+       - uses: actions/checkout@v4
+       - uses: gradle/gradle-build-action@v3
+         with:
+           arguments: lint ktlintCheck detekt
+
+   compose-visual-regression:
+     needs: compose-static-checks
+     runs-on: macos-latest
+     steps:
+       - uses: actions/checkout@v4
+       - uses: gradle/gradle-build-action@v3
+         with:
+           arguments: verifyPaparazziDebug
+
+   compose-performance:
+     needs: compose-visual-regression
+     runs-on: android-large
+     steps:
+       - uses: actions/checkout@v4
+       - uses: gradle/gradle-build-action@v3
+         with:
+           arguments: :benchmark:connectedCheck`,
+      },
+      {
+        heading: '可视化与回滚策略',
+        paragraphs: [
+          '我们在 App Startup 中注入发布版本号与 Git 提交哈希，日志上报至 ELK。Dashboards 以组件维度展示可用性、掉帧、无障碍通过率，一旦出现异常，可通过 Rollback Playbook 快速切回上一个稳定版本。',
+        ],
+        note: '建议将 Compose Compiler 的 `reportsDestination` 指向独立的 CI Artifact，长期追踪 `skipped` 与 `restart` 指标波动。',
+      },
+    ],
+  },
 ];
 
 export function getAllPosts() {

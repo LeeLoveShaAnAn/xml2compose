@@ -1,228 +1,104 @@
 # xml2compose.dev
 
-一个现代化的工具，帮助开发者将Android XML布局文件转换为Jetpack Compose代码。
+一个面向教育机构与企业团队的 Jetpack Compose 迁移支持平台，现已升级为 **Next.js 14 App Router** 架构，提供自动转换工具、原创技术文档与合规指南。
 
-## 🎨 设计系统
+## ✨ 功能概览
 
-本项目采用苹果设计风格，具有以下特点：
+- **在线转换器**：浏览器本地执行 XML → Compose 代码转换，附带导入语句、警告与性能建议。
+- **知识库**：精选迁移蓝图、状态管理、动效优化与案例复盘，全部为原创内容并定期更新。
+- **合规保障**：内置隐私政策、数据使用说明、联系渠道，确保站点符合 Google Publisher Policies、页面体验与隐私要求。
+- **响应式体验**：统一设计系统、可访问性优化（跳转链接、语义化结构、焦点样式）、移动优先布局。
 
-### 颜色系统
-- **主色调**: `#007AFF` (iOS蓝)
-- **次要色**: `#5856D6` (紫色)
-- **强调色**: `#FF2D92` (粉色)
-- **成功色**: `#34C759` (绿色)
-- **警告色**: `#FF9500` (橙色)
-- **错误色**: `#FF3B30` (红色)
+## 🧱 技术架构
 
-### 间距系统
-- `--space-1`: 4px
-- `--space-2`: 8px
-- `--space-3`: 12px
-- `--space-4`: 16px
-- `--space-5`: 20px
-- `--space-6`: 24px
-- `--space-8`: 32px
-- `--space-10`: 40px
-- `--space-12`: 48px
-- `--space-16`: 64px
-- `--space-20`: 80px
-- `--space-24`: 96px
+- **框架**：Next.js 14 + App Router，优先使用 Server Components；Converter 使用 Client Component 挂载原生转换逻辑。
+- **语言**：TypeScript + React 18。
+- **样式**：`app/globals.css` 维护设计系统变量、响应式规则和可访问性样式。
+- **内容**：博客数据集中在 `content/posts.ts`，支持 SSG；隐私、关于、联系等页面为静态 Server Components。
+- **SSR/SSG**：主页、博客列表、文章详情采用静态生成；如需纯静态部署，可执行 `next build && next export`。
 
-### 圆角系统
-- `--radius-xs`: 4px
-- `--radius-sm`: 8px
-- `--radius-md`: 12px
-- `--radius-lg`: 16px
-- `--radius-xl`: 20px
-- `--radius-2xl`: 24px
-
-### 字体系统
-- **主字体**: `-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', Arial, sans-serif`
-- **等宽字体**: `'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace`
-
-### 阴影系统
-- `--shadow-xs`: 0 1px 2px rgba(0, 0, 0, 0.05)
-- `--shadow-sm`: 0 2px 4px rgba(0, 0, 0, 0.1)
-- `--shadow-md`: 0 4px 8px rgba(0, 0, 0, 0.12)
-- `--shadow-lg`: 0 8px 16px rgba(0, 0, 0, 0.15)
-- `--shadow-xl`: 0 16px 32px rgba(0, 0, 0, 0.2)
-
-## 📱 页面结构
-
-### 1. 首页 (index.html)
-- **功能**: 展示项目介绍和代码转换示例
-- **特色**: 
-  - 响应式代码对比展示
-  - 更多示例展示
-  - 邮件订阅功能
-  - 反馈表单
-
-### 2. 转换器页面 (converter.html)
-- **功能**: 在线XML到Compose代码转换
-- **特色**:
-  - 实时代码转换
-  - 语法高亮
-  - 复制功能
-  - 响应式布局
-
-### 3. 博客页面 (blog.html)
-- **功能**: 技术文章展示
-- **特色**:
-  - 卡片式布局
-  - 渐变背景
-  - 暗色模式支持
-  - 动画效果
-
-### 4. 博客文章页面 (blog/*.html)
-- **功能**: 详细的技术文章
-- **特色**:
-  - 代码块语法高亮
-  - 响应式排版
-  - 阅读时间估算
-  - 社交分享
-
-## 🚀 功能特性
-
-### 多语言支持
-- 默认使用英文
-- 支持中英文切换
-- 响应式语言切换按钮
-
-### 暗色模式
-- 自动检测系统主题
-- 平滑的主题切换动画
-- 优化的暗色配色方案
-
-### 响应式设计
-- 移动端优先设计
-- 断点: 640px, 768px, 1024px, 1280px
-- 流畅的布局适配
-
-### 可访问性
-- 键盘导航支持
-- 焦点状态优化
-- 语义化HTML结构
-- ARIA标签支持
-
-### 性能优化
-- CSS变量系统
-- 优化的字体加载
-- 平滑的动画过渡
-- 最小化的重绘重排
-
-## 🛠️ 技术栈
-
-- **HTML5**: 语义化标记
-- **CSS3**: 现代CSS特性
-- **JavaScript**: 原生JS，无框架依赖
-- **字体**: Inter, SF Pro Display, SF Mono
-- **图标**: SVG图标系统
-
-## 📁 文件结构
+## 📁 目录结构
 
 ```
 xml2compose/
-├── index.html              # 首页
-├── converter.html          # 转换器页面
-├── blog.html              # 博客列表页
-├── style.css              # 主样式文件
-├── converter.css          # 转换器专用样式
-├── converter.js           # 转换器逻辑
-├── script.js              # 通用脚本
-├── blog/                  # 博客文章目录
-│   ├── jetpack-compose-migration.html
-│   ├── xml-layout-optimization.html
-│   └── sample-article.html
-└── README.md              # 项目说明
+├── app/
+│   ├── layout.tsx             # 根布局（Server Component）
+│   ├── page.tsx               # 首页
+│   ├── converter/page.tsx     # 在线转换器（Client + Server 混合）
+│   ├── blog/
+│   │   ├── page.tsx           # 博客列表
+│   │   └── [slug]/page.tsx    # 博客详情（SSG）
+│   ├── about/page.tsx         # 关于我们
+│   ├── contact/page.tsx       # 联系我们
+│   └── privacy/page.tsx       # 隐私政策与数据使用说明
+├── components/                # 站点级组件（Header、Footer、ConverterClient 等）
+├── content/posts.ts           # 博客元数据与正文段落
+├── js/core/                   # XML → Compose 转换核心逻辑（沿用原有模块）
+├── public/                    # 静态资源（如需要）
+├── next.config.mjs            # Next.js 配置
+├── tsconfig.json              # TypeScript 配置
+└── README.md
 ```
 
-## 🎯 使用指南
+> 历史静态 HTML/CSS/JS 文件已由 Next.js App Router 取代，仅保留转换核心逻辑以保证功能一致性。
 
-### 开发环境
-1. 克隆项目到本地
-2. 使用现代浏览器打开HTML文件
-3. 推荐使用Live Server进行本地开发
+## 🚀 快速开始
 
-### 自定义样式
-1. 修改 `style.css` 中的CSS变量
-2. 遵循设计系统的命名规范
-3. 使用提供的间距和颜色变量
+```bash
+npm install
+npm run dev   # 在 http://localhost:3000 启动开发服务器
 
-### 添加新页面
-1. 复制现有页面模板
-2. 引入 `style.css` 主样式文件
-3. 添加页面专用样式
-4. 保持一致的HTML结构
+npm run build # 生成生产构建（默认 SSR/SSG）
+npm run start # 仅在完成 build 后执行
+```
 
-## 🔧 维护说明
+若需生成纯静态站点，可执行：
 
-### 样式更新
-- 所有样式更改应在 `style.css` 中进行
-- 使用CSS变量保持一致性
-- 遵循BEM命名规范
+```bash
+npm run build
+npx next export
+```
 
-### 内容更新
-- 博客文章放在 `blog/` 目录下
-- 保持HTML结构的语义化
-- 定期更新sitemap.xml
+## 🧭 页面说明
 
-### 性能监控
-- 定期检查页面加载速度
-- 优化图片和字体资源
-- 监控Core Web Vitals指标
+- `主页 /`：展示核心能力、合规检查清单、迁移流程与行动召唤。
+- `转换器 /converter`：Client 端转换器组件，强调本地执行与版权提示。
+- `博客 /blog`：展示所有文章卡片，附带发布时间、标签与阅读时长。
+- `博客详情 /blog/[slug]`：结构化章节、代码片段、提示信息，便于教育使用。
+- `关于我们 /about`：团队成员、价值观、透明度报告。
+- `联系我们 /contact`：邮件、热线、教育合作渠道与承诺。
+- `隐私政策 /privacy`：数据收集范围、COPPA 应对、用户权利、联系地址。
+
+## ✅ 内容质量与合规流程
+
+1. **原创与透明**：所有文章由团队审校，包含数据来源与适用条件，避免薄内容或误导表述。
+2. **政策自检**：发布前核对 Google Publisher Policies、AdSense 页面体验、隐私要求；重大更新记录在 README 与透明度表格。
+3. **隐私保护**：默认最小化收集，提供撤回与删除流程，未成年人内容附加声明与禁用兴趣追踪。
+4. **可访问性**：跳过链接、语义结构、ARIA 标签、键盘导航和对比度均在设计阶段校验。
+5. **持续更新**：季度复盘新增文章、工具更新、用户反馈响应时效，见关于页面的透明度表。
+
+## 🛠️ 开发与维护
+
+- 修改样式时集中在 `app/globals.css`，遵循设计变量命名。
+- 新增页面使用 Server Components，必要时在 `components/` 中创建 Client Component。
+- 添加文章：在 `content/posts.ts` 中补充对象，系统会自动生成列表与详情。
+- 更新导航或页脚：修改 `components/SiteHeader.tsx` 或 `components/SiteFooter.tsx`。
+- 发布前检查：
+  - `npm run lint` 确保通过 Next.js Lint/TypeScript 检查。
+  - 运行 `npm run build` 验证 SSR/SSG 编译正常。
+  - 手动检查页面无敏感、侵权或误导内容。
 
 ## 📄 许可证
 
-本项目采用MIT许可证，详见LICENSE文件。
+MIT License。详见仓库根目录中的 `LICENSE`。
 
 ## 🤝 贡献指南
 
-欢迎提交Issue和Pull Request来改进项目！
-
-### 贡献流程
-1. Fork项目
-2. 创建功能分支
-3. 提交更改
-4. 创建Pull Request
-
-### 代码规范
-- 使用语义化的HTML
-- 遵循CSS变量命名规范
-- 保持代码注释清晰
-- 确保响应式设计
+1. Fork 仓库并创建特性分支。
+2. 执行 `npm run lint` 与 `npm run build` 确认通过。
+3. 在 Pull Request 描述中说明内容更新与合规自检结果。
+4. 若涉及隐私或政策文案，请一并更新 README 与相关页面。
 
 ---
 
-**xml2compose.dev** - 让Android UI开发更简单、更现代！
-## Web3Forms Configuration
-
-### Quick Setup
-
-1. **Get Access Key**:
-   - Visit [web3forms.com](https://web3forms.com/)
-   - Click "Get Started Free"
-   - Enter your email and verify
-   - Find your Access Key in the email
-
-2. **Configure Project**:
-   ```bash
-   # Configure Access Key
-   node configure-web3forms.js YOUR_ACCESS_KEY
-   
-   # Test configuration
-   node test-web3forms.js
-   ```
-
-3. **Test Forms**:
-   - Start server: `python -m http.server 8000`
-   - Visit `http://localhost:8000`
-   - Test both subscription and feedback forms
-
-### Features
-- ✅ Free unlimited submissions
-- ✅ No spam filtering
-- ✅ Automatic replies
-- ✅ Webhook support
-- ✅ File uploads supported
-
-See [CONFIGURE_WEB3FORMS.md](CONFIGURE_WEB3FORMS.md) for detailed setup instructions.
+**xml2compose.dev** —— 让 Android UI 迁移更透明、可控、合规。
