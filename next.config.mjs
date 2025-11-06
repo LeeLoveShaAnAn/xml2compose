@@ -6,6 +6,15 @@ const nextConfig = {
     },
   },
   output: 'standalone',
+  async redirects() {
+    return [
+      {
+        source: '/blog.html',
+        destination: '/blog',
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;
