@@ -58,7 +58,7 @@ export default async function BlogDetailPage({ params }: BlogPageProps) {
           ))}
         </div>
 
-        {post.sections.map((section: PostSection, index) => (
+        {post.sections.map((section: PostSection, index: number) => (
           <div key={index} style={{ marginBottom: '32px' }}>
             {section.heading && <h3 style={{ color: 'var(--text-primary)', marginBottom: '16px' }}>{section.heading}</h3>}
             {section.paragraphs?.map((paragraph, idx) => (

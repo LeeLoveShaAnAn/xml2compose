@@ -468,12 +468,10 @@ fun MyLegacyViewInCompose(selectedItem: Int) {
 ];
 
 export function getAllPosts() {
-  const allPosts = [...posts, ...newPosts];
-  return allPosts.sort((a, b) => (a.publishedAt < b.publishedAt ? 1 : -1));
+  return posts.sort((a, b) => (a.publishedAt < b.publishedAt ? 1 : -1));
 }
 
 export function getPostBySlug(slug: string) {
-  const allPosts = [...posts, ...newPosts];
-  return allPosts.find((post) => post.slug === slug);
+  return posts.find((post) => post.slug === slug);
 }
 
