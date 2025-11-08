@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { getAllPosts, getPostBySlug } from '../../../content/posts';
+import { getAllPosts, getPostBySlug, type PostSection } from '../../../content/posts';
 
 type BlogPageProps = {
   params: Promise<{ slug: string }>;
@@ -58,7 +58,7 @@ export default async function BlogDetailPage({ params }: BlogPageProps) {
           ))}
         </div>
 
-        {post.sections.map((section, index) => (
+        {post.sections.map((section: PostSection, index) => (
           <div key={index} style={{ marginBottom: '32px' }}>
             {section.heading && <h3 style={{ color: 'var(--text-primary)', marginBottom: '16px' }}>{section.heading}</h3>}
             {section.paragraphs?.map((paragraph, idx) => (
