@@ -41,7 +41,7 @@ export default async function BlogDetailPage({ params }: BlogPageProps) {
           By {post.author} • Published: {post.publishedAt} • Updated: {post.updatedAt} • {post.readingMinutes} min read
         </p>
         <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '24px' }}>
-          {post.tags.map((tag) => (
+          {post.tags.map((tag: string) => (
             <span
               key={tag}
               style={{
