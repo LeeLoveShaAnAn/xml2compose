@@ -329,13 +329,151 @@ data class InteropState(
       },
     ],
   },
+  {
+    slug: 'why-migrate-to-compose',
+    title: '告别 XML：为什么 Jetpack Compose 是 Android UI 的未来',
+    description: '深入探讨传统 XML 布局的性能瓶颈与维护难题，分析 Jetpack Compose 如何从根本上解决这些痛点，成为 Google 官方推荐的现代 UI 工具包。',
+    publishedAt: '2025-11-08',
+    updatedAt: '2025-11-08',
+    author: 'AI 助手',
+    tags: ['Compose', 'XML', 'Android开发', '性能'],
+    readingMinutes: 8,
+    sections: [
+      {
+        heading: '摘要：2025 年的必然选择',
+        paragraphs: [
+          '在 Android 开发领域，一场深刻的变革正在发生。传统的 XML 视图体系正被 Google 的现代声明式 UI 框架——Jetpack Compose——迅速取代。截至 2025 年，Compose 已成为成熟的行业标准，被 Google 官方标记为“Android 的推荐现代 UI 工具包”。Play 商店前 1,000 的应用中已有 60% 采用它，这明确地宣告了 Compose 代表着 Android UI 的现在与未来。',
+          '这场变革的核心驱动力是生产力的巨大飞跃。Compose 解决了 XML 布局固有的两大痛点：代码冗余和维护复杂性。Google Play 商店团队报告称，迁移到 Compose 使其 UI 代码减少了 50%，而 Lyft 的案例更具说服力：一个原先需要 800 行代码和 17 个 XML 文件的按钮组件，被简化为一个 Compose 函数。',
+        ],
+      },
+      {
+        heading: '传统 XML 布局的原理与局限',
+        paragraphs: [
+          '要理解这场变革的必要性，首先需要了解 XML 的工作原理。Android 系统通过 `LayoutInflater` 将静态的 XML 文本文件“膨胀”为用户可以交互的动态 View 对象树。这个过程包括解析 XML、实例化 View 对象、应用属性和构建视图层级。',
+          '尽管功能强大，XML 的性能模型却存在一个根本性缺陷：测量开销。Android 的渲染分为测量（Measure）和布局（Layout）两个阶段。某些布局（如 RelativeLayout）或参数（如 LinearLayout 的 `layout_weight`）会导致“双重测量”，即一个 View 被测量两次。',
+          '当带有权重的 `LinearLayout` 相互嵌套时，测量复杂度会呈指数级增长。一个嵌套 3 层的加权布局可能导致最内层的 View 被测量 8 次。这种开销在 `RecyclerView` 中尤其致命，因为列表项在滚动时会反复测量。XML View 系统的核心性能模型，与其构建现代复杂 UI 的目标从根本上是冲突的。'
+        ],
+        note: 'ConstraintLayout 等布局的出现，本质上是为了缓解这个固有的测量问题，但它们只是“创可贴”，而非根本的解决方案。'
+      }
+    ]
+  },
+  {
+    slug: 'compose-core-principles',
+    title: 'Jetpack Compose 核心揭秘：声明式 UI 与 Kotlin 的协同效应',
+    description: '从 @Composable 注解到重组机制，全面解析 Compose 的工作原理。探索其如何利用 Kotlin 语言特性构建高效、可维护的 UI，以及声明式范式如何颠覆传统开发思维。',
+    publishedAt: '2025-11-09',
+    updatedAt: '2025-11-09',
+    author: 'AI 助手',
+    tags: ['声明式UI', 'Kotlin', '架构', '重组'],
+    readingMinutes: 9,
+    sections: [
+      {
+        heading: '范式转变：从命令式到声明式',
+        paragraphs: [
+            '传统的 XML 是一种命令式范式。开发者需要关心“如何”更新 UI：获取 View 引用，然后手动调用 `setText()` 等方法来改变其内部状态。这种模式导致 UI 控件自己维护复杂状态，逻辑分散，难以跟踪。',
+            'Jetpack Compose 则采用声明式范式，开发者只关心“是什么” UI。其核心理念是 UI = f(State)，即 UI 是状态的函数。开发者只需在 Kotlin 代码中描述给定状态下的 UI 外观，当状态变化时，Compose 框架会自动且智能地“重组”受影响的 UI 部分。',
+        ]
+      },
+      {
+        heading: '核心解密：@Composable、编译器与重组',
+        paragraphs: [
+          'Compose 的能力深度集成在 Kotlin 编译器中。`@Composable` 注解会触发一个编译器插件，在编译期转换函数代码，注入一个 `Composer` 对象，它负责跟踪 UI 树的结构和状态。',
+          '重组是 Compose 更新 UI 的高效过程。当使用 `remember { mutableStateOf(...) }` 声明状态时，Compose 会将其存储在“插槽表”中。当 Composable 函数读取该状态的 `.value` 时，它会自动“订阅”这个状态。一旦状态被修改，Compose 会精确地只重新执行那些订阅了该状态的函数，而跳过所有未受影响的部分，从而实现极高的运行时效率。'
+        ],
+      },
+      {
+        heading: 'Kotlin 为本：语言特性如何赋能 Compose',
+        paragraphs: [
+          'Compose 的 API 设计与 Kotlin 语言特性密不可分，它本身就是一套领域特定语言 (DSL)。',
+        ],
+        list: [
+          '高阶函数与 Lambda：Compose API 的基础，例如 `Button(onClick = { ... })`。',
+          '尾随 Lambda：实现了优雅的嵌套结构，如 `Column { Text("Hello") }`。',
+          '扩展函数：`Modifier` 系统完全建立在扩展函数之上，使其可以链式调用。',
+          '协程：所有异步操作和副作用管理都通过协程处理，如 `LaunchedEffect`，它能完美地将异步任务与 UI 组件的生命周期绑定。'
+        ]
+      }
+    ]
+  },
+  {
+    slug: 'compose-migration-and-performance',
+    title: '实战指南：从 XML 到 Compose 的迁移策略与性能优化',
+    description: '提供一份权威的“xml 转 compose”分步指南，涵盖互操作性 API 的使用、常见挑战的解决方案，以及如何通过基线配置文件等工具优化 Compose 应用的性能。',
+    publishedAt: '2025-11-10',
+    updatedAt: '2025-11-10',
+    author: 'AI 助手',
+    tags: ['迁移', '互操作', '性能优化', '实战'],
+    readingMinutes: 11,
+    sections: [
+      {
+        heading: '性能对决：Compose vs. XML',
+        paragraphs: [
+          'Compose 和 XML 哪个更快？答案是复杂的。XML 在初始渲染上通常更快，因为它作为系统框架的一部分被预编译（AOT）。而 Compose 作为一个库，在首次运行时需要即时编译（JIT），导致启动时间较长。',
+          '然而，这个问题可以通过基线配置文件（Baseline Profiles）解决，它能触发对关键代码路径的 AOT 编译，使 Compose 的启动速度与 XML 基本持平。',
+          '在运行时效率上，Compose 通常更优。它的智能重组机制可以跳过未变化的 UI 更新，提供比 XML 更平滑的用户体验，慢帧百分比更低。'
+        ],
+        note: '编写糟糕的 Compose 代码比编写糟糕的 XML 代码更容易。最大的陷阱是“过度重组”，通常是由于向 Composable 传递了不稳定的参数（如可变的 `List<T>`）引起的。请优先使用不可变集合或用 `@Immutable` 注解标记你的数据类。'
+      },
+      {
+        heading: '权威迁移指南：从 XML 到 Compose',
+        paragraphs: [
+          '对于已有项目，“xml 转 compose”的核心原则是：绝不要一次性重写所有内容。官方推荐的策略是增量迁移。',
+        ],
+        list: [
+            '步骤一：用 Compose 构建所有新屏幕。',
+            '步骤二：将可重用的 UI 元素提取到共享的 Compose 组件库中。',
+            '步骤三：按照从简单到复杂的顺序，逐个屏幕替换现有功能。'
+        ]
+      },
+      {
+        heading: '战术一：在 XML 中嵌入 Compose (ComposeView)',
+        paragraphs: [
+          '这是迁移的起点。你可以在现有的 XML 布局中添加一个 `<androidx.compose.ui.platform.ComposeView>`，然后在代码中调用其 `setContent` 方法来渲染 Composable 函数。',
+          '关键点：在 Fragment 中使用时，必须设置正确的组合策略 `ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed`，以防止因 View 重建导致 Compose 状态丢失。',
+        ],
+        code: `my_compose_view.apply {
+   setViewCompositionStrategy(
+       ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed
+   )
+   setContent {
+       MaterialTheme {
+           Text("Hello Compose!")
+       }
+   }
+}`
+      },
+      {
+        heading: '战术二：在 Compose 中嵌入 XML (AndroidView)',
+        paragraphs: [
+          '当你正在构建一个 Compose 屏幕，但需要嵌入一个旧的 View 组件（如 MapView）时，可以使用 `AndroidView` Composable。它通过 `factory` lambda（仅执行一次，用于创建 View）和 `update` lambda（每次重组时执行，用于更新 View）来实现双向通信。',
+        ],
+        code: `@Composable
+fun MyLegacyViewInCompose(selectedItem: Int) {
+   AndroidView(
+       factory = { context ->
+           MyCustomView(context).apply {
+               // View -> Compose 通信
+               setOnClickListener { /*... */ }
+           }
+       },
+       update = { view ->
+           // Compose -> View 通信
+           view.selectedItem = selectedItem
+       }
+   )
+}`
+      }
+    ]
+  }
 ];
 
 export function getAllPosts() {
-  return posts.sort((a, b) => (a.publishedAt < b.publishedAt ? 1 : -1));
+  const allPosts = [...posts, ...newPosts];
+  return allPosts.sort((a, b) => (a.publishedAt < b.publishedAt ? 1 : -1));
 }
 
 export function getPostBySlug(slug: string) {
-  return posts.find((post) => post.slug === slug);
+  const allPosts = [...posts, ...newPosts];
+  return allPosts.find((post) => post.slug === slug);
 }
 
