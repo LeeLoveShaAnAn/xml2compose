@@ -2,35 +2,24 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { SiteHeader } from '../components/SiteHeader';
 import { SiteFooter } from '../components/SiteFooter';
+import { AppProvider } from '../lib/contexts/AppContext';
+import Script from 'next/script';
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://www.xml2compose.dev'),
   title: {
-    default: 'xml2compose.dev | Android XML 转 Compose 最佳实践',
+    default: 'xml2compose.dev | Convert Android XML to Jetpack Compose',
     template: '%s | xml2compose.dev',
   },
   description:
-    'xml2compose.dev 提供一站式 Android XML 布局迁移服务，涵盖自动转换、最佳实践指南、性能优化以及团队培训资源。',
-  keywords: [
-    'Jetpack Compose',
-    'Android XML 转换',
-    'Compose Migration',
-    'Next.js 14',
-    'SSR',
-    '开发工具',
-  ],
-  authors: [{ name: 'xml2compose.dev Team', url: 'https://www.xml2compose.dev/about' }],
+    'The ultimate tool for developers to automatically convert Android XML layout files into clean, modern Jetpack Compose code.',
+  keywords: ['Android', 'XML', 'Jetpack Compose', 'Converter', 'UI', 'Layout', 'Tool', 'Migration'],
+  authors: [{ name: 'xml2compose.dev' }],
   openGraph: {
-    title: 'xml2compose.dev | Android XML 转 Compose 最佳实践',
-    description:
-      '面向移动团队的完整迁移解决方案：自动转换、质量评估、培训和合规支持。',
-    url: 'https://www.xml2compose.dev',
+    title: 'xml2compose.dev | Convert Android XML to Jetpack Compose',
+    description: 'Automatically convert Android XML layouts to Jetpack Compose code. Try it now!',
+    url: 'https://xml2compose.dev',
     siteName: 'xml2compose.dev',
-    locale: 'zh_CN',
     type: 'website',
-  },
-  alternates: {
-    canonical: 'https://www.xml2compose.dev',
   },
 };
 
@@ -40,20 +29,39 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="zh-CN">
+    <html lang="en">
       <body>
-        <a className="skip-link" href="#main-content">
-          跳到主要内容
-        </a>
-        <div className="app-shell">
+        {/* Google Analytics */}
+        <Script
+          async
+          src="https://www.googletagmanager.com/gtag/js?id=G-F2G7TSB6Q6"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-F2G7TSB6Q6');
+          `}
+        </Script>
+
+        {/* Google AdSense */}
+        <Script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2819959179592334"
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
+        />
+
+        <AppProvider>
           <SiteHeader />
-          <main id="main-content" className="container" tabIndex={-1}>
+          <main id="home">
             {children}
           </main>
           <SiteFooter />
-        </div>
+        </AppProvider>
       </body>
     </html>
   );
 }
-

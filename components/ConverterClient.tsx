@@ -1,128 +1,171 @@
 'use client';
 
-import { useState, useCallback } from 'react';
-import { convertXmlToCompose } from '../js/core/generator.js';
+import { useState, useRef } from 'react';
+import { convertXmlToCompose } from '../lib/converter';
 
 const sampleXml = `<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16dp">
-
+    
     <TextView
-        android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Compose Migration"
-        android:textSize="20sp"
-        android:textStyle="bold" />
-
+        android:text="Hello World!"
+        android:textSize="24sp"
+        android:textColor="#007AFF" />
+        
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Start" />
+        android:text="Click Me!"
+        android:layout_marginTop="16dp" />
 </LinearLayout>`;
 
 export function ConverterClient() {
-  const [xmlInput, setXmlInput] = useState(sampleXml);
-  const [composeResult, setComposeResult] = useState('');
-  const [statusMessage, setStatusMessage] = useState<string | null>(null);
+  const [xmlInput, setXmlInput] = useState('');
+  const [composeOutput, setComposeOutput] = useState('');
+  const [showNotification, setShowNotification] = useState(false);
+  const outputRef = useRef<HTMLTextAreaElement>(null);
 
-  const handleConvert = useCallback(() => {
+  const handleConvert = () => {
+    if (!xmlInput.trim()) {
+      alert('Please enter XML code to convert');
+      return;
+    }
+
     try {
       const result = convertXmlToCompose(xmlInput);
-      setComposeResult(result);
-      setStatusMessage('转换完成。请根据提示逐条验证。');
+      setComposeOutput(result.code);
     } catch (error) {
-      console.error(error);
-      setStatusMessage('转换时出现异常，请检查XML格式或联系我们。');
+      console.error('Conversion error:', error);
+      setComposeOutput('// Error during conversion\n// Please check your XML syntax');
     }
-  }, [xmlInput]);
+  };
 
-  const handleClear = useCallback(() => {
+  const handleLoadSample = () => {
+    setXmlInput(sampleXml);
+  };
+
+  const handleClear = () => {
     setXmlInput('');
-    setComposeResult('');
-    setStatusMessage(null);
-  }, []);
+    setComposeOutput('');
+  };
+
+  const handleCopy = async () => {
+    if (composeOutput) {
+      try {
+        await navigator.clipboard.writeText(composeOutput);
+        setShowNotification(true);
+        setTimeout(() => setShowNotification(false), 2000);
+      } catch (err) {
+        console.error('Failed to copy:', err);
+      }
+    }
+  };
 
   return (
-    <div className="content" style={{ gap: 'var(--space-8)' }}>
-      <section className="card" aria-labelledby="converter-guideline">
-        <h1 id="converter-guideline" className="section-title" style={{ marginBottom: 'var(--space-3)' }}>
-          XML → Jetpack Compose 自动转换器
-        </h1>
-        <p>
-          此工具在浏览器本地运行，不会上传你的XML数据。转换结果包含自动生成的导入语句、Compose 代码以及警告提示。根据 Google AdSense
-          内容政策，我们仅提供原创算法与说明，不托管任何受限或侵权素材。
-        </p>
-        <ol style={{ margin: 'var(--space-6) 0 0', paddingLeft: '1.25rem', display: 'grid', gap: '0.75rem' }}>
-          <li>粘贴或输入完整的 Android XML 布局。</li>
-          <li>点击“执行转换”，在右侧查看 Compose 草稿与改进建议。</li>
-          <li>根据团队规范进一步校验，例如资源引用、交互逻辑与无障碍提示。</li>
-        </ol>
-        <div className="note" style={{ marginTop: 'var(--space-4)' }}>
-          提醒：转换结果仅供教育与评估目的，最终上线代码需经过人工审查与版权确认。
+    <>
+      <section className="converter-hero">
+        <div className="container">
+          <h1>XML to Jetpack Compose Converter</h1>
+          <p>
+            Transform your Android XML layouts into modern Jetpack Compose code instantly. 
+            Simply paste your XML and get clean, readable Compose code.
+          </p>
+          <button className="convert-button" onClick={handleConvert}>
+            <svg className="panel-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
+            </svg>
+            <span>Convert Now</span>
+          </button>
         </div>
       </section>
 
-      <section className="split-section" aria-labelledby="converter-workbench">
-        <div>
-          <h2 id="converter-workbench">输入区域</h2>
-          <label htmlFor="xml-input">Android XML 布局</label>
-          <textarea
-            id="xml-input"
-            rows={18}
-            value={xmlInput}
-            onChange={(event) => setXmlInput(event.target.value)}
-            placeholder="在此粘贴XML布局"
-            aria-describedby="xml-help"
-            style={{ fontFamily: 'SFMono-Regular, Menlo, Monaco, Consolas, monospace', minHeight: '320px' }}
-          />
-          <p id="xml-help" style={{ color: 'var(--text-secondary)', marginTop: '0.5rem' }}>
-            支持 `LinearLayout`、`ConstraintLayout`、`RecyclerView` 等常见组件，遇到未知标签时会保留 TODO 提示。
-          </p>
-          <div style={{ display: 'flex', gap: 'var(--space-4)', flexWrap: 'wrap' }}>
-            <button type="button" className="cta-button" onClick={handleConvert}>
-              执行转换
-            </button>
-            <button
-              type="button"
-              onClick={handleClear}
-              style={{
-                padding: '0.65rem 1.25rem',
-                borderRadius: '999px',
-                border: '1px solid rgba(15, 23, 42, 0.12)',
-                background: 'rgba(255,255,255,0.85)',
-                fontWeight: 600,
-              }}
-            >
-              清空输入
-            </button>
+      <main className="converter-main">
+        <div className="converter-grid">
+          {/* XML Input Panel */}
+          <div className="editor-panel">
+            <div className="panel-header">
+              <h2 className="panel-title">
+                <svg className="panel-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
+                </svg>
+                <span>Android XML</span>
+              </h2>
+              <div className="panel-actions">
+                <button className="action-button" onClick={handleLoadSample}>
+                  Load Sample
+                </button>
+                <button className="action-button" onClick={handleClear}>
+                  Clear
+                </button>
+              </div>
+            </div>
+            <div className="code-editor">
+              <textarea 
+                className="code-input" 
+                value={xmlInput}
+                onChange={(e) => setXmlInput(e.target.value)}
+                placeholder={`Paste your Android XML layout here...
+
+For example:
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+    
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Hello World!"
+        android:textSize="24sp" />
+        
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Click Me!" />
+</LinearLayout>`}
+              />
+            </div>
+          </div>
+
+          {/* Compose Output Panel */}
+          <div className="editor-panel">
+            <div className="panel-header">
+              <h2 className="panel-title">
+                <svg className="panel-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                </svg>
+                <span>Jetpack Compose</span>
+              </h2>
+              <div className="panel-actions">
+                <button className="action-button" onClick={handleCopy} disabled={!composeOutput}>
+                  Copy
+                </button>
+              </div>
+            </div>
+            <div className="code-editor">
+              <textarea 
+                ref={outputRef}
+                className="code-output" 
+                value={composeOutput}
+                readOnly
+                placeholder="Your Compose code will appear here after conversion..."
+              />
+            </div>
           </div>
         </div>
-        <aside className="card" aria-labelledby="converter-output" style={{ minHeight: '100%' }}>
-          <h2 id="converter-output">输出结果</h2>
-          {statusMessage ? <p>{statusMessage}</p> : <p>点击“执行转换”后将在此显示Compose代码。</p>}
-          <textarea
-            id="compose-output"
-            rows={18}
-            value={composeResult}
-            readOnly
-            aria-live="polite"
-            placeholder="Compose代码将显示在这里"
-            style={{
-              fontFamily: 'SFMono-Regular, Menlo, Monaco, Consolas, monospace',
-              minHeight: '320px',
-              background: '#0b1220',
-              color: '#dce3f5',
-              border: '1px solid rgba(15,23,42,0.3)',
-            }}
-          />
-        </aside>
-      </section>
-    </div>
+      </main>
+
+      <div className={`copy-notification ${showNotification ? 'show' : ''}`}>
+        ✓ Copied to clipboard!
+      </div>
+    </>
   );
 }
-

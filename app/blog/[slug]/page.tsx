@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import { getAllPosts, getPostBySlug } from '../../../content/posts';
 
 type BlogPageProps = {
@@ -21,17 +22,6 @@ export async function generateMetadata({ params }: BlogPageProps): Promise<Metad
   return {
     title: post.title,
     description: post.description,
-    alternates: {
-      canonical: `https://www.xml2compose.dev/blog/${post.slug}`,
-    },
-    openGraph: {
-      title: post.title,
-      description: post.description,
-      type: 'article',
-      publishedTime: post.publishedAt,
-      modifiedTime: post.updatedAt,
-      authors: [post.author],
-    },
   };
 }
 
@@ -44,62 +34,76 @@ export default async function BlogDetailPage({ params }: BlogPageProps) {
   }
 
   return (
-    <article className="content" aria-labelledby="post-title">
-      <header className="card" style={{ padding: 'var(--space-8)', marginBottom: 'var(--space-8)' }}>
-        <span className="badge">博客文章</span>
-        <h1 id="post-title" style={{ marginBottom: 'var(--space-2)' }}>
-          {post.title}
-        </h1>
-        <p style={{ marginTop: 0 }}>{post.description}</p>
-        <dl style={{ display: 'grid', gap: '0.35rem', margin: 'var(--space-4) 0 0' }}>
-          <div>
-            <dt className="sr-only">作者</dt>
-            <dd>作者：{post.author}</dd>
-          </div>
-          <div>
-            <dt className="sr-only">发布时间</dt>
-            <dd>发布于：{post.publishedAt}</dd>
-          </div>
-          <div>
-            <dt className="sr-only">最近更新</dt>
-            <dd>更新于：{post.updatedAt}</dd>
-          </div>
-          <div>
-            <dt className="sr-only">阅读时长</dt>
-            <dd>预计阅读时长：{post.readingMinutes} 分钟</dd>
-          </div>
-        </dl>
-        <div className="pill-list" aria-label="标签">
+    <div className="container">
+      <article>
+        <h2>{post.title}</h2>
+        <p className="blog-meta">
+          By {post.author} • Published: {post.publishedAt} • Updated: {post.updatedAt} • {post.readingMinutes} min read
+        </p>
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '24px' }}>
           {post.tags.map((tag) => (
-            <span key={tag}>{tag}</span>
+            <span
+              key={tag}
+              style={{
+                padding: '4px 12px',
+                borderRadius: '4px',
+                fontSize: '12px',
+                fontWeight: 600,
+                background: 'rgba(0, 122, 255, 0.1)',
+                color: 'var(--primary-color)',
+              }}
+            >
+              {tag}
+            </span>
           ))}
         </div>
-      </header>
 
-      {post.sections.map((section, index) => (
-        <section key={index} aria-labelledby={section.heading ? `section-${index}` : undefined}>
-          {section.heading ? (
-            <h2 id={`section-${index}`}>{section.heading}</h2>
-          ) : null}
-          {section.paragraphs?.map((paragraph, idx) => (
-            <p key={idx}>{paragraph}</p>
-          ))}
-          {section.list ? (
-            <ul>
-              {section.list.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ul>
-          ) : null}
-          {section.code ? (
-            <pre>
-              <code>{section.code}</code>
-            </pre>
-          ) : null}
-          {section.note ? <div className="note">{section.note}</div> : null}
-        </section>
-      ))}
-    </article>
+        {post.sections.map((section, index) => (
+          <div key={index} style={{ marginBottom: '32px' }}>
+            {section.heading && <h3 style={{ color: 'var(--text-primary)', marginBottom: '16px' }}>{section.heading}</h3>}
+            {section.paragraphs?.map((paragraph, idx) => (
+              <p key={idx}>{paragraph}</p>
+            ))}
+            {section.list && (
+              <ul style={{ paddingLeft: '24px', marginBottom: '16px' }}>
+                {section.list.map((item, idx) => (
+                  <li key={idx} style={{ marginBottom: '8px' }}>{item}</li>
+                ))}
+              </ul>
+            )}
+            {section.code && (
+              <pre style={{
+                fontFamily: 'var(--font-mono)',
+                fontSize: '14px',
+                background: 'var(--bg-secondary)',
+                padding: '16px',
+                borderRadius: '8px',
+                overflowX: 'auto',
+                marginBottom: '16px'
+              }}>
+                <code>{section.code}</code>
+              </pre>
+            )}
+            {section.note && (
+              <div style={{
+                padding: '12px 16px',
+                borderRadius: '8px',
+                background: 'rgba(255, 149, 0, 0.1)',
+                border: '1px solid rgba(255, 149, 0, 0.3)',
+                marginBottom: '16px'
+              }}>
+                <strong>Note:</strong> {section.note}
+              </div>
+            )}
+          </div>
+        ))}
+
+        <div style={{ marginTop: '48px', paddingTop: '24px', borderTop: '1px solid var(--border-secondary)' }}>
+          <Link href="/blog" className="button primary-button">
+            ← Back to Blog
+          </Link>
+        </div>
+      </article>
+    </div>
   );
 }
-
