@@ -54,7 +54,24 @@ const parseResourceReference = (value) => {
             'black': 'Color.Black',
             'transparent': 'Color.Transparent',
             'darker_gray': 'Color.DarkGray',
-            'background_light': 'MaterialTheme.colorScheme.background'
+            'background_light': 'MaterialTheme.colorScheme.background',
+            'background_dark': 'MaterialTheme.colorScheme.background',
+            'holo_blue_bright': 'Color(0xFF009688)',
+            'holo_blue_dark': 'Color(0xFF00796B)',
+            'holo_blue_light': 'Color(0xFFB2DFDB)',
+            'holo_green_dark': 'Color(0xFF388E3C)',
+            'holo_green_light': 'Color(0xFFC8E6C9)',
+            'holo_orange_dark': 'Color(0xFFFF5722)',
+            'holo_orange_light': 'Color(0xFFFFAB91)',
+            'holo_purple': 'Color(0xFF7B1FA2)',
+            'holo_red_dark': 'Color(0xFFD32F2F)',
+            'holo_red_light': 'Color(0xFFEF5350)',
+            'primary_text_light': 'MaterialTheme.colorScheme.onBackground',
+            'primary_text_dark': 'MaterialTheme.colorScheme.onBackground',
+            'secondary_text_light': 'MaterialTheme.colorScheme.onSurfaceVariant',
+            'secondary_text_dark': 'MaterialTheme.colorScheme.onSurfaceVariant',
+            'link_text_light': 'Color(0xFF1976D2)',
+            'link_text_dark': 'Color(0xFF2196F3)'
         };
         return systemColors[colorName] || `Color(/* TODO: Map @android:color/${colorName} */)`;
     }
@@ -169,13 +186,29 @@ const validateAttributes = (tagName, attributes) => {
     const unsupportedAttrs = {
         'android:layout_alignParentTop': 'Use Box with Alignment.TopStart',
         'android:layout_alignParentBottom': 'Use Box with Alignment.BottomStart',
+        'android:layout_alignParentLeft': 'Use Box with Alignment.TopStart',
+        'android:layout_alignParentRight': 'Use Box with Alignment.TopEnd',
         'android:layout_centerInParent': 'Use Box with Alignment.Center',
+        'android:layout_centerVertical': 'Use Box with Alignment.CenterVertically',
+        'android:layout_centerHorizontal': 'Use Box with Alignment.CenterHorizontally',
         'android:layout_toRightOf': 'Use ConstraintLayout or Row arrangement',
+        'android:layout_toLeftOf': 'Use ConstraintLayout or Row arrangement with Reverse',
         'android:layout_below': 'Use ConstraintLayout or Column arrangement',
+        'android:layout_above': 'Use ConstraintLayout or Column arrangement with Reverse',
+        'android:layout_alignTop': 'Use ConstraintLayout with constraints',
+        'android:layout_alignBottom': 'Use ConstraintLayout with constraints',
+        'android:layout_alignLeft': 'Use ConstraintLayout with constraints',
+        'android:layout_alignRight': 'Use ConstraintLayout with constraints',
         'android:drawableLeft': 'Use Row with Icon and Text',
         'android:drawableRight': 'Use Row with Text and Icon',
         'android:drawableTop': 'Use Column with Icon and Text',
-        'android:drawableBottom': 'Use Column with Text and Icon'
+        'android:drawableBottom': 'Use Column with Text and Icon',
+        'android:drawablePadding': 'Use spacing between Icon and Text elements',
+        'android:ellipsize': 'Use Text(overflow = TextOverflow.Ellipsis)',
+        'android:singleLine': 'Use Text(maxLines = 1)',
+        'android:lines': 'Use Text(maxLines = N)',
+        'android:maxLines': 'Use Text(maxLines = N)',
+        'android:scrollHorizontally': 'Use Text(overflow = TextOverflow.Ellipsis, maxLines = 1)'
     };
     
     Object.keys(attributes).forEach(attr => {
@@ -234,13 +267,50 @@ const generatePerformanceTips = (rootElement) => {
     
     // 检查大量子元素
     const checkLargeList = (node) => {
-        if (node.children.length > 10 && node.tagName === 'LinearLayout') {
-            tips.push('检测到大量子元素，建议使用 LazyColumn/LazyRow 提升性能');
+        if (node.children.length > 10) {
+            const layoutType = node.tagName;
+            if (layoutType === 'LinearLayout' || layoutType === 'RelativeLayout' || layoutType === 'FrameLayout') {
+                tips.push('检测到大量子元素，建议使用 LazyColumn/LazyRow 提升性能');
+            }
         }
         Array.from(node.children).forEach(child => checkLargeList(child));
     };
     
     checkLargeList(rootElement);
+    
+    // 检查可滚动容器中的大量子元素
+    const checkScrollableContent = (node) => {
+        if (node.tagName === 'ScrollView' || node.tagName === 'HorizontalScrollView') {
+            if (node.children.length > 0) {
+                const firstChild = node.children[0];
+                if (firstChild.children.length > 10) {
+                    tips.push('检测到 ScrollView 中包含大量子元素，建议使用 LazyColumn/LazyRow 替代以提升性能');
+                }
+            }
+        }
+        Array.from(node.children).forEach(child => checkScrollableContent(child));
+    };
+    
+    checkScrollableContent(rootElement);
+    
+    // 检查重复组件模式
+    const checkDuplicateComponents = (node) => {
+        const childTags = Array.from(node.children).map(child => child.tagName);
+        const tagCounts = {};
+        
+        childTags.forEach(tag => {
+            tagCounts[tag] = (tagCounts[tag] || 0) + 1;
+        });
+        
+        for (const [tag, count] of Object.entries(tagCounts)) {
+            if (count > 5 && tag !== 'TextView' && tag !== 'ImageView') { // 排除文本和图片标签
+                tips.push(`检测到重复的 ${tag} 组件 (${count} 次)，建议提取为可复用的 Composable 函数`);
+            }
+        }
+        Array.from(node.children).forEach(child => checkDuplicateComponents(child));
+    };
+    
+    checkDuplicateComponents(rootElement);
     
     return tips;
 };
@@ -272,6 +342,11 @@ const parseNode = (node, indentLevel) => {
     
     const composable = mapTagToComposable(tagName, processedAttributes);
     let composeCode = '';
+    
+    // 添加组件注释
+    if (composable.comment) {
+        composeCode += `\n${indent(indentLevel)}${composable.comment}`;
+    }
     
     // 添加属性注释
     if (attributeComments.length > 0) {
@@ -334,8 +409,12 @@ const mapTagToComposable = (tag, attrs) => {
         
         case 'ConstraintLayout':
             result.name = 'ConstraintLayout';
-            // ConstraintLayout需要特殊处理，暂时用Box代替并添加注释
-            result.name = 'Box'; // TODO: 需要添加ConstraintLayout依赖
+            // 添加ConstraintLayout支持提示
+            result.comment = '// 注意：需要添加Compose ConstraintLayout依赖：androidx.constraintlayout:constraintlayout-compose:1.1.0-beta03';
+            // 标记需要ConstraintSet配置
+            result.attributes = { 
+                constraintSet: 'ConstraintSet { /* TODO: Define constraints here */ }'
+            };
             break;
         
         case 'RelativeLayout':
@@ -556,7 +635,7 @@ const buildModifiers = (attrs, indentLevel, composable) => {
         }
     }
     
-    // 处理外边距（在Compose中通过父容器的spacer或padding实现）
+    // 处理外边距（在Compose中通过父容器的padding或Modifier实现）
     const marginStart = attrs['android:layout_marginStart'] || attrs['android:layout_marginLeft'];
     const marginTop = attrs['android:layout_marginTop'];
     const marginEnd = attrs['android:layout_marginEnd'] || attrs['android:layout_marginRight'];
@@ -818,7 +897,8 @@ const generateImports = (rootElement) => {
                 usedComponents.add(attributes['android:orientation'] === 'horizontal' ? 'Row' : 'Column');
                 break;
             case 'ConstraintLayout':
-                usedComponents.add('Box'); // 暂时用Box代替
+                usedComponents.add('ConstraintLayout');
+                usedComponents.add('ConstraintSet');
                 break;
             case 'TextView':
                 usedComponents.add('Text');
@@ -945,6 +1025,9 @@ const generateImports = (rootElement) => {
     }
     if (usedComponents.has('AndroidView')) {
         imports += 'import androidx.compose.ui.viewinterop.AndroidView\n';
+    }
+    if (usedComponents.has('ConstraintLayout')) {
+        imports += 'import androidx.constraintlayout.compose.*\n';
     }
     
     return imports;
