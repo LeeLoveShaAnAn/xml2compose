@@ -337,25 +337,26 @@ data class InteropState(
     updatedAt: '2025-11-08',
     author: 'AI 助手',
     tags: ['Compose', 'XML', 'Android开发', '性能'],
-    readingMinutes: 8,
+    readingMinutes: 12,
     sections: [
       {
-        heading: '摘要：2025 年的必然选择',
+        heading: '执行摘要：2025 年的必然选择',
         paragraphs: [
-          '在 Android 开发领域，一场深刻的变革正在发生。传统的 XML 视图体系正被 Google 的现代声明式 UI 框架——Jetpack Compose——迅速取代。截至 2025 年，Compose 已成为成熟的行业标准，被 Google 官方标记为“Android 的推荐现代 UI 工具包”。Play 商店前 1,000 的应用中已有 60% 采用它，这明确地宣告了 Compose 代表着 Android UI 的现在与未来。',
-          '这场变革的核心驱动力是生产力的巨大飞跃。Compose 解决了 XML 布局固有的两大痛点：代码冗余和维护复杂性。Google Play 商店团队报告称，迁移到 Compose 使其 UI 代码减少了 50%，而 Lyft 的案例更具说服力：一个原先需要 800 行代码和 17 个 XML 文件的按钮组件，被简化为一个 Compose 函数。',
+          '在 Android 开发领域，一场深刻的变革正在发生。传统的 XML 视图体系正被 Google 的现代声明式 UI 框架——Jetpack Compose——迅速取代。截至 2025 年，Compose 已成为成熟的行业标准，被 Google 官方标记为“Android 的推荐现代 UI 工具包”。',
+          'Google I/O 2025 的数据显示，Play 商店排名前 1,000 的应用中已有 60% 采用了 Jetpack Compose。这一转变不仅是技术上的迭代，更是生产力的巨大飞跃。Compose 解决了传统 XML 布局固有的两大痛点：代码冗余和维护复杂性。',
+          'Google Play 商店团队的实战数据显示，迁移到 Compose 使其 UI 代码量减少了高达 50%。更令人印象深刻的是 Lyft 的案例：一个核心按钮组件在 XML 时代需要 3 个 Java/Kotlin 文件（800 行代码）以及 17 个不同的 XML 文件来定义各种样式和布局；而迁移后，它被简化为一个仅需几行代码的 Compose 函数。这不仅减少了代码，更消除了文件碎片化带来的认知负荷。',
+          'MAX (前 HBO Max) 团队也报告称，采用 Compose 后，其 UI 变更的实现速度提升了 30%。这些数据清楚地表明，Compose 不仅是 Google 的推荐，更是企业提升研发效能的必经之路。',
         ],
       },
       {
-        heading: '传统 XML 布局的原理与局限',
+        heading: '传统 XML 布局的痛点深度剖析',
         paragraphs: [
-          '要理解这场变革的必要性，首先需要了解 XML 的工作原理。Android 系统通过 `LayoutInflater` 将静态的 XML 文本文件“膨胀”为用户可以交互的动态 View 对象树。这个过程包括解析 XML、实例化 View 对象、应用属性和构建视图层级。',
-          '尽管功能强大，XML 的性能模型却存在一个根本性缺陷：测量开销。Android 的渲染分为测量（Measure）和布局（Layout）两个阶段。某些布局（如 RelativeLayout）或参数（如 LinearLayout 的 `layout_weight`）会导致“双重测量”，即一个 View 被测量两次。',
-          '当带有权重的 `LinearLayout` 相互嵌套时，测量复杂度会呈指数级增长。一个嵌套 3 层的加权布局可能导致最内层的 View 被测量 8 次。这种开销在 `RecyclerView` 中尤其致命，因为列表项在滚动时会反复测量。XML View 系统的核心性能模型，与其构建现代复杂 UI 的目标从根本上是冲突的。'
+          'XML 布局的核心问题在于其“命令式”和“碎片化”的本质。开发者必须在 XML 文件（定义“是什么”）和 Kotlin/Java 文件（定义“如何做”）之间频繁切换。当需要调试一个功能时，理解其完整的上下文变得极其困难。',
+          '此外，XML 视图系统存在严重的性能隐患。传统的 View 系统在渲染时需要经过测量（Measure）和布局（Layout）两个阶段。某些布局（如使用 `layout_weight` 的 `LinearLayout` 或 `RelativeLayout`）会导致“双重测量” (Double Taxation)。当这些布局发生嵌套时，测量次数会呈指数级增长（例如 3 层嵌套可能导致 8 次测量），严重影响渲染性能，特别是在 `RecyclerView` 等滚动列表中。',
+          'ConstraintLayout 的出现虽然缓解了这个问题，但它更像是一个“创可贴”，并没有从根本上解决 View 系统本身“允许甚至依赖多重测量”的底层架构。而 Compose 通过单次测量规则（Single Pass Measurement）和固有的 Intrinsic Measurement 机制，从架构层面根除了双重测量的问题。',
         ],
-        note: 'ConstraintLayout 等布局的出现，本质上是为了缓解这个固有的测量问题，但它们只是“创可贴”，而非根本的解决方案。'
-      }
-    ]
+      },
+    ],
   },
   {
     slug: 'compose-core-principles',
@@ -365,35 +366,39 @@ data class InteropState(
     updatedAt: '2025-11-09',
     author: 'AI 助手',
     tags: ['声明式UI', 'Kotlin', '架构', '重组'],
-    readingMinutes: 9,
+    readingMinutes: 15,
     sections: [
       {
         heading: '范式转变：从命令式到声明式',
         paragraphs: [
-            '传统的 XML 是一种命令式范式。开发者需要关心“如何”更新 UI：获取 View 引用，然后手动调用 `setText()` 等方法来改变其内部状态。这种模式导致 UI 控件自己维护复杂状态，逻辑分散，难以跟踪。',
-            'Jetpack Compose 则采用声明式范式，开发者只关心“是什么” UI。其核心理念是 UI = f(State)，即 UI 是状态的函数。开发者只需在 Kotlin 代码中描述给定状态下的 UI 外观，当状态变化时，Compose 框架会自动且智能地“重组”受影响的 UI 部分。',
-        ]
-      },
-      {
-        heading: '核心解密：@Composable、编译器与重组',
-        paragraphs: [
-          'Compose 的能力深度集成在 Kotlin 编译器中。`@Composable` 注解会触发一个编译器插件，在编译期转换函数代码，注入一个 `Composer` 对象，它负责跟踪 UI 树的结构和状态。',
-          '重组是 Compose 更新 UI 的高效过程。当使用 `remember { mutableStateOf(...) }` 声明状态时，Compose 会将其存储在“插槽表”中。当 Composable 函数读取该状态的 `.value` 时，它会自动“订阅”这个状态。一旦状态被修改，Compose 会精确地只重新执行那些订阅了该状态的函数，而跳过所有未受影响的部分，从而实现极高的运行时效率。'
+          '传统的 XML 是一种命令式 (Imperative) 范式。开发者必须手动管理 UI 的状态更新：先通过 `findViewById` 获取 View 引用，然后在数据变化时手动调用 `setText()` 或 `setVisibility()`。这种模式下，View 自身持有状态，而业务逻辑又在外部修改状态，很容易导致状态不一致（State Inconsistency）和难以追踪的 Bug。',
+          'Jetpack Compose 采用声明式 (Declarative) 范式。核心公式是 `UI = f(State)`。开发者不再关心“如何”更新 UI，而是描述在给定状态下 UI “应该是什么样子”。当状态发生变化时，Compose 框架会自动负责计算差异并更新屏幕。这种思维模型的转变是迁移中最困难但也最有价值的部分。',
         ],
       },
       {
-        heading: 'Kotlin 为本：语言特性如何赋能 Compose',
+        heading: '核心解密：@Composable 与编译器插件',
         paragraphs: [
-          'Compose 的 API 设计与 Kotlin 语言特性密不可分，它本身就是一套领域特定语言 (DSL)。',
+          'Compose 不是一个普通的库，它是一个深度集成到 Kotlin 编译器中的系统。`@Composable` 注解并不是传统的运行时注解，而是一个编译器插件的标记。',
+          '在编译阶段，这个插件会转换所有被标记的函数，向其签名中注入一个隐式的 `Composer` 参数。`Composer` 对象负责在运行时跟踪 UI 树的结构和状态。这种机制类似于 Kotlin 协程的 `suspend` 关键字，它也是通过编译器注入 `Continuation` 参数来实现的。',
+          'Compose 运行时使用一种称为“间隙缓冲区”（Gap Buffer）或“插槽表”（Slot Table）的高效数据结构来存储 UI 树的信息。这种结构允许 Compose 以极低的开销在 UI 树的任意位置插入、删除或移动节点，从而支持高效的动态 UI 更新。',
         ],
-        list: [
-          '高阶函数与 Lambda：Compose API 的基础，例如 `Button(onClick = { ... })`。',
-          '尾随 Lambda：实现了优雅的嵌套结构，如 `Column { Text("Hello") }`。',
-          '扩展函数：`Modifier` 系统完全建立在扩展函数之上，使其可以链式调用。',
-          '协程：所有异步操作和副作用管理都通过协程处理，如 `LaunchedEffect`，它能完美地将异步任务与 UI 组件的生命周期绑定。'
-        ]
-      }
-    ]
+      },
+      {
+        heading: '智能重组 (Smart Recomposition)',
+        paragraphs: [
+          '重组是 Compose 更新 UI 的机制。为了保证性能，Compose 实现了极其激进的优化策略。其中最核心的是“位置记忆”（Positional Memoization）和“跳过机制”（Skipping）。',
+          '当使用 `remember` 声明状态时，该值被存储在插槽表中。当 Composable 函数读取状态时，它会自动订阅该状态的变更。一旦状态更新，Compose 只会重新执行那些依赖该状态的函数。',
+          '更重要的是，如果一个 Composable 的参数在重组期间没有发生变化（即参数是“稳定”的），Compose 会完全跳过该函数的执行。这就是为什么在 Compose 中使用不可变对象（Immutable Objects）和稳定的集合类型如此重要的原因。',
+        ],
+      },
+      {
+        heading: 'Kotlin 语言特性的极致运用',
+        paragraphs: [
+          'Compose 是 Kotlin 语言特性的集大成者。它大量使用了高阶函数和 Lambda 表达式（尤其是尾随 Lambda）来构建声明式的 UI 树结构。',
+          '`Modifier` 系统完全基于扩展函数（Extension Functions）构建，允许开发者通过链式调用流畅地添加修饰符。而所有的异步任务和副作用管理（如 `LaunchedEffect`）都直接建立在 Kotlin 协程（Coroutines）之上，使得 UI 生命周期与异步任务的绑定变得前所未有的简单和安全。',
+        ],
+      },
+    ],
   },
   {
     slug: 'compose-migration-and-performance',
@@ -403,68 +408,121 @@ data class InteropState(
     updatedAt: '2025-11-10',
     author: 'AI 助手',
     tags: ['迁移', '互操作', '性能优化', '实战'],
-    readingMinutes: 11,
+    readingMinutes: 18,
     sections: [
       {
-        heading: '性能对决：Compose vs. XML',
+        heading: '性能真相：AOT vs JIT',
         paragraphs: [
-          'Compose 和 XML 哪个更快？答案是复杂的。XML 在初始渲染上通常更快，因为它作为系统框架的一部分被预编译（AOT）。而 Compose 作为一个库，在首次运行时需要即时编译（JIT），导致启动时间较长。',
-          '然而，这个问题可以通过基线配置文件（Baseline Profiles）解决，它能触发对关键代码路径的 AOT 编译，使 Compose 的启动速度与 XML 基本持平。',
-          '在运行时效率上，Compose 通常更优。它的智能重组机制可以跳过未变化的 UI 更新，提供比 XML 更平滑的用户体验，慢帧百分比更低。'
+          '关于 Compose 性能的争议从未停止。基准测试显示，Compose 在初始页面加载（启动时间）上往往慢于 XML。这是因为 XML View 是 Android 系统框架的一部分，随系统启动并在安装时进行了 AOT（Ahead-of-Time）预编译。而 Compose 作为一个解耦的库打包在 APK 中，首次运行时需要经过 ART（Android Runtime）的 JIT（Just-in-Time）编译和类加载，这带来了“一次性成本”。',
+          '但是，这并不意味着 Compose 慢。通过引入“基线配置文件”（Baseline Profiles），开发者可以指示系统在安装时就对 Compose 的关键路径进行 AOT 编译，从而几乎完全消除启动时的性能差距。',
+          '在运行时性能（如列表滚动、动画流畅度）方面，得益于智能重组机制，Compose 往往优于传统的 View 系统，表现出更低的掉帧率（Slow Frame %）。',
         ],
-        note: '编写糟糕的 Compose 代码比编写糟糕的 XML 代码更容易。最大的陷阱是“过度重组”，通常是由于向 Composable 传递了不稳定的参数（如可变的 `List<T>`）引起的。请优先使用不可变集合或用 `@Immutable` 注解标记你的数据类。'
       },
       {
-        heading: '权威迁移指南：从 XML 到 Compose',
+        heading: '权威迁移策略：分步走',
         paragraphs: [
-          '对于已有项目，“xml 转 compose”的核心原则是：绝不要一次性重写所有内容。官方推荐的策略是增量迁移。',
+          '对于大型 XML 项目，“重写”是不可接受的。官方推荐且唯一可行的策略是“增量迁移”。',
+          '1. **新功能使用 Compose**：所有新屏幕和功能模块应 100% 使用 Compose 开发。',
+          '2. **构建 Design System**：将通用的 UI 组件（按钮、输入框、卡片）提取为 Compose 组件，建立统一的设计系统。',
+          '3. **逐屏迁移**：从简单的页面开始，逐步替换现有的 Activity 或 Fragment。',
         ],
-        list: [
-            '步骤一：用 Compose 构建所有新屏幕。',
-            '步骤二：将可重用的 UI 元素提取到共享的 Compose 组件库中。',
-            '步骤三：按照从简单到复杂的顺序，逐个屏幕替换现有功能。'
-        ]
       },
       {
-        heading: '战术一：在 XML 中嵌入 Compose (ComposeView)',
+        heading: '互操作性战术手册',
         paragraphs: [
-          '这是迁移的起点。你可以在现有的 XML 布局中添加一个 `<androidx.compose.ui.platform.ComposeView>`，然后在代码中调用其 `setContent` 方法来渲染 Composable 函数。',
-          '关键点：在 Fragment 中使用时，必须设置正确的组合策略 `ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed`，以防止因 View 重建导致 Compose 状态丢失。',
-        ],
-        code: `my_compose_view.apply {
-   setViewCompositionStrategy(
-       ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed
-   )
-   setContent {
-       MaterialTheme {
-           Text("Hello Compose!")
-       }
-   }
-}`
-      },
-      {
-        heading: '战术二：在 Compose 中嵌入 XML (AndroidView)',
-        paragraphs: [
-          '当你正在构建一个 Compose 屏幕，但需要嵌入一个旧的 View 组件（如 MapView）时，可以使用 `AndroidView` Composable。它通过 `factory` lambda（仅执行一次，用于创建 View）和 `update` lambda（每次重组时执行，用于更新 View）来实现双向通信。',
+          '**在 XML 中使用 Compose**：使用 `ComposeView`。关键点是必须设置 `setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)`，以确保 Compose 的状态在 Fragment 视图销毁时正确清理，避免内存泄漏和状态丢失。',
+          '**在 Compose 中使用 XML**：使用 `AndroidView`。这是集成地图、Webview 或尚未迁移的复杂自定义 View 的桥梁。通过 `factory` lambda 创建 View，通过 `update` lambda 响应 Compose 状态的变化，实现单向数据流的闭环。',
         ],
         code: `@Composable
-fun MyLegacyViewInCompose(selectedItem: Int) {
-   AndroidView(
-       factory = { context ->
-           MyCustomView(context).apply {
-               // View -> Compose 通信
-               setOnClickListener { /*... */ }
-           }
-       },
-       update = { view ->
-           // Compose -> View 通信
-           view.selectedItem = selectedItem
-       }
-   )
-}`
-      }
-    ]
-  }
+fun LegacyMapComponent(lat: Double, lng: Double) {
+    AndroidView(
+        factory = { context ->
+            MapView(context).apply {
+                onCreate(null)
+                getMapAsync { /* init */ }
+            }
+        },
+        update = { view ->
+            // 当 lat/lng 变化时，更新 MapView
+            view.updateLocation(lat, lng)
+        }
+    )
+}`,
+      },
+    ],
+  },
+  {
+    slug: 'xml-performance-deep-dive',
+    title: 'XML 布局系统的性能隐患：从 LayoutInflater 到双重测量',
+    description: '深入剖析 Android 传统 View 系统的渲染机制，揭示 LayoutInflater 的反射开销与嵌套布局导致的“双重测量”问题，从底层原理层面解释为何 Compose 是必然的进化。',
+    publishedAt: '2025-11-20',
+    updatedAt: '2025-11-20',
+    author: '技术团队',
+    tags: ['Android', 'XML', 'Performance', 'Render'],
+    readingMinutes: 12,
+    sections: [
+      {
+        heading: 'LayoutInflater：XML 变为 View 的昂贵过程',
+        paragraphs: [
+          'XML 布局文件本质上只是静态的文本描述。要将其转换为用户可见的界面，Android 系统必须执行“布局膨胀”（Layout Inflation）过程。这个过程由 `LayoutInflater` 类负责，它包含了解析、实例化、属性应用和视图树构建四个步骤。',
+          '其中，“实例化”步骤尤为昂贵。对于 XML 中的每一个标签（如 `<Button>`），系统都需要使用 Java 反射（Reflection）机制来查找并加载对应的 View 类。反射操作在运行时是非常耗时的，尤其是在布局复杂、控件数量众多的页面中，这直接导致了界面加载的延迟。',
+          '此外，系统还需要遍历 XML 中的每一个属性，并再次通过反射或查找 setter 方法来应用这些属性。这意味着一个复杂的 XML 布局可能包含成百上千次的反射调用和方法查找，累积起来构成了显著的性能开销。',
+        ],
+      },
+      {
+        heading: '测量（Measure）与布局（Layout）过程',
+        paragraphs: [
+          'View 对象创建后，还需要经过测量和布局阶段才能绘制。在测量阶段，父容器会询问子 View 需要多大空间；在布局阶段，父容器决定子 View 的具体位置。',
+          '这是一个自顶向下的递归过程。性能问题的核心在于，某些常用的布局容器（特别是 `LinearLayout` 和 `RelativeLayout`）为了确定子 View 的大小，往往需要多次测量同一个子 View。',
+        ],
+      },
+      {
+        heading: '双重测量 (Double Taxation) 的指数级灾难',
+        paragraphs: [
+          '以最常见的 `LinearLayout` 配合 `layout_weight` 为例。为了按比例分配剩余空间，`LinearLayout` 必须执行两次测量传递：第一次测量所有无权重的子项，确定它们占用的空间；第二次根据剩余空间和权重比例，重新测量那些带有权重的子项。',
+          '这被称为“双重测量”。如果只有一个层级，这还在可接受范围内。但现代 UI 往往非常复杂，导致布局层层嵌套。当一个需要双重测量的布局嵌套在另一个需要双重测量的布局中时，测量次数会呈指数级爆炸。',
+          '例如，一个嵌套 3 层的加权 `LinearLayout` 结构，会导致最内层的 View 被测量 $2^3 = 8$ 次！这种“指数级灾难”在 `RecyclerView` 的 Item 布局中尤为致命，因为列表滚动时会频繁触发绑定和测量，直接导致掉帧和卡顿。',
+          '尽管 `ConstraintLayout` 通过其扁平化的特性缓解了嵌套问题，但它并不能改变 View 系统本身“允许甚至依赖多重测量”的底层架构。Jetpack Compose 则引入了“固有特性测量”（Intrinsic Measurement）和严格的“单次测量”规则，从架构上根本杜绝了双重测量问题，确保了 UI 复杂度增加时性能的线性（而非指数级）可预测性。',
+        ],
+      },
+    ],
+  },
+  {
+    slug: 'compose-compiler-magic',
+    title: '解构 Compose 编译器：@Composable 如何改变 Android 开发',
+    description: '揭开 @Composable 注解的神秘面纱，深入了解 Compose 编译器插件如何通过“插槽表”和“位置记忆”实现高效的 UI 更新，以及它与 Kotlin 挂起函数的异同。',
+    publishedAt: '2025-11-21',
+    updatedAt: '2025-11-21',
+    author: '技术团队',
+    tags: ['Compiler', 'Kotlin', 'Internals', 'Composable'],
+    readingMinutes: 14,
+    sections: [
+      {
+        heading: '@Composable：不止是一个注解',
+        paragraphs: [
+          '很多初学者认为 `@Composable` 类似于 Dagger 的 `@Inject`，是一个运行时注解。事实上，它更像 Kotlin 的 `suspend` 关键字，是一个改变函数类型的语言级特性。',
+          '`@Composable` 对应着一个 Kotlin 编译器插件（Compose Compiler Plugin）。在编译期间，这个插件会拦截所有被标记的函数，并重写其签名。最显著的变化是注入了一个隐式的参数：`Composer`。',
+          '`Composer` 是 Compose 运行时的核心上下文对象，它贯穿于整个 UI 树的构建过程，负责记录正在执行的节点位置、存储状态以及调度重组。这解释了为什么 Composable 函数只能在其他 Composable 函数中调用——因为它们需要这个隐式传递的 `Composer` 上下文。',
+        ],
+      },
+      {
+        heading: '插槽表 (Slot Table) 与间隙缓冲区',
+        paragraphs: [
+          'Compose 如何存储 UI 树？它并没有使用传统的对象树（如 View Hierarchy），而是使用了一种基于数组的线性数据结构，称为“插槽表”。',
+          '插槽表的设计灵感来源于文本编辑器中常用的“间隙缓冲区”（Gap Buffer）。它是一个包含数据的数组，但在当前操作位置保留了一段空的“间隙”。这使得 Compose 可以在 O(1) 时间复杂度内移动光标，并在当前位置高效地插入或删除数据。',
+          '这种结构极其适合 UI 的动态特性。当重组发生时，Compose 编译器生成的代码会按照执行顺序访问插槽表。如果发现数据（如状态或节点结构）没有变化，它就直接跳过；如果发生变化，它就利用间隙缓冲区高效地更新数组内容。',
+        ],
+      },
+      {
+        heading: '位置记忆 (Positional Memoization)',
+        paragraphs: [
+          '理解了插槽表，就能理解 `remember` 的工作原理。`remember` 并不是魔法，它利用了“位置记忆”技术。',
+          '因为 Composable 函数的执行顺序在重组期间通常是稳定的，Compose 可以利用函数在源代码中的“位置”作为 key，在插槽表中查找和存取值。当代码执行到 `remember { ... }` 时，Composer 会检查当前插槽位置是否已有缓存值。如果有且依赖未变，直接返回；否则，执行 lambda 计算新值并存入插槽。',
+          '这种机制使得函数式 UI 能够拥有“状态”，并且这种状态能够跨越多次重组而持久存在，直到该 Composable 从 UI 树中被移除。',
+        ],
+      },
+    ],
+  },
 ];
 
 export function getAllPosts() {
