@@ -49,7 +49,7 @@ const sampleXml = `<?xml version="1.0" encoding="utf-8"?>
 document.addEventListener('DOMContentLoaded', () => {
     // 初始化国际化
     i18n.updateUI();
-    
+
     // 获取DOM元素
     const xmlInput = document.getElementById('xml-input');
     const composeOutput = document.getElementById('compose-output');
@@ -66,27 +66,27 @@ document.addEventListener('DOMContentLoaded', () => {
     const outputStatusText = document.getElementById('output-status-text');
     const inputLines = document.getElementById('input-lines');
     const outputLines = document.getElementById('output-lines');
-    
+
     // 语言切换
     const langButtons = document.querySelectorAll('.lang-switch button');
     langButtons.forEach(btn => {
         btn.addEventListener('click', () => {
             const lang = btn.textContent.includes('EN') ? 'en' : 'zh';
             i18n.setLanguage(lang);
-            
+
             // 更新按钮状态
             langButtons.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-            
+
             notifier.success(i18n.t('notification.languageChanged') || 'Language changed!');
         });
     });
-    
+
     // 更新输入状态
     function updateInputStatus() {
         const lines = xmlInput.value.split('\n').length;
         inputLines.textContent = i18n.t('lines', { count: lines });
-        
+
         if (xmlInput.value.trim()) {
             inputStatus.className = 'status-dot success';
             inputStatusText.textContent = i18n.t('status.xmlReady');
@@ -95,7 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
             inputStatusText.textContent = i18n.t('status.ready');
         }
     }
-    
+
     // 更新输出状态
     function updateOutputStatus(hasContent) {
         if (hasContent) {
@@ -109,7 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
             outputStatusText.textContent = i18n.t('status.waiting');
         }
     }
-    
+
     // 执行转换
     function performConversion() {
         const xmlCode = xmlInput.value.trim();
@@ -117,7 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
             notifier.warning(i18n.t('notification.emptyInput'));
             return;
         }
-        
+
         // 检查缓存
         const cached = cache.get(xmlCode);
         if (cached) {
@@ -125,47 +125,48 @@ document.addEventListener('DOMContentLoaded', () => {
             notifier.info('Loaded from cache');
             return;
         }
-        
+
         // 显示加载状态
         outputStatusText.textContent = i18n.t('status.converting');
-        
+
         // 使用 setTimeout 模拟异步处理，避免阻塞UI
         setTimeout(() => {
             try {
                 const composeCode = convertXmlToCompose(xmlCode);
-                
+
                 // 缓存结果
                 cache.set(xmlCode, composeCode);
-                
+
                 // 保存到历史记录
                 storage.saveConversion(xmlCode, composeCode);
-                
+
                 // 显示结果
                 displayResult(composeCode);
-                
+
                 notifier.success(i18n.t('notification.copied') || 'Conversion complete!');
             } catch (error) {
                 console.error('Conversion error:', error);
-                notifier.error(i18n.t('error.conversion'));
+                console.error('Full traceback:', error.stack);
+                notifier.error(i18n.t('error.conversion') + ': ' + error.message);
                 outputStatusText.textContent = i18n.t('status.error');
             }
         }, 100);
     }
-    
+
     // 显示转换结果
     function displayResult(composeCode) {
         emptyState.style.display = 'none';
         composeOutput.style.display = 'block';
         composeOutput.textContent = composeCode;
-        
+
         // 语法高亮
         if (typeof hljs !== 'undefined') {
             hljs.highlightElement(composeOutput);
         }
-        
+
         updateOutputStatus(true);
     }
-    
+
     // 复制代码
     async function copyCode() {
         const code = composeOutput.textContent;
@@ -173,7 +174,7 @@ document.addEventListener('DOMContentLoaded', () => {
             notifier.warning(i18n.t('notification.noCode'));
             return;
         }
-        
+
         try {
             await navigator.clipboard.writeText(code);
             notifier.success(i18n.t('notification.copied'));
@@ -182,14 +183,14 @@ document.addEventListener('DOMContentLoaded', () => {
             notifier.error('Failed to copy code');
         }
     }
-    
+
     // 加载示例
     function loadSample() {
         xmlInput.value = sampleXml;
         updateInputStatus();
         performConversion();
     }
-    
+
     // 清空输入
     function clearInput() {
         xmlInput.value = '';
@@ -200,7 +201,7 @@ document.addEventListener('DOMContentLoaded', () => {
         updateOutputStatus(false);
         notifier.info(i18n.t('notification.cleared'));
     }
-    
+
     // 下载代码
     function downloadCode() {
         const code = composeOutput.textContent;
@@ -208,24 +209,24 @@ document.addEventListener('DOMContentLoaded', () => {
             notifier.warning(i18n.t('notification.noCode'));
             return;
         }
-        
+
         exporter.exportAsKotlin(code);
         notifier.success(i18n.t('notification.downloaded'));
     }
-    
+
     // 显示代码对比
     function showComparison() {
         const xmlCode = xmlInput.value.trim();
         const composeCode = composeOutput.textContent;
-        
+
         if (!xmlCode || !composeCode) {
             notifier.warning('Please convert XML first!');
             return;
         }
-        
+
         diffViewer.show(xmlCode, composeCode);
     }
-    
+
     // 绑定事件
     if (convertBtn) convertBtn.addEventListener('click', performConversion);
     if (copyBtn) copyBtn.addEventListener('click', copyCode);
@@ -234,7 +235,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (downloadBtn) downloadBtn.addEventListener('click', downloadCode);
     if (compareBtn) compareBtn.addEventListener('click', showComparison);
     if (xmlInput) xmlInput.addEventListener('input', updateInputStatus);
-    
+
     // 初始化拖拽上传
     if (xmlInput) {
         const dragDrop = new DragDropHandler(
@@ -246,7 +247,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         );
     }
-    
+
     // 初始化历史记录UI
     const historyUI = new HistoryUI(storage, (xml, compose) => {
         xmlInput.value = xml;
@@ -254,7 +255,7 @@ document.addEventListener('DOMContentLoaded', () => {
         displayResult(compose);
         notifier.info('History loaded');
     });
-    
+
     // 初始化快捷键
     const shortcuts = new ShortcutManager({
         convert: performConversion,
@@ -272,11 +273,11 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     });
-    
+
     // 初始化状态
     updateInputStatus();
     updateOutputStatus(false);
-    
+
     // 如果有示例加载按钮，自动加载示例
     if (loadSampleBtn && xmlInput && composeOutput) {
         // 可选：自动加载示例

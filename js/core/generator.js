@@ -21,8 +21,8 @@ export const indent = (level) => '    '.repeat(level);
  */
 export const formatCompose = (code) => {
     return code.replace(/,(\n\s*\})/g, '$1')
-                .replace(/\n\s*\n/g, '\n')
-                .trim();
+        .replace(/\n\s*\n/g, '\n')
+        .trim();
 };
 
 /**
@@ -34,19 +34,20 @@ export const generateImports = (rootElement) => {
     const usedComponents = new Set();
     const usedModifiers = new Set();
     const usedResources = new Set();
-    
+
     // 递归收集使用的组件和功能
     const collectUsage = (node) => {
         const tagName = node.tagName;
         const attributes = getAttributes(node);
-        
+
         // 收集组件类型
         switch (tagName) {
             case 'LinearLayout':
                 usedComponents.add(attributes['android:orientation'] === 'horizontal' ? 'Row' : 'Column');
                 break;
             case 'ConstraintLayout':
-                usedComponents.add('Box');
+                usedComponents.add('ConstraintLayout');
+                usedComponents.add('ConstraintSet');
                 break;
             case 'TextView':
                 usedComponents.add('Text');
@@ -99,8 +100,24 @@ export const generateImports = (rootElement) => {
                 usedComponents.add('LazyVerticalGrid');
                 usedComponents.add('GridCells');
                 break;
+            case 'androidx.cardview.widget.CardView':
+            case 'CardView':
+                usedComponents.add('Card');
+                if (attributes['app:cardElevation'] || attributes['cardElevation']) {
+                    usedComponents.add('CardDefaults');
+                }
+                break;
+            case 'View':
+                if (attributes['android:layout_height'] === '1dp' || attributes['android:layout_height'] === '0.5dp') {
+                    usedComponents.add('HorizontalDivider');
+                } else if (attributes['android:layout_weight']) {
+                    usedComponents.add('Spacer');
+                } else {
+                    usedComponents.add('Box');
+                }
+                break;
         }
-        
+
         // 收集修饰符使用
         if (attributes['android:layout_width'] === 'match_parent') usedModifiers.add('fillMaxWidth');
         if (attributes['android:layout_height'] === 'match_parent') usedModifiers.add('fillMaxHeight');
@@ -109,7 +126,7 @@ export const generateImports = (rootElement) => {
         if (attributes['android:background']) usedModifiers.add('background');
         if (attributes['android:visibility']) usedModifiers.add('alpha');
         if (attributes['android:onClick']) usedModifiers.add('clickable');
-        
+
         // 收集资源引用
         Object.values(attributes).forEach(value => {
             if (typeof value === 'string') {
@@ -119,40 +136,40 @@ export const generateImports = (rootElement) => {
                 if (value.startsWith('@drawable/')) usedResources.add('painterResource');
             }
         });
-        
+
         // 递归处理子元素
         Array.from(node.children).forEach(child => collectUsage(child));
     };
-    
+
     collectUsage(rootElement);
-    
+
     // 生成导入语句
     let imports = '// 自动生成的导入语句\n';
-    
+
     // 基础Compose导入
     imports += 'import androidx.compose.runtime.*\n';
     imports += 'import androidx.compose.ui.Modifier\n';
     imports += 'import androidx.compose.ui.unit.dp\n';
     imports += 'import androidx.compose.ui.unit.sp\n';
-    
+
     // 布局导入
     if (usedComponents.has('Column') || usedComponents.has('Row') || usedComponents.has('Box')) {
         imports += 'import androidx.compose.foundation.layout.*\n';
     }
-    
+
     // Material3组件导入
-    const material3Components = ['Text', 'Button', 'TextField', 'Checkbox', 'RadioButton', 'Switch', 
-                               'LinearProgressIndicator', 'CircularProgressIndicator', 'Slider'];
+    const material3Components = ['Text', 'Button', 'TextField', 'Checkbox', 'RadioButton', 'Switch',
+        'LinearProgressIndicator', 'CircularProgressIndicator', 'Slider', 'Card', 'HorizontalDivider'];
     if (material3Components.some(comp => usedComponents.has(comp))) {
         imports += 'import androidx.compose.material3.*\n';
     }
-    
+
     // 图片和资源导入
     if (usedComponents.has('Image') || usedResources.has('painterResource')) {
         imports += 'import androidx.compose.foundation.Image\n';
         imports += 'import androidx.compose.ui.res.painterResource\n';
     }
-    
+
     // 资源导入
     if (usedResources.has('stringResource')) {
         imports += 'import androidx.compose.ui.res.stringResource\n';
@@ -163,7 +180,7 @@ export const generateImports = (rootElement) => {
     if (usedResources.has('dimensionResource')) {
         imports += 'import androidx.compose.ui.res.dimensionResource\n';
     }
-    
+
     // 特殊功能导入
     if (usedComponents.has('PasswordVisualTransformation')) {
         imports += 'import androidx.compose.ui.text.input.PasswordVisualTransformation\n';
@@ -174,7 +191,10 @@ export const generateImports = (rootElement) => {
     if (usedComponents.has('AndroidView')) {
         imports += 'import androidx.compose.ui.viewinterop.AndroidView\n';
     }
-    
+    if (usedComponents.has('ConstraintLayout')) {
+        imports += 'import androidx.constraintlayout.compose.*\n';
+    }
+
     return imports;
 };
 
@@ -193,38 +213,38 @@ export const convertXmlToCompose = (xmlString) => {
         });
         return errorMessage;
     }
-    
+
     const xmlDoc = validation.xmlDoc;
     const rootElement = xmlDoc.documentElement;
-    
+
     // 收集验证信息
     const allWarnings = [];
     const allSuggestions = [];
-    
+
     const collectValidationInfo = (node) => {
         const attributes = getAttributes(node);
         const validation = validateAttributes(node.tagName, attributes);
         allWarnings.push(...validation.warnings);
         allSuggestions.push(...validation.suggestions);
-        
+
         Array.from(node.children).forEach(child => collectValidationInfo(child));
     };
-    
+
     collectValidationInfo(rootElement);
-    
+
     // 生成性能建议
     const performanceTips = generatePerformanceTips(rootElement);
-    
+
     // 生成导入语句
     const imports = generateImports(rootElement);
     const composeCode = parseNode(rootElement, 0);
-    
+
     let result = imports + "\n" + formatCompose(composeCode);
-    
+
     // 添加警告和建议
     if (allWarnings.length > 0 || allSuggestions.length > 0 || performanceTips.length > 0) {
         result += "\n\n/* 转换提示和建议：\n";
-        
+
         if (allWarnings.length > 0) {
             result += "\n⚠️ 警告：\n";
             allWarnings.forEach(warning => {
@@ -234,24 +254,24 @@ export const convertXmlToCompose = (xmlString) => {
                 }
             });
         }
-        
+
         if (allSuggestions.length > 0) {
             result += "\n💡 建议：\n";
             allSuggestions.forEach(suggestion => {
                 result += `• ${suggestion.message}\n`;
             });
         }
-        
+
         if (performanceTips.length > 0) {
             result += "\n🚀 性能优化：\n";
             performanceTips.forEach(tip => {
                 result += `• ${tip}\n`;
             });
         }
-        
+
         result += "*/";
     }
-    
+
     return result;
 };
 

@@ -14,7 +14,7 @@ import { indent } from './generator.js';
  */
 export const handleSpecialTags = (node, indentLevel) => {
     const tagName = node.tagName;
-    
+
     switch (tagName) {
         case 'include':
             const layout = node.getAttribute('layout');
@@ -23,7 +23,7 @@ export const handleSpecialTags = (node, indentLevel) => {
                 return `\n${indent(indentLevel)}// TODO: Include layout: ${layoutName}\n${indent(indentLevel)}// ${layoutName.charAt(0).toUpperCase() + layoutName.slice(1)}()`;
             }
             return `\n${indent(indentLevel)}// TODO: Handle include tag`;
-            
+
         case 'merge':
             // merge标签的子元素直接展开
             const children = Array.from(node.children);
@@ -32,7 +32,7 @@ export const handleSpecialTags = (node, indentLevel) => {
                 mergeCode += parseNode(child, indentLevel);
             });
             return mergeCode;
-            
+
         case 'fragment':
             const fragmentName = node.getAttribute('android:name') || node.getAttribute('class');
             if (fragmentName) {
@@ -40,7 +40,7 @@ export const handleSpecialTags = (node, indentLevel) => {
                 return `\n${indent(indentLevel)}// TODO: Replace with Composable: ${simpleName}()\n${indent(indentLevel)}AndroidView(factory = { context -> /* Fragment container */ })`;
             }
             return `\n${indent(indentLevel)}// TODO: Handle fragment tag`;
-            
+
         default:
             return null;
     }
@@ -54,42 +54,100 @@ export const handleSpecialTags = (node, indentLevel) => {
  */
 export const mapTagToComposable = (tag, attrs) => {
     const result = { name: tag, attributes: {} };
-    
+
     switch (tag) {
         case 'LinearLayout':
             result.name = attrs['android:orientation'] === 'horizontal' ? 'Row' : 'Column';
             break;
-        
-        case 'ConstraintLayout':
-            result.name = 'Box'; // TODO: 需要添加ConstraintLayout依赖
+
+        case 'androidx.cardview.widget.CardView':
+        case 'CardView':
+            result.name = 'Card';
+            // 处理圆角
+            if (attrs['app:cardCornerRadius'] || attrs['cardCornerRadius']) {
+                const radius = attrs['app:cardCornerRadius'] || attrs['cardCornerRadius'];
+                const radiusVal = parseInt(radius);
+                if (!isNaN(radiusVal)) {
+                    result.attributes.shape = `RoundedCornerShape(${radiusVal}.dp)`;
+                }
+            }
+            // 处理阴影
+            if (attrs['app:cardElevation'] || attrs['cardElevation']) {
+                const elevation = attrs['app:cardElevation'] || attrs['cardElevation'];
+                const elevationVal = parseInt(elevation);
+                if (!isNaN(elevationVal)) {
+                    result.attributes.elevation = `CardDefaults.cardElevation(defaultElevation = ${elevationVal}.dp)`;
+                }
+            }
+            // 处理背景色
+            if (attrs['app:cardBackgroundColor'] || attrs['cardBackgroundColor']) {
+                const color = attrs['app:cardBackgroundColor'] || attrs['cardBackgroundColor'];
+                if (color.startsWith('#')) {
+                    result.attributes.colors = `CardDefaults.cardColors(containerColor = Color(0x${color.replace('#', 'FF')}))`;
+                } else if (color.startsWith('@color/')) {
+                    const colorName = color.replace('@color/', '');
+                    result.attributes.colors = `CardDefaults.cardColors(containerColor = colorResource(R.color.${colorName}))`;
+                }
+            }
             break;
-        
+
+        case 'View':
+            const height = attrs['android:layout_height'];
+            const background = attrs['android:background'];
+
+            // 检查是否是分割线
+            if (height && (height === '1dp' || height === '0.5dp') && background) {
+                result.name = 'HorizontalDivider';
+                // 提取颜色
+                if (background.startsWith('#')) {
+                    result.attributes.color = `Color(0x${background.replace('#', 'FF')})`;
+                } else if (background.startsWith('@color/')) {
+                    const colorName = background.replace('@color/', '');
+                    result.attributes.color = `colorResource(R.color.${colorName})`;
+                }
+                // 提取厚度
+                const thickness = parseFloat(height);
+                if (!isNaN(thickness) && thickness !== 1) { // 1dp is default
+                    result.attributes.thickness = `${thickness}.dp`;
+                }
+            } else {
+                // 普通View作为占位符或容器
+                result.name = attrs['android:layout_weight'] ? 'Spacer' : 'Box';
+            }
+            break;
+
+        case 'ConstraintLayout':
+            result.name = 'ConstraintLayout';
+            // 添加ConstraintLayout支持提示
+            result.comment = '// Attention: Requires androidx.constraintlayout:constraintlayout-compose dependency';
+            break;
+
         case 'RelativeLayout':
         case 'FrameLayout':
             result.name = 'Box';
             break;
-        
+
         case 'ScrollView':
             result.name = 'Column';
             result.scrollable = 'vertical';
             break;
-        
+
         case 'HorizontalScrollView':
             result.name = 'Row';
             result.scrollable = 'horizontal';
             break;
-        
+
         case 'GridLayout':
             result.name = 'LazyVerticalGrid';
             const columnCount = attrs['android:columnCount'] || '2';
             result.attributes.columns = `GridCells.Fixed(${columnCount})`;
             break;
-        
+
         case 'TextView':
             result.name = 'Text';
             if (attrs['text']) {
-                result.attributes.text = attrs['text'].startsWith('stringResource(') 
-                    ? attrs['text'] 
+                result.attributes.text = attrs['text'].startsWith('stringResource(')
+                    ? attrs['text']
                     : `"${attrs['text']}"`;
             }
             if (attrs['textSize']) {
@@ -120,17 +178,17 @@ export const mapTagToComposable = (tag, attrs) => {
                 else if (gravity.includes('start') || gravity.includes('left')) result.attributes.textAlign = 'TextAlign.Start';
             }
             break;
-        
+
         case 'Button':
             result.name = 'Button';
             break;
-        
+
         case 'ImageView':
             result.name = 'Image';
             result.attributes.painter = `painterResource(id = R.drawable.placeholder)`;
             result.attributes.contentDescription = `"${attrs['android:contentDescription'] || 'Image'}"`;
             break;
-        
+
         case 'EditText':
             result.name = 'TextField';
             if (attrs['android:hint']) {
@@ -151,26 +209,26 @@ export const mapTagToComposable = (tag, attrs) => {
                 }
             }
             break;
-        
+
         case 'CheckBox':
             result.name = 'Checkbox';
             result.attributes.checked = 'false';
             result.attributes.onCheckedChange = '{ /* TODO: Handle check change */ }';
             break;
-        
+
         case 'RadioButton':
             result.name = 'RadioButton';
             result.attributes.selected = 'false';
             result.attributes.onClick = '{ /* TODO: Handle radio selection */ }';
             break;
-        
+
         case 'Switch':
         case 'ToggleButton':
             result.name = 'Switch';
             result.attributes.checked = 'false';
             result.attributes.onCheckedChange = '{ /* TODO: Handle switch change */ }';
             break;
-        
+
         case 'ProgressBar':
             const style = attrs['style'];
             if (style && style.includes('Horizontal')) {
@@ -180,24 +238,24 @@ export const mapTagToComposable = (tag, attrs) => {
                 result.name = 'CircularProgressIndicator';
             }
             break;
-        
+
         case 'SeekBar':
             result.name = 'Slider';
             result.attributes.value = '0.5f';
             result.attributes.onValueChange = '{ /* TODO: Handle slider change */ }';
             break;
-        
+
         case 'Spinner':
             result.name = 'ExposedDropdownMenuBox';
             result.attributes.expanded = 'false';
             result.attributes.onExpandedChange = '{ /* TODO: Handle dropdown */ }';
             break;
-        
+
         case 'WebView':
             result.name = 'AndroidView';
             result.attributes.factory = '{ context -> WebView(context) }';
             break;
-        
+
         default:
             result.name = 'Box';
             break;
@@ -215,11 +273,11 @@ export const mapTagToComposable = (tag, attrs) => {
 export const buildModifiers = (attrs, indentLevel, composable) => {
     let modifierString = '';
     const indentStr = indent(indentLevel);
-    
+
     // 处理尺寸
     const width = attrs['android:layout_width'];
     const height = attrs['android:layout_height'];
-    
+
     if (width === 'match_parent') {
         modifierString += `\n${indentStr}.fillMaxWidth()`;
     } else if (width === 'wrap_content') {
@@ -230,7 +288,7 @@ export const buildModifiers = (attrs, indentLevel, composable) => {
             modifierString += `\n${indentStr}.width(${widthValue}.dp)`;
         }
     }
-    
+
     if (height === 'match_parent') {
         modifierString += `\n${indentStr}.fillMaxHeight()`;
     } else if (height === 'wrap_content') {
@@ -241,14 +299,14 @@ export const buildModifiers = (attrs, indentLevel, composable) => {
             modifierString += `\n${indentStr}.height(${heightValue}.dp)`;
         }
     }
-    
+
     // 处理内边距
     const padding = attrs['android:padding'];
     const paddingStart = attrs['android:paddingStart'] || attrs['android:paddingLeft'];
     const paddingTop = attrs['android:paddingTop'];
     const paddingEnd = attrs['android:paddingEnd'] || attrs['android:paddingRight'];
     const paddingBottom = attrs['android:paddingBottom'];
-    
+
     if (padding) {
         const paddingValue = parseInt(padding);
         if (!isNaN(paddingValue)) {
@@ -259,19 +317,19 @@ export const buildModifiers = (attrs, indentLevel, composable) => {
         const top = paddingTop ? parseInt(paddingTop) : 0;
         const end = paddingEnd ? parseInt(paddingEnd) : 0;
         const bottom = paddingBottom ? parseInt(paddingBottom) : 0;
-        
+
         if (!isNaN(start) || !isNaN(top) || !isNaN(end) || !isNaN(bottom)) {
             modifierString += `\n${indentStr}.padding(start = ${start || 0}.dp, top = ${top || 0}.dp, end = ${end || 0}.dp, bottom = ${bottom || 0}.dp)`;
         }
     }
-    
+
     // 处理外边距
     const marginStart = attrs['android:layout_marginStart'] || attrs['android:layout_marginLeft'];
     const marginTop = attrs['android:layout_marginTop'];
     const marginEnd = attrs['android:layout_marginEnd'] || attrs['android:layout_marginRight'];
     const marginBottom = attrs['android:layout_marginBottom'];
     const margin = attrs['android:layout_margin'];
-    
+
     if (margin) {
         const marginValue = parseInt(margin);
         if (!isNaN(marginValue)) {
@@ -282,12 +340,12 @@ export const buildModifiers = (attrs, indentLevel, composable) => {
         const top = marginTop ? parseInt(marginTop) : 0;
         const end = marginEnd ? parseInt(marginEnd) : 0;
         const bottom = marginBottom ? parseInt(marginBottom) : 0;
-        
+
         if (!isNaN(start) || !isNaN(top) || !isNaN(end) || !isNaN(bottom)) {
             modifierString += `\n${indentStr}/* TODO: Add margins (start=${start || 0}dp, top=${top || 0}dp, end=${end || 0}dp, bottom=${bottom || 0}dp) in parent container */`;
         }
     }
-    
+
     // 处理滚动
     if (composable && composable.scrollable) {
         if (composable.scrollable === 'vertical') {
@@ -296,7 +354,7 @@ export const buildModifiers = (attrs, indentLevel, composable) => {
             modifierString += `\n${indentStr}.horizontalScroll(rememberScrollState())`;
         }
     }
-    
+
     // 处理背景
     if (attrs['android:background']) {
         const background = attrs['android:background'];
@@ -316,7 +374,7 @@ export const buildModifiers = (attrs, indentLevel, composable) => {
             modifierString += `\n${indentStr}.background(/* TODO: Implement gradient background using Brush.linearGradient() */)`;
         }
     }
-    
+
     // 处理背景色
     if (attrs['android:backgroundColor']) {
         const backgroundColor = attrs['android:backgroundColor'];
@@ -328,7 +386,7 @@ export const buildModifiers = (attrs, indentLevel, composable) => {
             modifierString += `\n${indentStr}.background(Color(0x${color.toUpperCase()}))`;
         }
     }
-    
+
     // 处理可见性
     if (attrs['android:visibility']) {
         const visibility = attrs['android:visibility'];
@@ -338,17 +396,17 @@ export const buildModifiers = (attrs, indentLevel, composable) => {
             modifierString += `\n${indentStr}.alpha(0f)`;
         }
     }
-    
+
     // 处理点击事件
     if (attrs['android:onClick']) {
         modifierString += `\n${indentStr}.clickable { /* TODO: Handle ${attrs['android:onClick']} */ }`;
     }
-    
+
     // 处理启用/禁用状态
     if (attrs['android:enabled'] === 'false') {
         modifierString += `\n${indentStr}.alpha(0.6f)`;
     }
-    
+
     // 处理旋转
     if (attrs['android:rotation']) {
         const rotation = parseFloat(attrs['android:rotation']);
@@ -356,7 +414,7 @@ export const buildModifiers = (attrs, indentLevel, composable) => {
             modifierString += `\n${indentStr}.rotate(${rotation}f)`;
         }
     }
-    
+
     // 处理缩放
     if (attrs['android:scaleX'] || attrs['android:scaleY']) {
         const scaleX = attrs['android:scaleX'] ? parseFloat(attrs['android:scaleX']) : 1.0;
@@ -365,7 +423,7 @@ export const buildModifiers = (attrs, indentLevel, composable) => {
             modifierString += `\n${indentStr}.scale(scaleX = ${scaleX}f, scaleY = ${scaleY}f)`;
         }
     }
-    
+
     // 处理透明度
     if (attrs['android:alpha']) {
         const alpha = parseFloat(attrs['android:alpha']);
@@ -373,7 +431,45 @@ export const buildModifiers = (attrs, indentLevel, composable) => {
             modifierString += `\n${indentStr}.alpha(${alpha}f)`;
         }
     }
-    
+
+    // 处理重力对齐
+    if (attrs['android:gravity']) {
+        const gravity = attrs['android:gravity'];
+        // 对于Box中的内容对齐
+        if (composable.name === 'Box') {
+            if (gravity.includes('center')) modifierString += `\n${indentStr}.align(Alignment.Center)`;
+            else if (gravity.includes('center_vertical')) modifierString += `\n${indentStr}.align(Alignment.CenterStart)`;
+            else if (gravity.includes('center_horizontal')) modifierString += `\n${indentStr}.align(Alignment.TopCenter)`;
+            else if (gravity.includes('bottom')) modifierString += `\n${indentStr}.align(Alignment.BottomStart)`;
+            else if (gravity.includes('end') || gravity.includes('right')) modifierString += `\n${indentStr}.align(Alignment.TopEnd)`;
+        } else {
+            modifierString += `\n${indentStr}/* TODO: Apply gravity '${gravity}' - use textAlign for Text or Arrangement/Alignment for layouts */`;
+        }
+    }
+
+    // 处理layout_gravity
+    if (attrs['android:layout_gravity']) {
+        const gravity = attrs['android:layout_gravity'];
+        // Row/Column scope
+        if (gravity.includes('center_vertical')) modifierString += `\n${indentStr}.align(Alignment.CenterVertically)`;
+        else if (gravity.includes('center_horizontal')) modifierString += `\n${indentStr}.align(Alignment.CenterHorizontally)`;
+        else if (gravity.includes('center')) modifierString += `\n${indentStr}.align(Alignment.Center)`;
+        else if (gravity.includes('bottom')) modifierString += `\n${indentStr}.align(Alignment.Bottom)`;
+        else if (gravity.includes('end')) modifierString += `\n${indentStr}.align(Alignment.End)`;
+        else {
+            modifierString += `\n${indentStr}/* TODO: Verify layout_gravity '${gravity}' applies to parent scope */`;
+        }
+    }
+
+    // 处理ConstraintLayout约束
+    const constraintKeys = Object.keys(attrs).filter(k => k.startsWith('app:layout_') || k.startsWith('layout_'));
+    if (constraintKeys.length > 0) {
+        const hasConstraints = constraintKeys.some(k => k.includes('to'));
+        if (hasConstraints) {
+            modifierString += `\n${indentStr}.constrainAs(ref) {\n${indentStr}    /* TODO: Convert constraints: \n${indentStr}    ${constraintKeys.map(k => `${k}="${attrs[k]}"`).join(`\n${indentStr}    `)}\n${indentStr}    */\n${indentStr}}`;
+        }
+    }
+
     return modifierString;
 };
 
@@ -385,20 +481,20 @@ export const buildModifiers = (attrs, indentLevel, composable) => {
  */
 export const parseNode = (node, indentLevel) => {
     const tagName = node.tagName;
-    
+
     // 首先检查是否是特殊标签
     const specialTagResult = handleSpecialTags(node, indentLevel);
     if (specialTagResult !== null) {
         return specialTagResult;
     }
-    
+
     const rawAttributes = getAttributes(node);
     const children = Array.from(node.children);
-    
+
     // 处理命名空间属性
     const processedAttributes = {};
     const attributeComments = [];
-    
+
     Object.entries(rawAttributes).forEach(([name, value]) => {
         const parsed = parseNamespacedAttribute(name, value);
         if (parsed.comment) {
@@ -406,42 +502,42 @@ export const parseNode = (node, indentLevel) => {
         }
         processedAttributes[parsed.name] = parsed.value;
     });
-    
+
     const composable = mapTagToComposable(tagName, processedAttributes);
     let composeCode = '';
-    
+
     // 添加属性注释
     if (attributeComments.length > 0) {
         composeCode += `\n${indent(indentLevel)}${attributeComments.join('\n' + indent(indentLevel))}`;
     }
-    
+
     composeCode += `\n${indent(indentLevel)}${composable.name}(`;
-    
+
     // 处理LazyVerticalGrid的特殊参数
     if (composable.name === 'LazyVerticalGrid') {
         Object.entries(composable.attributes).forEach(([key, value]) => {
             composeCode += `\n${indent(indentLevel + 1)}${key} = ${value},`;
         });
     }
-    
+
     const modifiers = buildModifiers(processedAttributes, indentLevel + 1, composable);
     if (modifiers) {
         composeCode += `\n${indent(indentLevel + 1)}modifier = Modifier${modifiers},`;
     }
-    
+
     // 处理非LazyVerticalGrid的普通属性
     if (composable.name !== 'LazyVerticalGrid') {
         Object.entries(composable.attributes).forEach(([key, value]) => {
             composeCode += `\n${indent(indentLevel + 1)}${key} = ${value},`;
         });
     }
-    
+
     if (children.length > 0 || (tagName === 'Button' && processedAttributes['text'])) {
         composeCode += `\n${indent(indentLevel)}) {`;
         if (tagName === 'Button' && processedAttributes['text']) {
             composeCode += `\n${indent(indentLevel + 1)}Text(text = ${processedAttributes['text']})`;
         }
-        
+
         // 处理LazyVerticalGrid的子元素
         if (composable.name === 'LazyVerticalGrid') {
             children.forEach(child => {
