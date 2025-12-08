@@ -13,6 +13,7 @@ import { ShortcutManager } from './ui/shortcuts.js';
 import { AnimationManager } from './ui/animations.js';
 import { HistoryUI } from './ui/history.js';
 import { DiffViewer } from './ui/diff.js';
+import { themeManager } from './ui/theme.js';
 import { i18n } from './i18n/i18n.js';
 
 // 初始化管理器实例
@@ -85,6 +86,14 @@ document.addEventListener('DOMContentLoaded', () => {
             notifier.success(i18n.t('notification.languageChanged') || 'Language changed!');
         });
     });
+
+    // 主题切换按钮
+    const themeToggleBtn = document.getElementById('theme-toggle-btn');
+    if (themeToggleBtn) {
+        themeToggleBtn.addEventListener('click', (e) => {
+            themeManager.toggle(e);
+        });
+    }
 
     // 更新输入状态
     function updateInputStatus() {

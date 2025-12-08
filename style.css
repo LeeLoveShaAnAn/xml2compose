@@ -101,9 +101,9 @@
     --container-2xl: 1536px;
 }
 
-/* Dark Mode Support */
+/* Dark Mode Support - via media query */
 @media (prefers-color-scheme: dark) {
-    :root {
+    :root:not(.light-theme) {
         --primary-color: #0A84FF;
         --primary-dark: #0056CC;
         --primary-light: #4DA3FF;
@@ -128,6 +128,38 @@
         --border-tertiary: #1C1C1E;
     }
 }
+
+/* Dark Mode - via JavaScript class */
+:root.dark-theme {
+    --primary-color: #0A84FF;
+    --primary-dark: #0056CC;
+    --primary-light: #4DA3FF;
+    --secondary-color: #5E5CE6;
+    --accent-color: #FF375F;
+    --success-color: #30D158;
+    --warning-color: #FF9F0A;
+    --error-color: #FF453A;
+
+    --bg-primary: #000000;
+    --bg-secondary: #1C1C1E;
+    --bg-tertiary: #2C2C2E;
+    --bg-quaternary: #3A3A3C;
+
+    --text-primary: #FFFFFF;
+    --text-secondary: #EBEBF5;
+    --text-tertiary: #EBEBF599;
+    --text-quaternary: #EBEBF54D;
+
+    --border-primary: #38383A;
+    --border-secondary: #48484A;
+    --border-tertiary: #1C1C1E;
+}
+
+/* Dark mode header */
+:root.dark-theme header {
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
 
 /* Reset and Base Styles */
 * {
