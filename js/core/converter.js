@@ -256,6 +256,192 @@ export const mapTagToComposable = (tag, attrs) => {
             result.attributes.factory = '{ context -> WebView(context) }';
             break;
 
+        // RecyclerView 支持
+        case 'RecyclerView':
+        case 'androidx.recyclerview.widget.RecyclerView':
+            const layoutManager = attrs['app:layoutManager'] || attrs['layoutManager'] || '';
+            if (layoutManager.includes('GridLayoutManager')) {
+                result.name = 'LazyVerticalGrid';
+                const spanCount = attrs['app:spanCount'] || '2';
+                result.attributes.columns = `GridCells.Fixed(${spanCount})`;
+            } else if (layoutManager.includes('LinearLayoutManager')) {
+                const orientation = attrs['android:orientation'];
+                result.name = orientation === 'horizontal' ? 'LazyRow' : 'LazyColumn';
+            } else {
+                // 默认垂直列表
+                result.name = 'LazyColumn';
+            }
+            result.comment = '// TODO: Replace with actual list items using items() or itemsIndexed()';
+            break;
+
+        // CoordinatorLayout → Scaffold
+        case 'CoordinatorLayout':
+        case 'androidx.coordinatorlayout.widget.CoordinatorLayout':
+            result.name = 'Scaffold';
+            result.comment = '// Note: Map AppBarLayout to topBar, FAB to floatingActionButton parameter';
+            break;
+
+        // DrawerLayout → ModalNavigationDrawer
+        case 'DrawerLayout':
+        case 'androidx.drawerlayout.widget.DrawerLayout':
+            result.name = 'ModalNavigationDrawer';
+            result.attributes.drawerContent = '{ /* TODO: Add NavigationView content */ }';
+            result.comment = '// Note: Move NavigationView content to drawerContent parameter';
+            break;
+
+        // NavigationView
+        case 'NavigationView':
+        case 'com.google.android.material.navigation.NavigationView':
+            result.name = 'ModalDrawerSheet';
+            result.comment = '// TODO: Add NavigationDrawerItem for each menu item';
+            break;
+
+        // TabLayout → TabRow
+        case 'TabLayout':
+        case 'com.google.android.material.tabs.TabLayout':
+            result.name = 'TabRow';
+            result.attributes.selectedTabIndex = '0';
+            result.comment = '// TODO: Add Tab() for each tab item';
+            break;
+
+        // ViewPager → HorizontalPager
+        case 'ViewPager':
+        case 'ViewPager2':
+        case 'androidx.viewpager.widget.ViewPager':
+        case 'androidx.viewpager2.widget.ViewPager2':
+            result.name = 'HorizontalPager';
+            result.attributes.state = 'rememberPagerState { pageCount }';
+            result.comment = '// TODO: Define pageCount and page content';
+            break;
+
+        // FloatingActionButton
+        case 'FloatingActionButton':
+        case 'com.google.android.material.floatingactionbutton.FloatingActionButton':
+            result.name = 'FloatingActionButton';
+            result.attributes.onClick = '{ /* TODO: Handle FAB click */ }';
+            // 处理图标
+            if (attrs['app:srcCompat'] || attrs['android:src']) {
+                const src = attrs['app:srcCompat'] || attrs['android:src'];
+                if (src.startsWith('@drawable/')) {
+                    const iconName = src.replace('@drawable/', '');
+                    result.attributes.content = `{ Icon(painterResource(R.drawable.${iconName}), contentDescription = null) }`;
+                }
+            }
+            break;
+
+        // BottomNavigationView → NavigationBar
+        case 'BottomNavigationView':
+        case 'com.google.android.material.bottomnavigation.BottomNavigationView':
+            result.name = 'NavigationBar';
+            result.comment = '// TODO: Add NavigationBarItem for each menu item';
+            break;
+
+        // Toolbar → TopAppBar
+        case 'Toolbar':
+        case 'androidx.appcompat.widget.Toolbar':
+        case 'MaterialToolbar':
+        case 'com.google.android.material.appbar.MaterialToolbar':
+            result.name = 'TopAppBar';
+            if (attrs['app:title'] || attrs['android:title']) {
+                const title = attrs['app:title'] || attrs['android:title'];
+                result.attributes.title = `{ Text("${title}") }`;
+            }
+            if (attrs['app:navigationIcon'] || attrs['android:navigationIcon']) {
+                result.attributes.navigationIcon = '{ IconButton(onClick = { /* TODO */ }) { Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back") } }';
+            }
+            break;
+
+        // AppBarLayout
+        case 'AppBarLayout':
+        case 'com.google.android.material.appbar.AppBarLayout':
+            result.name = 'Column';
+            result.comment = '// Note: AppBarLayout content should be placed in Scaffold topBar parameter';
+            break;
+
+        // CollapsingToolbarLayout → LargeTopAppBar
+        case 'CollapsingToolbarLayout':
+        case 'com.google.android.material.appbar.CollapsingToolbarLayout':
+            result.name = 'LargeTopAppBar';
+            if (attrs['app:title']) {
+                result.attributes.title = `{ Text("${attrs['app:title']}") }`;
+            }
+            result.attributes.scrollBehavior = 'TopAppBarDefaults.exitUntilCollapsedScrollBehavior()';
+            break;
+
+        // TextInputLayout → OutlinedTextField
+        case 'TextInputLayout':
+        case 'com.google.android.material.textfield.TextInputLayout':
+            result.name = 'OutlinedTextField';
+            result.attributes.value = '""';
+            result.attributes.onValueChange = '{ /* TODO: Handle text change */ }';
+            if (attrs['android:hint'] || attrs['app:hint']) {
+                const hint = attrs['android:hint'] || attrs['app:hint'];
+                result.attributes.label = `{ Text("${hint}") }`;
+            }
+            break;
+
+        // ChipGroup → FlowRow
+        case 'ChipGroup':
+        case 'com.google.android.material.chip.ChipGroup':
+            result.name = 'FlowRow';
+            result.attributes.horizontalArrangement = 'Arrangement.spacedBy(8.dp)';
+            break;
+
+        // Chip → FilterChip/AssistChip
+        case 'Chip':
+        case 'com.google.android.material.chip.Chip':
+            const chipStyle = attrs['style'] || '';
+            if (chipStyle.includes('Filter') || attrs['app:checkable'] === 'true') {
+                result.name = 'FilterChip';
+                result.attributes.selected = 'false';
+                result.attributes.onClick = '{ /* TODO: Handle chip selection */ }';
+            } else if (chipStyle.includes('Action') || chipStyle.includes('Assist')) {
+                result.name = 'AssistChip';
+                result.attributes.onClick = '{ /* TODO: Handle chip click */ }';
+            } else {
+                result.name = 'SuggestionChip';
+                result.attributes.onClick = '{ /* TODO: Handle chip click */ }';
+            }
+            if (attrs['android:text']) {
+                result.attributes.label = `{ Text("${attrs['android:text']}") }`;
+            }
+            break;
+
+        // NestedScrollView → Column with nestedScroll
+        case 'NestedScrollView':
+        case 'androidx.core.widget.NestedScrollView':
+            result.name = 'Column';
+            result.scrollable = 'vertical';
+            result.nestedScroll = true;
+            result.comment = '// Note: For proper nested scrolling with Scaffold, use nestedScroll modifier';
+            break;
+
+        // SwipeRefreshLayout → PullToRefreshBox
+        case 'SwipeRefreshLayout':
+        case 'androidx.swiperefreshlayout.widget.SwipeRefreshLayout':
+            result.name = 'PullToRefreshBox';
+            result.attributes.isRefreshing = 'false';
+            result.attributes.onRefresh = '{ /* TODO: Handle refresh */ }';
+            break;
+
+        // CardView (重复检查)
+        case 'MaterialCardView':
+        case 'com.google.android.material.card.MaterialCardView':
+            result.name = 'Card';
+            if (attrs['app:cardCornerRadius'] || attrs['cardCornerRadius']) {
+                const radius = attrs['app:cardCornerRadius'] || attrs['cardCornerRadius'];
+                const radiusVal = parseInt(radius);
+                if (!isNaN(radiusVal)) {
+                    result.attributes.shape = `RoundedCornerShape(${radiusVal}.dp)`;
+                }
+            }
+            break;
+
+        // Divider
+        case 'com.google.android.material.divider.MaterialDivider':
+            result.name = 'HorizontalDivider';
+            break;
+
         default:
             result.name = 'Box';
             break;
@@ -466,7 +652,100 @@ export const buildModifiers = (attrs, indentLevel, composable) => {
     if (constraintKeys.length > 0) {
         const hasConstraints = constraintKeys.some(k => k.includes('to'));
         if (hasConstraints) {
-            modifierString += `\n${indentStr}.constrainAs(ref) {\n${indentStr}    /* TODO: Convert constraints: \n${indentStr}    ${constraintKeys.map(k => `${k}="${attrs[k]}"`).join(`\n${indentStr}    `)}\n${indentStr}    */\n${indentStr}}`;
+            // 尝试生成更具体的约束代码
+            let constraintCode = `\n${indentStr}.constrainAs(ref) {`;
+            constraintKeys.forEach(key => {
+                const value = attrs[key];
+                const constraintName = key.replace('app:layout_constraint', '').replace('layout_constraint', '');
+                if (key.includes('toTopOf') && value === 'parent') {
+                    constraintCode += `\n${indentStr}    top.linkTo(parent.top)`;
+                } else if (key.includes('toBottomOf') && value === 'parent') {
+                    constraintCode += `\n${indentStr}    bottom.linkTo(parent.bottom)`;
+                } else if (key.includes('toStartOf') && value === 'parent') {
+                    constraintCode += `\n${indentStr}    start.linkTo(parent.start)`;
+                } else if (key.includes('toEndOf') && value === 'parent') {
+                    constraintCode += `\n${indentStr}    end.linkTo(parent.end)`;
+                } else if (key.includes('to') && value !== 'parent') {
+                    constraintCode += `\n${indentStr}    // ${constraintName} -> ${value}`;
+                }
+            });
+            constraintCode += `\n${indentStr}}`;
+            modifierString += constraintCode;
+        }
+    }
+
+    // 处理elevation/阴影
+    if (attrs['android:elevation']) {
+        const elevation = parseInt(attrs['android:elevation']);
+        if (!isNaN(elevation)) {
+            modifierString += `\n${indentStr}.shadow(elevation = ${elevation}.dp)`;
+        }
+    }
+
+    // 处理layout_weight
+    if (attrs['android:layout_weight']) {
+        const weight = parseFloat(attrs['android:layout_weight']);
+        if (!isNaN(weight)) {
+            modifierString += `\n${indentStr}.weight(${weight}f)`;
+        }
+    }
+
+    // 处理最小尺寸
+    const minWidth = attrs['android:minWidth'];
+    const minHeight = attrs['android:minHeight'];
+    if (minWidth || minHeight) {
+        const minW = minWidth ? parseInt(minWidth) : null;
+        const minH = minHeight ? parseInt(minHeight) : null;
+        if (minW !== null && minH !== null) {
+            modifierString += `\n${indentStr}.defaultMinSize(minWidth = ${minW}.dp, minHeight = ${minH}.dp)`;
+        } else if (minW !== null) {
+            modifierString += `\n${indentStr}.defaultMinSize(minWidth = ${minW}.dp)`;
+        } else if (minH !== null) {
+            modifierString += `\n${indentStr}.defaultMinSize(minHeight = ${minH}.dp)`;
+        }
+    }
+
+    // 处理最大尺寸
+    const maxWidth = attrs['android:maxWidth'];
+    const maxHeight = attrs['android:maxHeight'];
+    if (maxWidth) {
+        const maxW = parseInt(maxWidth);
+        if (!isNaN(maxW)) {
+            modifierString += `\n${indentStr}.widthIn(max = ${maxW}.dp)`;
+        }
+    }
+    if (maxHeight) {
+        const maxH = parseInt(maxHeight);
+        if (!isNaN(maxH)) {
+            modifierString += `\n${indentStr}.heightIn(max = ${maxH}.dp)`;
+        }
+    }
+
+    // 处理nestedScroll (用于NestedScrollView)
+    if (composable && composable.nestedScroll) {
+        modifierString += `\n${indentStr}.nestedScroll(scrollBehavior.nestedScrollConnection)`;
+    }
+
+    // 处理圆角 (通用)
+    if (attrs['android:radius'] || attrs['cornerRadius']) {
+        const radius = parseInt(attrs['android:radius'] || attrs['cornerRadius']);
+        if (!isNaN(radius)) {
+            modifierString += `\n${indentStr}.clip(RoundedCornerShape(${radius}.dp))`;
+        }
+    }
+
+    // 处理边框
+    if (attrs['android:strokeWidth'] || attrs['app:strokeWidth']) {
+        const strokeWidth = parseInt(attrs['android:strokeWidth'] || attrs['app:strokeWidth']);
+        const strokeColor = attrs['android:strokeColor'] || attrs['app:strokeColor'] || '#000000';
+        if (!isNaN(strokeWidth)) {
+            let colorCode = 'Color.Black';
+            if (strokeColor.startsWith('#')) {
+                let color = strokeColor.replace('#', '');
+                if (color.length === 6) color = 'FF' + color;
+                colorCode = `Color(0x${color.toUpperCase()})`;
+            }
+            modifierString += `\n${indentStr}.border(${strokeWidth}.dp, ${colorCode})`;
         }
     }
 

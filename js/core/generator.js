@@ -102,6 +102,8 @@ export const generateImports = (rootElement) => {
                 break;
             case 'androidx.cardview.widget.CardView':
             case 'CardView':
+            case 'MaterialCardView':
+            case 'com.google.android.material.card.MaterialCardView':
                 usedComponents.add('Card');
                 if (attributes['app:cardElevation'] || attributes['cardElevation']) {
                     usedComponents.add('CardDefaults');
@@ -115,6 +117,89 @@ export const generateImports = (rootElement) => {
                 } else {
                     usedComponents.add('Box');
                 }
+                break;
+            // 新增组件支持
+            case 'RecyclerView':
+            case 'androidx.recyclerview.widget.RecyclerView':
+                const layoutManager = attributes['app:layoutManager'] || '';
+                if (layoutManager.includes('GridLayoutManager')) {
+                    usedComponents.add('LazyVerticalGrid');
+                    usedComponents.add('GridCells');
+                } else if (layoutManager.includes('LinearLayoutManager') && attributes['android:orientation'] === 'horizontal') {
+                    usedComponents.add('LazyRow');
+                } else {
+                    usedComponents.add('LazyColumn');
+                }
+                break;
+            case 'CoordinatorLayout':
+            case 'androidx.coordinatorlayout.widget.CoordinatorLayout':
+                usedComponents.add('Scaffold');
+                break;
+            case 'DrawerLayout':
+            case 'androidx.drawerlayout.widget.DrawerLayout':
+                usedComponents.add('ModalNavigationDrawer');
+                usedComponents.add('ModalDrawerSheet');
+                break;
+            case 'NavigationView':
+            case 'com.google.android.material.navigation.NavigationView':
+                usedComponents.add('ModalDrawerSheet');
+                usedComponents.add('NavigationDrawerItem');
+                break;
+            case 'TabLayout':
+            case 'com.google.android.material.tabs.TabLayout':
+                usedComponents.add('TabRow');
+                usedComponents.add('Tab');
+                break;
+            case 'ViewPager':
+            case 'ViewPager2':
+            case 'androidx.viewpager.widget.ViewPager':
+            case 'androidx.viewpager2.widget.ViewPager2':
+                usedComponents.add('HorizontalPager');
+                usedComponents.add('PagerState');
+                break;
+            case 'FloatingActionButton':
+            case 'com.google.android.material.floatingactionbutton.FloatingActionButton':
+                usedComponents.add('FloatingActionButton');
+                usedComponents.add('Icon');
+                break;
+            case 'BottomNavigationView':
+            case 'com.google.android.material.bottomnavigation.BottomNavigationView':
+                usedComponents.add('NavigationBar');
+                usedComponents.add('NavigationBarItem');
+                break;
+            case 'Toolbar':
+            case 'androidx.appcompat.widget.Toolbar':
+            case 'MaterialToolbar':
+            case 'com.google.android.material.appbar.MaterialToolbar':
+                usedComponents.add('TopAppBar');
+                usedComponents.add('IconButton');
+                break;
+            case 'CollapsingToolbarLayout':
+            case 'com.google.android.material.appbar.CollapsingToolbarLayout':
+                usedComponents.add('LargeTopAppBar');
+                usedComponents.add('TopAppBarDefaults');
+                break;
+            case 'TextInputLayout':
+            case 'com.google.android.material.textfield.TextInputLayout':
+                usedComponents.add('OutlinedTextField');
+                break;
+            case 'ChipGroup':
+            case 'com.google.android.material.chip.ChipGroup':
+                usedComponents.add('FlowRow');
+                break;
+            case 'Chip':
+            case 'com.google.android.material.chip.Chip':
+                usedComponents.add('FilterChip');
+                usedComponents.add('AssistChip');
+                break;
+            case 'NestedScrollView':
+            case 'androidx.core.widget.NestedScrollView':
+                usedComponents.add('Column');
+                usedModifiers.add('nestedScroll');
+                break;
+            case 'SwipeRefreshLayout':
+            case 'androidx.swiperefreshlayout.widget.SwipeRefreshLayout':
+                usedComponents.add('PullToRefreshBox');
                 break;
         }
 
@@ -185,14 +270,38 @@ export const generateImports = (rootElement) => {
     if (usedComponents.has('PasswordVisualTransformation')) {
         imports += 'import androidx.compose.ui.text.input.PasswordVisualTransformation\n';
     }
-    if (usedComponents.has('LazyVerticalGrid')) {
+    if (usedComponents.has('LazyVerticalGrid') || usedComponents.has('GridCells')) {
         imports += 'import androidx.compose.foundation.lazy.grid.*\n';
+    }
+    if (usedComponents.has('LazyColumn') || usedComponents.has('LazyRow')) {
+        imports += 'import androidx.compose.foundation.lazy.*\n';
     }
     if (usedComponents.has('AndroidView')) {
         imports += 'import androidx.compose.ui.viewinterop.AndroidView\n';
     }
     if (usedComponents.has('ConstraintLayout')) {
         imports += 'import androidx.constraintlayout.compose.*\n';
+    }
+
+    // Pager导入
+    if (usedComponents.has('HorizontalPager') || usedComponents.has('PagerState')) {
+        imports += 'import androidx.compose.foundation.pager.*\n';
+    }
+
+    // FlowRow导入
+    if (usedComponents.has('FlowRow')) {
+        imports += 'import androidx.compose.foundation.layout.FlowRow\n';
+    }
+
+    // NestedScroll导入
+    if (usedModifiers.has('nestedScroll')) {
+        imports += 'import androidx.compose.ui.input.nestedscroll.nestedScroll\n';
+    }
+
+    // Icons导入
+    if (usedComponents.has('Icon') || usedComponents.has('IconButton')) {
+        imports += 'import androidx.compose.material.icons.Icons\n';
+        imports += 'import androidx.compose.material.icons.automirrored.filled.ArrowBack\n';
     }
 
     return imports;
