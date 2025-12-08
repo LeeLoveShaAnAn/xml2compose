@@ -1,21 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-F2G7TSB6Q6"></script>
     <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-F2G7TSB6Q6');
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-F2G7TSB6Q6');
     </script>
     <!-- Google AdSense -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2819959179592334" 
-      crossorigin="anonymous"></script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2819959179592334"
+        crossorigin="anonymous"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title data-i18n="converter.title">XML to Jetpack Compose Converter | xml2compose.dev</title>
-    <meta name="description" content="Convert Android XML layouts to Jetpack Compose code instantly. Real-time conversion with syntax highlighting and copy functionality." data-i18n-content="converter.description">
+    <meta name="description"
+        content="Convert Android XML layouts to Jetpack Compose code instantly. Real-time conversion with syntax highlighting and copy functionality."
+        data-i18n-content="converter.description">
     <link rel="canonical" href="https://xml2compose.dev/converter.html">
     <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -28,14 +31,14 @@
         body {
             background: var(--bg-secondary);
         }
-        
+
         .converter-hero {
             background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
             padding: var(--space-12) 0 var(--space-8);
             text-align: center;
             border-bottom: 1px solid var(--border-secondary);
         }
-        
+
         .converter-hero h1 {
             font-size: var(--text-4xl);
             font-weight: var(--font-bold);
@@ -43,7 +46,7 @@
             margin: 0 0 var(--space-4);
             letter-spacing: -0.02em;
         }
-        
+
         .converter-hero p {
             font-size: var(--text-lg);
             color: var(--text-secondary);
@@ -51,7 +54,7 @@
             margin: 0 auto var(--space-8);
             line-height: var(--leading-relaxed);
         }
-        
+
         .convert-button {
             background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: white;
@@ -67,29 +70,29 @@
             align-items: center;
             gap: var(--space-2);
         }
-        
+
         .convert-button:hover {
             transform: translateY(-2px);
             box-shadow: var(--shadow-lg);
         }
-        
+
         .convert-button:active {
             transform: translateY(0);
         }
-        
+
         .converter-main {
             max-width: 1400px;
             margin: 0 auto;
             padding: var(--space-8) var(--space-4);
         }
-        
+
         .converter-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: var(--space-8);
             margin-bottom: var(--space-12);
         }
-        
+
         .editor-panel {
             background: var(--bg-primary);
             border: 1px solid var(--border-secondary);
@@ -98,11 +101,11 @@
             box-shadow: var(--shadow-md);
             transition: all var(--transition-normal);
         }
-        
+
         .editor-panel:hover {
             box-shadow: var(--shadow-lg);
         }
-        
+
         .panel-header {
             background: var(--bg-tertiary);
             padding: var(--space-4) var(--space-6);
@@ -111,7 +114,7 @@
             justify-content: space-between;
             align-items: center;
         }
-        
+
         .panel-title {
             font-size: var(--text-lg);
             font-weight: var(--font-semibold);
@@ -121,18 +124,18 @@
             align-items: center;
             gap: var(--space-2);
         }
-        
+
         .panel-icon {
             width: 20px;
             height: 20px;
             opacity: 0.7;
         }
-        
+
         .panel-actions {
             display: flex;
             gap: var(--space-2);
         }
-        
+
         .action-button {
             background: var(--bg-secondary);
             border: 1px solid var(--border-secondary);
@@ -144,31 +147,31 @@
             cursor: pointer;
             transition: all var(--transition-fast);
         }
-        
+
         .action-button:hover {
             background: var(--bg-tertiary);
             color: var(--text-primary);
             transform: translateY(-1px);
         }
-        
+
         .action-button.primary {
             background: var(--primary-color);
             color: white;
             border-color: var(--primary-color);
         }
-        
+
         .action-button.primary:hover {
             background: var(--primary-dark);
             border-color: var(--primary-dark);
         }
-        
+
         .code-editor {
             padding: var(--space-6);
             min-height: 400px;
             max-height: 600px;
             overflow-y: auto;
         }
-        
+
         .code-input {
             width: 100%;
             height: 100%;
@@ -183,11 +186,11 @@
             resize: none;
             padding: 0;
         }
-        
+
         .code-input::placeholder {
             color: var(--text-tertiary);
         }
-        
+
         .code-output {
             font-family: var(--font-mono);
             font-size: var(--text-sm);
@@ -199,7 +202,7 @@
             white-space: pre-wrap;
             word-wrap: break-word;
         }
-        
+
         .empty-state {
             display: flex;
             flex-direction: column;
@@ -209,24 +212,24 @@
             color: var(--text-tertiary);
             text-align: center;
         }
-        
+
         .empty-state-icon {
             width: 48px;
             height: 48px;
             margin-bottom: var(--space-4);
             opacity: 0.5;
         }
-        
+
         .empty-state-text {
             font-size: var(--text-base);
             margin-bottom: var(--space-2);
         }
-        
+
         .empty-state-hint {
             font-size: var(--text-sm);
             color: var(--text-quaternary);
         }
-        
+
         .status-bar {
             background: var(--bg-secondary);
             border-top: 1px solid var(--border-secondary);
@@ -237,28 +240,28 @@
             justify-content: space-between;
             align-items: center;
         }
-        
+
         .status-indicator {
             display: flex;
             align-items: center;
             gap: var(--space-2);
         }
-        
+
         .status-dot {
             width: 8px;
             height: 8px;
             border-radius: 50%;
             background: var(--text-tertiary);
         }
-        
+
         .status-dot.success {
             background: var(--success-color);
         }
-        
+
         .status-dot.error {
             background: var(--error-color);
         }
-        
+
         .copy-notification {
             position: fixed;
             top: var(--space-8);
@@ -275,18 +278,18 @@
             transition: all var(--transition-normal);
             z-index: 1000;
         }
-        
+
         .copy-notification.show {
             transform: translateX(0);
             opacity: 1;
         }
-        
+
         .features-section {
             background: var(--bg-primary);
             padding: var(--space-12) 0;
             border-top: 1px solid var(--border-secondary);
         }
-        
+
         .features-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -295,81 +298,81 @@
             margin: 0 auto;
             padding: 0 var(--space-4);
         }
-        
+
         .feature-card {
             text-align: center;
             padding: var(--space-6);
         }
-        
+
         .feature-icon {
             width: 40px;
             height: 40px;
             margin: 0 auto var(--space-4);
             color: var(--primary-color);
         }
-        
+
         .feature-title {
             font-size: var(--text-lg);
             font-weight: var(--font-semibold);
             color: var(--text-primary);
             margin-bottom: var(--space-2);
         }
-        
+
         .feature-description {
             color: var(--text-secondary);
             line-height: var(--leading-relaxed);
         }
-        
+
         /* Responsive Design */
         @media (max-width: 1024px) {
             .converter-grid {
                 grid-template-columns: 1fr;
                 gap: var(--space-6);
             }
-            
+
             .converter-hero h1 {
                 font-size: var(--text-3xl);
             }
-            
+
             .converter-hero p {
                 font-size: var(--text-base);
             }
         }
-        
+
         @media (max-width: 768px) {
             .converter-hero {
                 padding: var(--space-8) 0 var(--space-6);
             }
-            
+
             .converter-hero h1 {
                 font-size: var(--text-2xl);
             }
-            
+
             .converter-main {
                 padding: var(--space-6) var(--space-3);
             }
-            
+
             .panel-header {
                 flex-direction: column;
                 gap: var(--space-3);
                 align-items: flex-start;
             }
-            
+
             .panel-actions {
                 width: 100%;
                 justify-content: space-between;
             }
-            
+
             .code-editor {
                 padding: var(--space-4);
             }
-            
+
             .features-grid {
                 grid-template-columns: 1fr;
                 padding: 0 var(--space-3);
             }
         }
-        
+
         /* Dark mode specific adjustments */
         @media (prefers-color-scheme: dark) {
             .converter-hero {
@@ -378,6 +381,7 @@
         }
     </style>
 </head>
+
 <body>
     <header>
         <div class="container">
@@ -388,7 +392,7 @@
                 <ul>
                     <li><a href="index.html">Home</a></li>
                     <li><a href="converter.html" class="active">Converter</a></li>
-                    <li><a href="blog.html">Blog</a></li>
+                    <li><a href="/blog">Blog</a></li>
                     <li><a href="index.html#faq">FAQ</a></li>
                 </ul>
             </nav>
@@ -402,10 +406,12 @@
     <section class="converter-hero">
         <div class="container">
             <h1 data-i18n="converter.title">XML to Jetpack Compose Converter</h1>
-            <p data-i18n="converter.description">Transform your Android XML layouts into modern Jetpack Compose code instantly. Simply paste your XML and get clean, readable Compose code.</p>
+            <p data-i18n="converter.description">Transform your Android XML layouts into modern Jetpack Compose code
+                instantly. Simply paste your XML and get clean, readable Compose code.</p>
             <button class="convert-button" id="convert-btn">
                 <svg class="panel-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
                 </svg>
                 <span data-i18n="button.convert">Convert Now</span>
             </button>
@@ -428,30 +434,30 @@
         </div>
         <button class="history-toggle" id="history-toggle-btn" title="Show History">
             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="20" height="20">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
         </button>
-        
+
         <div class="converter-grid">
             <!-- XML Input Panel -->
             <div class="editor-panel">
                 <div class="panel-header">
                     <h2 class="panel-title">
                         <svg class="panel-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
                         </svg>
                         <span data-i18n="converter.xmlLabel">Android XML</span>
                     </h2>
                     <div class="panel-actions">
-                        <button class="action-button" id="load-sample-btn" data-i18n="button.loadSample">Load Sample</button>
+                        <button class="action-button" id="load-sample-btn" data-i18n="button.loadSample">Load
+                            Sample</button>
                         <button class="action-button" id="clear-input-btn" data-i18n="button.clear">Clear</button>
                     </div>
                 </div>
                 <div class="code-editor">
-                    <textarea 
-                        class="code-input" 
-                        id="xml-input" 
-                        placeholder="Paste your Android XML layout here...
+                    <textarea class="code-input" id="xml-input" placeholder="Paste your Android XML layout here...
                         
 For example:
 <LinearLayout
@@ -467,10 +473,7 @@ For example:
         android:text=&quot;Hello World!&quot;
         android:textSize=&quot;24sp&quot; />
         
-</LinearLayout>"
-                        spellcheck="false"
-                        aria-label="XML Input"
-                    ></textarea>
+</LinearLayout>" spellcheck="false" aria-label="XML Input"></textarea>
                 </div>
                 <div class="status-bar">
                     <div class="status-indicator">
@@ -486,14 +489,16 @@ For example:
                 <div class="panel-header">
                     <h2 class="panel-title">
                         <svg class="panel-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                         </svg>
                         <span data-i18n="converter.composeLabel">Jetpack Compose</span>
                     </h2>
                     <div class="panel-actions">
                         <button class="action-button" id="compare-btn" title="Compare codes">
                             <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
                             </svg>
                             Compare
                         </button>
@@ -504,10 +509,13 @@ For example:
                 <div class="code-editor">
                     <div class="empty-state" id="empty-state">
                         <svg class="empty-state-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                         </svg>
-                        <div class="empty-state-text" data-i18n="converter.emptyState">Your Compose code will appear here</div>
-                        <div class="empty-state-hint" data-i18n="converter.emptyHint">Click "Convert Now" to transform your XML</div>
+                        <div class="empty-state-text" data-i18n="converter.emptyState">Your Compose code will appear
+                            here</div>
+                        <div class="empty-state-hint" data-i18n="converter.emptyHint">Click "Convert Now" to transform
+                            your XML</div>
                     </div>
                     <pre class="code-output" id="compose-output" style="display: none;"></pre>
                 </div>
@@ -525,24 +533,30 @@ For example:
             <div class="features-grid">
                 <div class="feature-card">
                     <svg class="feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M13 10V3L4 14h7v7l9-11h-7z" />
                     </svg>
                     <h3 class="feature-title">Instant Conversion</h3>
-                    <p class="feature-description">Convert XML layouts to Compose code in real-time with intelligent parsing and optimization.</p>
+                    <p class="feature-description">Convert XML layouts to Compose code in real-time with intelligent
+                        parsing and optimization.</p>
                 </div>
                 <div class="feature-card">
                     <svg class="feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
                     </svg>
                     <h3 class="feature-title">Clean Code Output</h3>
-                    <p class="feature-description">Generated code follows Compose best practices with proper formatting and structure.</p>
+                    <p class="feature-description">Generated code follows Compose best practices with proper formatting
+                        and structure.</p>
                 </div>
                 <div class="feature-card">
                     <svg class="feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
                     </svg>
                     <h3 class="feature-title">Mobile Friendly</h3>
-                    <p class="feature-description">Works perfectly on all devices with responsive design and touch-friendly interface.</p>
+                    <p class="feature-description">Works perfectly on all devices with responsive design and
+                        touch-friendly interface.</p>
                 </div>
             </div>
         </section>
@@ -555,10 +569,10 @@ For example:
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/xml.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/kotlin.min.js"></script>
-    
+
     <!-- Load ES6 Modules -->
     <script type="module" src="js/main.js"></script>
-    
+
 
     <footer>
         <div class="container">
@@ -566,4 +580,5 @@ For example:
         </div>
     </footer>
 </body>
+
 </html>
