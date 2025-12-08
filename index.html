@@ -33,6 +33,16 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <script type="module">
+        import { i18n } from './js/i18n/i18n.js';
+        window.i18n = i18n;
+        document.addEventListener('DOMContentLoaded', () => {
+            i18n.updateUI();
+        });
+        window.switchLang = function (lang) {
+            i18n.setLanguage(lang);
+        };
+    </script>
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -111,10 +121,10 @@
             </div>
             <nav>
                 <ul>
-                    <li><a href="index.html">Home</a></li>
-                    <li><a href="converter.html">Converter</a></li>
-                    <li><a href="/blog">Blog</a></li>
-                    <li><a href="#faq">FAQ</a></li>
+                    <li><a href="index.html" data-i18n="nav.home">Home</a></li>
+                    <li><a href="converter.html" data-i18n="nav.converter">Converter</a></li>
+                    <li><a href="/blog" data-i18n="nav.blog">Blog</a></li>
+                    <li><a href="#faq" data-i18n="nav.faq">FAQ</a></li>
                 </ul>
             </nav>
             <div class="lang-switch">
@@ -127,8 +137,9 @@
     <main id="home">
         <div class="container">
             <div class="hero">
-                <h1>Convert Android XML to Jetpack Compose</h1>
-                <p class="subtitle">The ultimate tool for developers to automatically convert Android XML layout files
+                <h1 data-i18n="home.hero.title">Convert Android XML to Jetpack Compose</h1>
+                <p class="subtitle" data-i18n="home.hero.subtitle">The ultimate tool for developers to automatically
+                    convert Android XML layout files
                     into clean, modern Jetpack Compose code.</p>
                 <!-- GIF 展示已移除 -->
                 <div class="code-comparison-container">
@@ -178,47 +189,56 @@
                         </div>
                     </div>
                 </div>
-                <a href="converter.html" class="button primary-button pulse">Try the Converter Now!</a>
-                <p class="cta-desc">No registration required. Instantly convert your layouts!</p>
+                <a href="converter.html" class="button primary-button pulse" data-i18n="button.tryConverter">Try the
+                    Converter Now!</a>
+                <p class="cta-desc" data-i18n="home.hero.ctaDesc">No registration required. Instantly convert your
+                    layouts!</p>
             </div>
         </div>
     </main>
 
     <section id="about" class="about-section">
         <div class="container">
-            <h2>About xml2compose</h2>
-            <p>xml2compose is a powerful tool designed to streamline the transition from traditional Android XML layouts
+            <h2 data-i18n="home.about.title">About xml2compose</h2>
+            <p data-i18n="home.about.p1">xml2compose is a powerful tool designed to streamline the transition from
+                traditional Android XML layouts
                 to the modern, declarative UI framework, Jetpack Compose. Our mission is to save developers countless
                 hours of manual conversion, reduce boilerplate code, and help teams adopt Compose faster and more
                 efficiently.</p>
-            <p>Whether you're migrating a large, existing project or just starting a new one, xml2compose provides an
+            <p data-i18n="home.about.p2">Whether you're migrating a large, existing project or just starting a new one,
+                xml2compose provides an
                 intuitive and reliable solution to bring your UI development into the future.</p>
-            <p>Developed by a team of experienced Android engineers passionate about developer productivity and open
+            <p data-i18n="home.about.p3">Developed by a team of experienced Android engineers passionate about developer
+                productivity and open
                 source.</p>
         </div>
     </section>
 
     <section id="faq" class="faq-section">
         <div class="container">
-            <h2>Frequently Asked Questions</h2>
+            <h2 data-i18n="home.faq.title">Frequently Asked Questions</h2>
             <ul>
                 <li>
-                    <strong>What XML layouts are supported?</strong>
-                    <p>Most common layouts and widgets are supported, including LinearLayout, ConstraintLayout,
+                    <strong data-i18n="home.faq.q1">What XML layouts are supported?</strong>
+                    <p data-i18n="home.faq.a1">Most common layouts and widgets are supported, including LinearLayout,
+                        ConstraintLayout,
                         FrameLayout, TextView, Button, ImageView, RecyclerView, and more.</p>
                 </li>
                 <li>
-                    <strong>Is my data safe?</strong>
-                    <p>Yes. Uploaded XML files are processed securely and never stored. We respect your privacy.</p>
+                    <strong data-i18n="home.faq.q2">Is my data safe?</strong>
+                    <p data-i18n="home.faq.a2">Yes. Uploaded XML files are processed securely and never stored. We
+                        respect your privacy.</p>
                 </li>
                 <li>
-                    <strong>How accurate is the conversion?</strong>
-                    <p>Our tool aims for high fidelity, but always review the output and adjust for project-specific
+                    <strong data-i18n="home.faq.q3">How accurate is the conversion?</strong>
+                    <p data-i18n="home.faq.a3">Our tool aims for high fidelity, but always review the output and adjust
+                        for project-specific
                         needs.</p>
                 </li>
                 <li>
-                    <strong>Can I contribute or give feedback?</strong>
-                    <p>Absolutely! Visit our <a href="https://github.com/your-repo" target="_blank">GitHub</a> or use
+                    <strong data-i18n="home.faq.q4">Can I contribute or give feedback?</strong>
+                    <p data-i18n="home.faq.a4">Absolutely! Visit our <a href="https://github.com/your-repo"
+                            target="_blank">GitHub</a> or use
                         the feedback form below.</p>
                 </li>
             </ul>
@@ -227,7 +247,7 @@
 
     <section id="contact" class="form-container">
         <div class="container">
-            <h2>Get notified when we launch!</h2>
+            <h2 data-i18n="home.contact.title">Get notified when we launch!</h2>
             <!-- 
                 表单配置说明：
                 1. 使用Web3Forms（免费，无限提交）：
@@ -245,8 +265,9 @@
                 <input type="hidden" name="subject" value="New Subscription from xml2compose.dev">
                 <input type="hidden" name="from_name" value="xml2compose.dev">
                 <div class="form-group">
-                    <input type="email" name="email" placeholder="Enter your email address" required>
-                    <button type="submit">Notify Me</button>
+                    <input type="email" name="email" data-i18n-placeholder="home.contact.placeholder"
+                        placeholder="Enter your email address" required>
+                    <button type="submit" data-i18n="button.notifyMe">Notify Me</button>
                 </div>
                 <div class="form-message" id="form-message"
                     style="display: none; margin-top: 10px; padding: 10px; border-radius: 8px;"></div>
@@ -301,21 +322,23 @@
                 }
             </script>
             <p id="form-message"></p>
-            <p class="privacy-note">We respect your privacy. Your email will only be used for launch notifications.</p>
+            <p class="privacy-note" data-i18n="home.contact.privacy">We respect your privacy. Your email will only be
+                used for launch notifications.</p>
         </div>
     </section>
 
     <section id="feedback" class="feedback-section">
         <div class="container">
-            <h2>Feedback & Suggestions</h2>
+            <h2 data-i18n="home.feedback.title">Feedback & Suggestions</h2>
             <form id="feedback-form" action="https://api.web3forms.com/submit" method="POST" autocomplete="off">
                 <input type="hidden" name="access_key" value="a6b941e5-d568-43d8-800e-9009299100b4">
                 <input type="hidden" name="subject" value="New Feedback from xml2compose.dev">
                 <input type="hidden" name="from_name" value="xml2compose.dev Feedback">
                 <div class="form-group">
-                    <textarea name="feedback" placeholder="Your feedback or suggestions..." required></textarea>
+                    <textarea name="feedback" data-i18n-placeholder="home.feedback.placeholder"
+                        placeholder="Your feedback or suggestions..." required></textarea>
                 </div>
-                <button type="submit" class="submit-button">Send Feedback</button>
+                <button type="submit" class="submit-button" data-i18n="button.sendFeedback">Send Feedback</button>
                 <div class="form-message" id="feedback-message"
                     style="display: none; margin-top: 10px; padding: 10px; border-radius: 8px;"></div>
             </form>
