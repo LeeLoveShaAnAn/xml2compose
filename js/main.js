@@ -72,7 +72,11 @@ document.addEventListener('DOMContentLoaded', () => {
     langButtons.forEach(btn => {
         btn.addEventListener('click', () => {
             const lang = btn.textContent.includes('EN') ? 'en' : 'zh';
-            i18n.setLanguage(lang);
+
+            // 使用动画切换语言
+            animator.animateLanguageSwitch(() => {
+                i18n.setLanguage(lang);
+            });
 
             // 更新按钮状态
             langButtons.forEach(b => b.classList.remove('active'));
@@ -115,6 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const xmlCode = xmlInput.value.trim();
         if (!xmlCode) {
             notifier.warning(i18n.t('notification.emptyInput'));
+            animator.shake(xmlInput);
             return;
         }
 
@@ -126,7 +131,8 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // 显示加载状态
+        // 显示按钮加载状态
+        animator.showButtonLoading(convertBtn, i18n.t('status.converting') || 'Converting...');
         outputStatusText.textContent = i18n.t('status.converting');
 
         // 使用 setTimeout 模拟异步处理，避免阻塞UI
@@ -140,20 +146,25 @@ document.addEventListener('DOMContentLoaded', () => {
                 // 保存到历史记录
                 storage.saveConversion(xmlCode, composeCode);
 
-                // 显示结果
-                displayResult(composeCode);
+                // 显示结果（带动画）
+                displayResultWithAnimation(composeCode);
 
-                notifier.success(i18n.t('notification.copied') || 'Conversion complete!');
+                // 按钮成功状态
+                animator.hideButtonLoading(convertBtn, true);
+
+                notifier.success(i18n.t('status.complete') || 'Conversion complete!');
             } catch (error) {
                 console.error('Conversion error:', error);
                 console.error('Full traceback:', error.stack);
+                animator.hideButtonLoading(convertBtn, false);
+                animator.shake(convertBtn);
                 notifier.error(i18n.t('error.conversion') + ': ' + error.message);
                 outputStatusText.textContent = i18n.t('status.error');
             }
-        }, 100);
+        }, 300);
     }
 
-    // 显示转换结果
+    // 显示转换结果（无动画）
     function displayResult(composeCode) {
         emptyState.style.display = 'none';
         composeOutput.style.display = 'block';
@@ -162,6 +173,25 @@ document.addEventListener('DOMContentLoaded', () => {
         // 语法高亮
         if (typeof hljs !== 'undefined') {
             hljs.highlightElement(composeOutput);
+        }
+
+        updateOutputStatus(true);
+    }
+
+    // 显示转换结果（带动画）
+    function displayResultWithAnimation(composeCode) {
+        emptyState.style.display = 'none';
+        composeOutput.style.display = 'block';
+
+        // 使用代码渐入动画
+        composeOutput.textContent = composeCode;
+        animator.codeReveal(composeOutput);
+
+        // 语法高亮
+        if (typeof hljs !== 'undefined') {
+            setTimeout(() => {
+                hljs.highlightElement(composeOutput);
+            }, 100);
         }
 
         updateOutputStatus(true);
@@ -177,9 +207,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             await navigator.clipboard.writeText(code);
+            animator.showCopySuccess(copyBtn);
             notifier.success(i18n.t('notification.copied'));
         } catch (error) {
             console.error('Failed to copy:', error);
+            animator.shake(copyBtn);
             notifier.error('Failed to copy code');
         }
     }
