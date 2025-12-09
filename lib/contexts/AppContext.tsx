@@ -12,7 +12,7 @@ interface AppContextType {
   language: Language;
   setLanguage: (lang: Language) => void;
   t: (key: TranslationKey, params?: Record<string, string | number>) => string;
-  
+
   // 主题
   theme: Theme;
   setTheme: (theme: Theme) => void;
@@ -57,7 +57,17 @@ export function AppProvider({ children }: { children: ReactNode }) {
   // 监听系统主题变化
   useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    
+
+    // 监听 theme.js 触发的变更事件
+    const handleThemeChange = (e: CustomEvent<{ theme: Theme }>) => {
+      if (e.detail && e.detail.theme && e.detail.theme !== theme) {
+        setThemeState(e.detail.theme);
+        // theme.js 已经更新了 localStorage，这里只同步状态
+      }
+    };
+
+    window.addEventListener('themeChanged', handleThemeChange as EventListener);
+
     const updateActualTheme = () => {
       if (theme === 'system') {
         setActualTheme(mediaQuery.matches ? 'dark' : 'light');
@@ -67,7 +77,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     };
 
     updateActualTheme();
-    
+
     const handler = (e: MediaQueryListEvent) => {
       if (theme === 'system') {
         setActualTheme(e.matches ? 'dark' : 'light');
@@ -75,7 +85,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
     };
 
     mediaQuery.addEventListener('change', handler);
-    return () => mediaQuery.removeEventListener('change', handler);
+    return () => {
+      mediaQuery.removeEventListener('change', handler);
+      window.removeEventListener('themeChanged', handleThemeChange as EventListener);
+    };
   }, [theme]);
 
   // 应用主题到document
@@ -102,14 +115,14 @@ export function AppProvider({ children }: { children: ReactNode }) {
   // 翻译函数
   const t = (key: TranslationKey, params?: Record<string, string | number>): string => {
     let text: string = translations[language][key] || translations.en[key] || key;
-    
+
     // 替换参数
     if (params) {
       Object.keys(params).forEach(paramKey => {
         text = text.replace(`{{${paramKey}}}`, String(params[paramKey]));
       });
     }
-    
+
     return text;
   };
 

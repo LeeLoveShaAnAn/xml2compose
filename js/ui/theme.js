@@ -5,6 +5,7 @@
 
 export class ThemeManager {
     constructor() {
+        if (typeof window === 'undefined') return;
         this.currentTheme = this.getSavedTheme() || this.getSystemTheme();
         this.rippleElement = null;
         this.isAnimating = false;
@@ -15,7 +16,10 @@ export class ThemeManager {
      * 初始化主题
      */
     init() {
+        if (typeof window === 'undefined') return;
+
         // 应用保存的主题
+        // ...
         this.applyTheme(this.currentTheme, false);
 
         // 创建涟漪遮罩元素
@@ -140,13 +144,15 @@ export class ThemeManager {
         // 设置 data 属性用于 CSS 选择
         document.documentElement.setAttribute('data-theme', theme);
 
-        // 添加/移除 dark 类
+        // 添加/移除 dark 类 (兼容 Next.js 和 static pages)
         if (theme === 'dark') {
             document.documentElement.classList.add('dark-theme');
+            document.documentElement.classList.add('dark');
             document.documentElement.classList.remove('light-theme');
         } else {
             document.documentElement.classList.add('light-theme');
             document.documentElement.classList.remove('dark-theme');
+            document.documentElement.classList.remove('dark');
         }
 
         // 更新 meta theme-color
@@ -206,7 +212,7 @@ export class ThemeManager {
 }
 
 // 添加涟漪动画 CSS
-if (!document.getElementById('theme-ripple-styles')) {
+if (typeof window !== 'undefined' && !document.getElementById('theme-ripple-styles')) {
     const style = document.createElement('style');
     style.id = 'theme-ripple-styles';
     style.textContent = `
