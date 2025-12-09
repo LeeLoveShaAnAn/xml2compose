@@ -2,17 +2,14 @@
 
 import Link from 'next/link';
 import { useApp } from '../lib/contexts/AppContext';
-import { themeManager } from '../js/ui/theme.js';
+import { useThemeAnimation } from '../lib/hooks/useThemeAnimation';
 
 export function SiteHeader() {
   const { language, setLanguage, t } = useApp();
+  const { toggleTheme } = useThemeAnimation();
 
   const toggleLanguage = () => {
     setLanguage(language === 'en' ? 'zh' : 'en');
-  };
-
-  const handleThemeToggle = (e: React.MouseEvent) => {
-    themeManager.toggle(e.nativeEvent);
   };
 
   return (
@@ -33,7 +30,7 @@ export function SiteHeader() {
         </nav>
         <div className="header-controls">
           <button
-            onClick={handleThemeToggle}
+            onClick={toggleTheme}
             className="theme-toggle-btn"
             title={t('theme.toggle') || "Toggle theme"}
             aria-label="Toggle theme"
