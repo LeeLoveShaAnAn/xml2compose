@@ -523,6 +523,218 @@ fun LegacyMapComponent(lat: Double, lng: Double) {
       },
     ],
   },
+  {
+    slug: 'modifier-order-matters',
+    title: 'The Hidden Trap: How Modifier Order Can Ruin Your Compose Layout',
+    description: 'A simple padding vs background ordering mistake can cost you two hours of debugging. This article breaks down Modifier chain execution logic with real examples so you finally understand what goes where.',
+    publishedAt: '2025-12-10',
+    updatedAt: '2025-12-10',
+    author: 'Engineering Team',
+    tags: ['Compose', 'Modifier', 'Debug', 'Layout'],
+    readingMinutes: 8,
+    sections: [
+      {
+        heading: 'A Bug That Made Someone Rage-Quit',
+        paragraphs: [
+          'Last Friday at 5:30 PM, my colleague Jake slammed his desk. He spent two hours debugging a button where the background color was bleeding outside the rounded corners. The fix? He had put clip() after background(). That was it.',
+          'This is not an isolated incident. Modifier ordering is the #1 gotcha for Compose newcomers. The worst part? No compile errors, no lint warnings — just a button that looks slightly off and you cannot figure out why.',
+        ],
+      },
+      {
+        heading: 'The Onion Model: Outer to Inner',
+        paragraphs: [
+          'The key to understanding Modifier order is to think of it as an onion. The first Modifier you write is the outermost layer, and the last one is innermost. Layout measures from outside-in, drawing renders from inside-out. Here is a classic example:',
+        ],
+        code: `// Version A: Red background covers the entire area INCLUDING padding
+Box(
+    modifier = Modifier
+        .background(Color.Red)
+        .padding(16.dp)
+)
+
+// Version B: Red background only fills INSIDE the padding, 16dp border is transparent
+Box(
+    modifier = Modifier
+        .padding(16.dp)
+        .background(Color.Red)
+)`,
+      },
+      {
+        heading: 'Real Fix: Rounded Button with Shadow',
+        paragraphs: [
+          'Jake made this exact mistake. He wanted a button with rounded corners and a shadow:',
+        ],
+        code: `// ❌ WRONG: Shadow gets clipped, background bleeds outside corners
+Box(
+    modifier = Modifier
+        .shadow(4.dp, RoundedCornerShape(12.dp))
+        .background(Color.Blue)
+        .clip(RoundedCornerShape(12.dp))  // Too late!
+        .padding(16.dp)
+)
+
+// ✅ CORRECT: Clip first, then fill
+Box(
+    modifier = Modifier
+        .shadow(4.dp, RoundedCornerShape(12.dp))
+        .clip(RoundedCornerShape(12.dp))  // Clip first
+        .background(Color.Blue)            // Then fill color
+        .padding(16.dp)
+)`,
+      },
+      {
+        paragraphs: [
+          'Here is the order cheat sheet: shadow → clip → background → border → padding → clickable. Shadow must be outermost (so it draws outside the component), clip must come before background (otherwise the color is already painted outside before you clip).',
+        ],
+      },
+      {
+        heading: 'Where Should clickable() Go?',
+        paragraphs: [
+          'Another common issue is touch target size. If you want the padding area to respond to taps, clickable must come BEFORE padding:',
+        ],
+        code: `// Touch target INCLUDES padding
+Modifier
+    .clickable { onClick() }
+    .padding(16.dp)
+
+// Touch target EXCLUDES padding (users tap edges, nothing happens)
+Modifier
+    .padding(16.dp)
+    .clickable { onClick() }`,
+      },
+      {
+        paragraphs: [
+          'This also explains why Material components have ripple effects that spread across the entire surface — internally, they place clickable before size modifiers.',
+        ],
+      },
+      {
+        heading: 'Debugging Tip: Layout Inspector',
+        paragraphs: [
+          'When you are unsure if Modifier order is correct, open Android Studio Layout Inspector. In Compose mode, you can see exactly how each Modifier affects the size — layer by layer.',
+          'A dumber but effective trick: temporarily add a different background color to each layer and see where each boundary lands. Crude, but it works.',
+        ],
+      },
+    ],
+  },
+  {
+    slug: 'recomposition-debugging-guide',
+    title: 'Why Is Your Composable Recomposing Like Crazy? A Debugging Guide',
+    description: 'UI jank and list stuttering often come from unnecessary recompositions. This guide walks you through Compose Compiler Metrics and common code patterns to find and fix the culprits.',
+    publishedAt: '2025-12-10',
+    updatedAt: '2025-12-10',
+    author: 'Engineering Team',
+    tags: ['Compose', 'Performance', 'Recomposition', 'Debug'],
+    readingMinutes: 11,
+    sections: [
+      {
+        heading: 'The Symptom: List Scrolling Like a Slideshow',
+        paragraphs: [
+          'The story always starts the same way: PM says "why does this list scroll like a PowerPoint presentation?" You open Profiler and see recomposition count spiking at hundreds per second.',
+          'The problem is often not the list itself, but some innocent-looking ViewModel or state update triggering recomposition across a huge subtree. Let us debug this systematically.',
+        ],
+      },
+      {
+        heading: 'Step 1: Enable Recomposition Highlighting',
+        paragraphs: [
+          'Since Android Studio Hedgehog, Layout Inspector can highlight Composables that are recomposing. Go to Layout Inspector settings and turn on "Show Recomposition Counts". Then interact with your UI and watch which areas are flashing like a disco.',
+          'If a component that should not be changing keeps recomposing, that is your suspect.',
+        ],
+      },
+      {
+        heading: 'Step 2: Compose Compiler Metrics',
+        paragraphs: [
+          'Enable compiler metrics in your build.gradle:',
+        ],
+        code: `composeCompiler {
+    reportsDestination = layout.buildDirectory.dir("compose_compiler")
+    metricsDestination = layout.buildDirectory.dir("compose_compiler")
+}`,
+      },
+      {
+        paragraphs: [
+          'After building, check the generated .txt files. Watch for two types of functions:',
+        ],
+        list: [
+          'restartable but not skippable: These run every time their parent recomposes, even if their parameters have not changed',
+          'unstable parameters: Parameter types that Compose cannot prove are stable, forcing recomposition',
+        ],
+      },
+      {
+        heading: 'Common Culprit #1: Lambda Captures',
+        paragraphs: [
+          'Problematic code looks like this:',
+        ],
+        code: `@Composable
+fun UserCard(user: User, viewModel: UserViewModel) {
+    Button(onClick = { viewModel.onUserClick(user.id) }) {
+        Text(user.name)
+    }
+}`,
+      },
+      {
+        paragraphs: [
+          'Every time UserCard recomposes, the onClick lambda is a new instance (because it captures external variables), so Button cannot skip. Fix: wrap the lambda in remember:',
+        ],
+        code: `@Composable
+fun UserCard(user: User, viewModel: UserViewModel) {
+    val onClick = remember(user.id) { { viewModel.onUserClick(user.id) } }
+    Button(onClick = onClick) {
+        Text(user.name)
+    }
+}`,
+      },
+      {
+        heading: 'Common Culprit #2: Unstable Data Classes',
+        paragraphs: [
+          'Compose determines if parameters changed by checking type "stability". List, Map, and other collection types are unstable by default — even if their contents have not changed, they trigger recomposition.',
+        ],
+        code: `// UNSTABLE — recomposes every time
+data class ScreenState(
+    val items: List<Item>  // List is unstable
+)
+
+// STABLE — can skip correctly
+@Immutable
+data class ScreenState(
+    val items: ImmutableList<Item>  // from kotlinx.collections.immutable
+)`,
+      },
+      {
+        paragraphs: [
+          'Add the kotlinx-collections-immutable library and swap List for ImmutableList, Map for ImmutableMap. Or annotate your data class with @Immutable (but you must guarantee it truly never mutates).',
+        ],
+      },
+      {
+        heading: 'Common Culprit #3: Uncached Derived State',
+        paragraphs: [
+          'If you compute something inside a Composable, it runs on every recomposition:',
+        ],
+        code: `// ❌ Filters on every recomposition
+@Composable
+fun FilteredList(items: List<Item>, filter: String) {
+    val filtered = items.filter { it.name.contains(filter) }
+    LazyColumn { items(filtered) { ... } }
+}
+
+// ✅ Cache with remember
+@Composable
+fun FilteredList(items: List<Item>, filter: String) {
+    val filtered = remember(items, filter) {
+        items.filter { it.name.contains(filter) }
+    }
+    LazyColumn { items(filtered) { ... } }
+}`,
+      },
+      {
+        heading: 'Last Resort: CompositionLocal Abuse Check',
+        paragraphs: [
+          'If a CompositionLocal value changes frequently, every Composable reading it will recompose. This often happens when you shove an entire ViewModel or large state object into CompositionLocal.',
+          'Solution: Only pass truly global values (like theme or locale) through CompositionLocal. Everything else should use parameter passing or dependency injection.',
+        ],
+        note: 'Rule of thumb: If you find yourself "optimizing recomposition", first ask if your architecture is the real problem. Good state decomposition beats manual remember every time.',
+      },
+    ],
+  },
 ];
 
 export function getAllPosts() {
