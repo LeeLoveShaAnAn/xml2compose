@@ -1,10 +1,19 @@
 import Link from 'next/link';
 import { getAllPosts } from '../../content/posts';
+import { Metadata } from 'next';
 
-export const metadata = {
+export const metadata: Metadata = {
   title: 'Blog - Tech Articles on Android Development',
   description:
     'Explore the latest technical articles on Android development, Jetpack Compose, and XML conversion, sharing best practices and development experience.',
+  alternates: {
+    canonical: '/blog',
+  },
+  openGraph: {
+    title: 'Tech Blog | xml2compose.dev',
+    description: 'Explore the latest technical articles on Android development, Jetpack Compose, and XML conversion.',
+    type: 'website',
+  },
 };
 
 export default function BlogPage() {
@@ -22,7 +31,7 @@ export default function BlogPage() {
       <div className="blog-list">
         {posts.map((post) => (
           <article key={post.slug} className="blog-item">
-            <span className="badge" style={{ 
+            <span className="badge" style={{
               display: 'inline-block',
               padding: '4px 12px',
               borderRadius: '4px',

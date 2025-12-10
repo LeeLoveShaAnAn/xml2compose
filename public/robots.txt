@@ -4,17 +4,27 @@ Allow: /
 # Sitemap
 Sitemap: https://xml2compose.dev/sitemap.xml
 
+# Allow important resources
+Allow: /og-image.png
+Allow: /*.css
+Allow: /*.js
+
 # Disallow crawling of temporary or test files
 Disallow: /*test*.html
 Disallow: /*.tmp
 Disallow: /temp/
 Disallow: /cache/
+Disallow: /_next/static/
+Disallow: /api/
 
 # Allow important pages
 Allow: /index.html
 Allow: /converter.html
-Allow: /blog.html
+Allow: /blog
 Allow: /blog/
+Allow: /about
+Allow: /contact
+Allow: /privacy
 
 # Crawl delay (optional)
 Crawl-delay: 1
