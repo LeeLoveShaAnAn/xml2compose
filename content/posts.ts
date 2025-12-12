@@ -335,7 +335,7 @@ data class InteropState(
     description: 'Deep dive into the performance bottlenecks and maintenance challenges of traditional XML layouts, analyzing how Jetpack Compose fundamentally solves these pain points as Google\'s officially recommended modern UI toolkit.',
     publishedAt: '2025-11-08',
     updatedAt: '2025-11-08',
-    author: 'AI Assistant',
+    author: 'Engineering Team',
     tags: ['Compose', 'XML', 'Android Development', 'Performance'],
     readingMinutes: 12,
     sections: [
@@ -364,7 +364,7 @@ data class InteropState(
     description: 'From @Composable annotation to recomposition mechanism, comprehensively analyzing how Compose works. Exploring how it leverages Kotlin language features to build efficient, maintainable UIs, and how the declarative paradigm revolutionizes traditional development thinking.',
     publishedAt: '2025-11-09',
     updatedAt: '2025-11-09',
-    author: 'AI Assistant',
+    author: 'Engineering Team',
     tags: ['Declarative UI', 'Kotlin', 'Architecture', 'Recomposition'],
     readingMinutes: 15,
     sections: [
@@ -406,7 +406,7 @@ data class InteropState(
     description: 'Providing an authoritative step-by-step guide for "xml to compose," covering interoperability API usage, common challenge solutions, and how to optimize Compose app performance using tools like baseline profiles.',
     publishedAt: '2025-11-10',
     updatedAt: '2025-11-10',
-    author: 'AI Assistant',
+    author: 'Engineering Team',
     tags: ['Migration', 'Interoperability', 'Performance Optimization', 'Practical'],
     readingMinutes: 18,
     sections: [
@@ -732,6 +732,524 @@ fun FilteredList(items: List<Item>, filter: String) {
           'Solution: Only pass truly global values (like theme or locale) through CompositionLocal. Everything else should use parameter passing or dependency injection.',
         ],
         note: 'Rule of thumb: If you find yourself "optimizing recomposition", first ask if your architecture is the real problem. Good state decomposition beats manual remember every time.',
+      },
+    ],
+  },
+  {
+    slug: 'material3-theming-deep-dive',
+    title: 'Material 3 Theming in Compose: Building Dynamic Color Systems',
+    description: 'Master Material 3 dynamic color system in Jetpack Compose. Learn how to implement adaptive themes, custom color schemes, and dark mode support that delights users.',
+    publishedAt: '2025-12-11',
+    updatedAt: '2025-12-11',
+    author: 'Engineering Team',
+    tags: ['Material 3', 'Theming', 'Dynamic Color', 'Design System'],
+    readingMinutes: 14,
+    sections: [
+      {
+        heading: 'Why Material 3 Changes Everything',
+        paragraphs: [
+          'Material 3 (also known as Material You) represents a fundamental shift in how Android apps approach theming. Instead of static color palettes, M3 introduces dynamic color extraction from user wallpapers, creating a personalized experience for every user.',
+          'For developers migrating from XML, this is a significant upgrade. Traditional theme.xml files with hardcoded colors are replaced by a flexible, programmatic color system that adapts to user preferences automatically.',
+        ],
+      },
+      {
+        heading: 'Setting Up Material 3 in Compose',
+        paragraphs: [
+          'The foundation of M3 theming is the MaterialTheme composable. Unlike M2, M3 uses a ColorScheme with expanded color roles:',
+        ],
+        code: `@Composable
+fun MyAppTheme(
+    darkTheme: Boolean = isSystemInDarkTheme(),
+    dynamicColor: Boolean = true,
+    content: @Composable () -> Unit
+) {
+    val colorScheme = when {
+        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
+            val context = LocalContext.current
+            if (darkTheme) dynamicDarkColorScheme(context)
+            else dynamicLightColorScheme(context)
+        }
+        darkTheme -> DarkColorScheme
+        else -> LightColorScheme
+    }
+
+    MaterialTheme(
+        colorScheme = colorScheme,
+        typography = Typography,
+        content = content
+    )
+}`,
+      },
+      {
+        heading: 'Understanding Color Roles',
+        paragraphs: [
+          'M3 introduces semantic color roles that describe the purpose of colors rather than their appearance:',
+        ],
+        list: [
+          'primary/onPrimary: Main brand color and text on top of it',
+          'secondary/onSecondary: Supporting accent color for less prominent elements',
+          'tertiary/onTertiary: Contrasting accent for visual interest',
+          'surface/onSurface: Background colors and text for content areas',
+          'error/onError: States indicating errors or destructive actions',
+        ],
+        note: 'Always use semantic color roles instead of hardcoded colors. This ensures your UI adapts correctly to light/dark themes and dynamic colors.',
+      },
+      {
+        heading: 'Custom Color Schemes',
+        paragraphs: [
+          'For brand consistency, you can define custom color schemes while still supporting dynamic colors as a fallback:',
+        ],
+        code: `private val LightColorScheme = lightColorScheme(
+    primary = Color(0xFF6750A4),
+    onPrimary = Color.White,
+    primaryContainer = Color(0xFFEADDFF),
+    onPrimaryContainer = Color(0xFF21005D),
+    secondary = Color(0xFF625B71),
+    // ... other colors
+)
+
+private val DarkColorScheme = darkColorScheme(
+    primary = Color(0xFFD0BCFF),
+    onPrimary = Color(0xFF381E72),
+    primaryContainer = Color(0xFF4F378B),
+    onPrimaryContainer = Color(0xFFEADDFF),
+    // ... other colors
+)`,
+      },
+    ],
+  },
+  {
+    slug: 'lazycolumn-performance-masterclass',
+    title: 'LazyColumn Performance Masterclass: Handling 10,000+ Items Smoothly',
+    description: 'Learn advanced techniques to optimize LazyColumn performance in Jetpack Compose. From key strategies to custom item providers, make your lists butter-smooth.',
+    publishedAt: '2025-12-10',
+    updatedAt: '2025-12-10',
+    author: 'Engineering Team',
+    tags: ['LazyColumn', 'Performance', 'Lists', 'Optimization'],
+    readingMinutes: 16,
+    sections: [
+      {
+        heading: 'The Foundation: Keys Are Non-Negotiable',
+        paragraphs: [
+          'The single most important optimization for LazyColumn is providing stable keys. Without keys, Compose cannot efficiently track item identity across data changes, leading to unnecessary recompositions and visual glitches.',
+        ],
+        code: `// ❌ BAD: No keys - Compose uses index by default
+LazyColumn {
+    items(users) { user ->
+        UserCard(user)
+    }
+}
+
+// ✅ GOOD: Stable keys based on unique identifier
+LazyColumn {
+    items(
+        items = users,
+        key = { user -> user.id }  // Must be unique and stable
+    ) { user ->
+        UserCard(user)
+    }
+}`,
+      },
+      {
+        heading: 'Content Type Optimization',
+        paragraphs: [
+          'When your list contains different item types (headers, content, footers), use contentType to enable Compose to reuse compositions more efficiently:',
+        ],
+        code: `LazyColumn {
+    items(
+        items = feedItems,
+        key = { it.id },
+        contentType = { item ->
+            when (item) {
+                is FeedItem.Header -> "header"
+                is FeedItem.Post -> "post"
+                is FeedItem.Ad -> "ad"
+            }
+        }
+    ) { item ->
+        when (item) {
+            is FeedItem.Header -> HeaderCard(item)
+            is FeedItem.Post -> PostCard(item)
+            is FeedItem.Ad -> AdCard(item)
+        }
+    }
+}`,
+      },
+      {
+        heading: 'Avoid Expensive Operations in Item Scope',
+        paragraphs: [
+          'Item composables should be as lightweight as possible. Move expensive calculations outside the LazyColumn scope:',
+        ],
+        list: [
+          'Use remember with proper keys for computed values',
+          'Avoid creating new objects (lambdas, data classes) inside items',
+          'Pre-process data in ViewModel before passing to UI',
+          'Use derivedStateOf for filtered/sorted lists',
+        ],
+      },
+      {
+        heading: 'Prefetch and Placeholder Strategies',
+        paragraphs: [
+          'For extremely large lists or network-loaded content, implement prefetching and placeholders:',
+        ],
+        code: `@Composable
+fun InfiniteUserList(
+    users: LazyPagingItems<User>
+) {
+    LazyColumn {
+        items(
+            count = users.itemCount,
+            key = users.itemKey { it.id }
+        ) { index ->
+            val user = users[index]
+            if (user != null) {
+                UserCard(user)
+            } else {
+                UserCardPlaceholder()  // Shimmer loading state
+            }
+        }
+    }
+}`,
+        note: 'Use Paging 3 library with Compose for automatic prefetching and memory management. It handles the complex logic of loading data in chunks.',
+      },
+    ],
+  },
+  {
+    slug: 'custom-layouts-compose',
+    title: 'Building Custom Layouts in Compose: Beyond Row and Column',
+    description: 'Learn how to create custom layout components in Jetpack Compose. From basic Layout composables to complex multi-child layouts with intrinsic measurements.',
+    publishedAt: '2025-12-09',
+    updatedAt: '2025-12-09',
+    author: 'Engineering Team',
+    tags: ['Custom Layout', 'Architecture', 'Advanced', 'UI Components'],
+    readingMinutes: 15,
+    sections: [
+      {
+        heading: 'When Built-in Layouts Are Not Enough',
+        paragraphs: [
+          'Row, Column, and Box cover 90% of layout needs. But sometimes you need pixel-perfect control: overlapping elements with specific offsets, flow layouts that wrap content, or performance-critical layouts that minimize measurement passes.',
+          'Custom layouts in Compose are surprisingly approachable. The Layout composable gives you direct access to measurement and placement, while maintaining the declarative paradigm.',
+        ],
+      },
+      {
+        heading: 'The Layout Composable Basics',
+        paragraphs: [
+          'Every custom layout starts with the Layout composable. It takes content and a MeasurePolicy:',
+        ],
+        code: `@Composable
+fun SimpleCustomLayout(
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit
+) {
+    Layout(
+        content = content,
+        modifier = modifier
+    ) { measurables, constraints ->
+        // 1. Measure children
+        val placeables = measurables.map { measurable ->
+            measurable.measure(constraints)
+        }
+        
+        // 2. Decide layout size
+        val width = placeables.maxOf { it.width }
+        val height = placeables.sumOf { it.height }
+        
+        // 3. Place children
+        layout(width, height) {
+            var yPosition = 0
+            placeables.forEach { placeable ->
+                placeable.placeRelative(x = 0, y = yPosition)
+                yPosition += placeable.height
+            }
+        }
+    }
+}`,
+      },
+      {
+        heading: 'Real Example: Flow Layout',
+        paragraphs: [
+          'A flow layout wraps children to the next row when they exceed available width. This is perfect for tag clouds or chip groups:',
+        ],
+        code: `@Composable
+fun FlowRow(
+    modifier: Modifier = Modifier,
+    horizontalSpacing: Dp = 8.dp,
+    verticalSpacing: Dp = 8.dp,
+    content: @Composable () -> Unit
+) {
+    Layout(content = content, modifier = modifier) { measurables, constraints ->
+        val hSpacingPx = horizontalSpacing.roundToPx()
+        val vSpacingPx = verticalSpacing.roundToPx()
+        
+        val placeables = measurables.map { it.measure(constraints) }
+        
+        var currentX = 0
+        var currentY = 0
+        var rowHeight = 0
+        
+        val positions = placeables.map { placeable ->
+            if (currentX + placeable.width > constraints.maxWidth) {
+                currentX = 0
+                currentY += rowHeight + vSpacingPx
+                rowHeight = 0
+            }
+            val position = IntOffset(currentX, currentY)
+            currentX += placeable.width + hSpacingPx
+            rowHeight = maxOf(rowHeight, placeable.height)
+            position
+        }
+        
+        layout(constraints.maxWidth, currentY + rowHeight) {
+            placeables.forEachIndexed { index, placeable ->
+                placeable.placeRelative(positions[index])
+            }
+        }
+    }
+}`,
+      },
+      {
+        heading: 'Intrinsic Measurements',
+        paragraphs: [
+          'Sometimes parent layouts need to know child sizes before full measurement. Compose provides intrinsic measurements for this:',
+        ],
+        list: [
+          'minIntrinsicWidth/Height: Minimum size needed to display content properly',
+          'maxIntrinsicWidth/Height: Size needed to display content without constraints',
+          'Use IntrinsicSize.Min or IntrinsicSize.Max modifiers to query these values',
+        ],
+        note: 'Intrinsic measurements add an extra measurement pass. Use sparingly and only when necessary for correct layout behavior.',
+      },
+    ],
+  },
+  {
+    slug: 'compose-navigation-patterns',
+    title: 'Navigation in Compose: From Basic Routes to Complex Flows',
+    description: 'Master Jetpack Compose Navigation. Learn type-safe navigation, nested graphs, deep links, and how to handle complex multi-module navigation architectures.',
+    publishedAt: '2025-12-08',
+    updatedAt: '2025-12-08',
+    author: 'Engineering Team',
+    tags: ['Navigation', 'Architecture', 'Deep Links', 'Multi-module'],
+    readingMinutes: 17,
+    sections: [
+      {
+        heading: 'Navigation Compose Fundamentals',
+        paragraphs: [
+          'Compose Navigation moves away from fragment transactions to a declarative model where destinations are composables. The core components are NavHost, NavController, and NavGraph.',
+        ],
+        code: `@Composable
+fun AppNavigation() {
+    val navController = rememberNavController()
+    
+    NavHost(
+        navController = navController,
+        startDestination = "home"
+    ) {
+        composable("home") {
+            HomeScreen(
+                onNavigateToDetail = { id ->
+                    navController.navigate("detail/$id")
+                }
+            )
+        }
+        composable(
+            route = "detail/{itemId}",
+            arguments = listOf(
+                navArgument("itemId") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val itemId = backStackEntry.arguments?.getString("itemId")
+            DetailScreen(itemId = itemId)
+        }
+    }
+}`,
+      },
+      {
+        heading: 'Type-Safe Navigation with Kotlin Serialization',
+        paragraphs: [
+          'String-based routes are error-prone. Use sealed classes or data classes with Kotlin Serialization for type-safe navigation:',
+        ],
+        code: `@Serializable
+sealed class Screen {
+    @Serializable
+    data object Home : Screen()
+    
+    @Serializable
+    data class Detail(val itemId: String) : Screen()
+    
+    @Serializable
+    data class Profile(val userId: String, val showEdit: Boolean = false) : Screen()
+}
+
+// Usage with type-safe navigation
+navController.navigate(Screen.Detail(itemId = "123"))
+navController.navigate(Screen.Profile(userId = "456", showEdit = true))`,
+      },
+      {
+        heading: 'Nested Navigation Graphs',
+        paragraphs: [
+          'For complex apps, organize related destinations into nested graphs. This improves code organization and enables modular navigation:',
+        ],
+        code: `NavHost(navController = navController, startDestination = "main") {
+    // Main flow
+    navigation(startDestination = "home", route = "main") {
+        composable("home") { HomeScreen() }
+        composable("search") { SearchScreen() }
+    }
+    
+    // Auth flow - separate graph
+    navigation(startDestination = "login", route = "auth") {
+        composable("login") { LoginScreen() }
+        composable("register") { RegisterScreen() }
+        composable("forgot_password") { ForgotPasswordScreen() }
+    }
+    
+    // Settings flow
+    navigation(startDestination = "settings_main", route = "settings") {
+        composable("settings_main") { SettingsScreen() }
+        composable("settings_account") { AccountSettingsScreen() }
+    }
+}`,
+      },
+      {
+        heading: 'Deep Links Integration',
+        paragraphs: [
+          'Deep links allow external sources to navigate directly to specific screens. Configure them in your composable destinations:',
+        ],
+        code: `composable(
+    route = "product/{productId}",
+    arguments = listOf(navArgument("productId") { type = NavType.StringType }),
+    deepLinks = listOf(
+        navDeepLink { uriPattern = "https://myapp.com/product/{productId}" },
+        navDeepLink { uriPattern = "myapp://product/{productId}" }
+    )
+) { backStackEntry ->
+    ProductScreen(productId = backStackEntry.arguments?.getString("productId"))
+}`,
+        note: 'Remember to declare deep link intents in AndroidManifest.xml for the app to respond to external URLs.',
+      },
+    ],
+  },
+  {
+    slug: 'testing-compose-ui',
+    title: 'Testing Compose UI: A Comprehensive Guide to Reliable Tests',
+    description: 'Learn how to write effective tests for Jetpack Compose UIs. From unit tests with ComposeContentTestRule to screenshot testing and accessibility validation.',
+    publishedAt: '2025-12-07',
+    updatedAt: '2025-12-07',
+    author: 'Engineering Team',
+    tags: ['Testing', 'UI Testing', 'Quality Assurance', 'Screenshot Testing'],
+    readingMinutes: 13,
+    sections: [
+      {
+        heading: 'The Compose Testing Philosophy',
+        paragraphs: [
+          'Compose testing differs fundamentally from View testing. Instead of finding views by ID and simulating touches, you interact with the semantic tree that Compose uses for accessibility. This makes tests more resilient and closer to how users actually interact with your app.',
+        ],
+      },
+      {
+        heading: 'Setting Up Compose Tests',
+        paragraphs: [
+          'Add the testing dependencies and create your first test:',
+        ],
+        code: `// build.gradle.kts
+dependencies {
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
+    debugImplementation("androidx.compose.ui:ui-test-manifest")
+}
+
+// LoginScreenTest.kt
+class LoginScreenTest {
+    @get:Rule
+    val composeTestRule = createComposeRule()
+
+    @Test
+    fun loginButton_isDisabled_whenEmailIsEmpty() {
+        composeTestRule.setContent {
+            LoginScreen()
+        }
+        
+        composeTestRule
+            .onNodeWithText("Log In")
+            .assertIsNotEnabled()
+    }
+}`,
+      },
+      {
+        heading: 'Finding and Interacting with Nodes',
+        paragraphs: [
+          'Compose provides powerful matchers to find nodes in the semantic tree:',
+        ],
+        code: `// Find by text
+composeTestRule.onNodeWithText("Submit")
+
+// Find by content description (accessibility)
+composeTestRule.onNodeWithContentDescription("Close button")
+
+// Find by test tag
+composeTestRule.onNodeWithTag("email_input")
+
+// Combine matchers
+composeTestRule.onNode(
+    hasText("Submit") and hasClickAction() and isEnabled()
+)
+
+// Perform actions
+composeTestRule.onNodeWithTag("email_input")
+    .performTextInput("user@example.com")
+    
+composeTestRule.onNodeWithText("Submit")
+    .performClick()`,
+      },
+      {
+        heading: 'Testing State and Recomposition',
+        paragraphs: [
+          'For testing state changes and async operations, use waitUntil and other synchronization utilities:',
+        ],
+        code: `@Test
+fun loadingIndicator_disappears_afterDataLoads() {
+    composeTestRule.setContent {
+        MyScreenWithLoading()
+    }
+    
+    // Initially shows loading
+    composeTestRule.onNodeWithTag("loading").assertIsDisplayed()
+    
+    // Wait for loading to complete
+    composeTestRule.waitUntil(timeoutMillis = 5000) {
+        composeTestRule
+            .onAllNodesWithTag("loading")
+            .fetchSemanticsNodes().isEmpty()
+    }
+    
+    // Content is now visible
+    composeTestRule.onNodeWithTag("content").assertIsDisplayed()
+}`,
+      },
+      {
+        heading: 'Screenshot Testing with Paparazzi',
+        paragraphs: [
+          'Screenshot tests catch visual regressions that functional tests miss. Paparazzi runs on JVM without an emulator:',
+        ],
+        code: `class ButtonScreenshotTest {
+    @get:Rule
+    val paparazzi = Paparazzi(
+        theme = "android:Theme.Material3.Light"
+    )
+
+    @Test
+    fun primaryButton_default() {
+        paparazzi.snapshot {
+            PrimaryButton(text = "Click Me", onClick = {})
+        }
+    }
+    
+    @Test
+    fun primaryButton_disabled() {
+        paparazzi.snapshot {
+            PrimaryButton(text = "Click Me", enabled = false, onClick = {})
+        }
+    }
+}`,
+        note: 'Run screenshot tests on CI with consistent environment settings. Small differences in font rendering or density can cause false failures across different machines.',
       },
     ],
   },

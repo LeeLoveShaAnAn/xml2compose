@@ -14,6 +14,7 @@ export const translations = {
     'footer.about': 'About',
     'footer.contact': 'Contact',
     'footer.privacy': 'Privacy Policy',
+    'footer.terms': 'Terms of Service',
     'footer.copyright': '© {{year}} xml2compose.dev. All rights reserved.',
 
     // Home page
@@ -109,6 +110,7 @@ export const translations = {
     'footer.about': '关于',
     'footer.contact': '联系',
     'footer.privacy': '隐私政策',
+    'footer.terms': '服务条款',
     'footer.copyright': '© {{year}} xml2compose.dev. 版权所有。',
 
     // Home page
