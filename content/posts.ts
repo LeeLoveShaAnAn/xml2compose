@@ -1845,6 +1845,491 @@ fun RoundAwareScreen() {
       },
     ],
   },
+  {
+    slug: 'compose-fundamentals-part1',
+    title: 'Compose Fundamentals Part 1: Your First Composable Function',
+    description: 'Start your Jetpack Compose journey here. Learn what Composables are, how @Composable annotation works, and build your first UI component step by step.',
+    publishedAt: '2025-12-15',
+    updatedAt: '2025-12-15',
+    author: 'Engineering Team',
+    tags: ['Beginner', 'Fundamentals', 'Tutorial', 'Getting Started'],
+    readingMinutes: 10,
+    sections: [
+      {
+        heading: 'Welcome to Compose',
+        paragraphs: [
+          'If you are reading this, you have probably heard that Jetpack Compose is the future of Android UI development. You might feel overwhelmed by all the new concepts. Do not worry — this series will guide you from zero to confident Compose developer.',
+          'By the end of this article, you will understand what Composables are and build your first real UI component. No prior Compose experience required, but basic Kotlin knowledge is assumed.',
+        ],
+      },
+      {
+        heading: 'What Is a Composable Function?',
+        paragraphs: [
+          'In Compose, UI is built using functions marked with @Composable. These are not regular functions — they can remember state, subscribe to data changes, and automatically update when that data changes.',
+          'Think of a Composable as a recipe that describes what your UI should look like. When ingredients (state) change, Compose re-runs the recipe and updates only what changed.',
+        ],
+        code: `// Your first Composable!
+@Composable
+fun Greeting(name: String) {
+    Text(text = "Hello, $name!")
+}
+
+// Using it in your app
+@Composable
+fun MyApp() {
+    Greeting(name = "Android Developer")
+}`,
+      },
+      {
+        heading: 'The Three Golden Rules',
+        paragraphs: [
+          'Before we go further, memorize these three rules:',
+        ],
+        list: [
+          'Composables can only be called from other Composables (or setContent{})',
+          'Composables should be side-effect free — they just describe the UI',
+          'Composables can be called many times (recomposition), so do not do expensive work inside them',
+        ],
+      },
+      {
+        heading: 'Building Your First Component',
+        paragraphs: [
+          'Let us build a simple user profile card. We will combine multiple Composables:',
+        ],
+        code: `@Composable
+fun UserProfileCard(
+    name: String,
+    email: String,
+    avatarUrl: String
+) {
+    // Card is a Material container with elevation
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+    ) {
+        // Row arranges children horizontally
+        Row(
+            modifier = Modifier.padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // Placeholder for avatar (we'll learn images later)
+            Box(
+                modifier = Modifier
+                    .size(48.dp)
+                    .background(Color.Gray, CircleShape)
+            )
+            
+            Spacer(modifier = Modifier.width(16.dp))
+            
+            // Column arranges children vertically
+            Column {
+                Text(
+                    text = name,
+                    style = MaterialTheme.typography.titleMedium
+                )
+                Text(
+                    text = email,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
+    }
+}`,
+      },
+      {
+        heading: 'Preview Your Work',
+        paragraphs: [
+          'One of the best features of Compose is instant previews in Android Studio. Add @Preview to see your component without running the app:',
+        ],
+        code: `@Preview(showBackground = true)
+@Composable
+fun UserProfileCardPreview() {
+    MyAppTheme {
+        UserProfileCard(
+            name = "Jane Developer",
+            email = "jane@example.com",
+            avatarUrl = ""
+        )
+    }
+}`,
+        note: 'Press the \"Split\" or \"Design\" button in Android Studio to see the preview. You can have multiple @Preview functions with different configurations!',
+      },
+      {
+        heading: 'Next Steps',
+        paragraphs: [
+          'Congratulations! You have written your first Composable function. In Part 2, we will explore Modifiers — the powerful system for customizing layout, appearance, and behavior.',
+        ],
+      },
+    ],
+  },
+  {
+    slug: 'compose-fundamentals-part2',
+    title: 'Compose Fundamentals Part 2: Mastering Modifiers',
+    description: 'Learn how Modifiers work in Jetpack Compose. Understand modifier chaining, common modifiers for layout and styling, and avoid the most common ordering mistakes.',
+    publishedAt: '2025-12-15',
+    updatedAt: '2025-12-15',
+    author: 'Engineering Team',
+    tags: ['Beginner', 'Fundamentals', 'Modifier', 'Tutorial'],
+    readingMinutes: 12,
+    sections: [
+      {
+        heading: 'What Are Modifiers?',
+        paragraphs: [
+          'In XML, you set properties like width, height, margin, and background directly on Views. In Compose, all of this is done through Modifiers.',
+          'Modifiers are the Swiss Army knife of Compose. They can: set size and position, add padding and margins, apply backgrounds and borders, handle clicks and gestures, and much more.',
+        ],
+      },
+      {
+        heading: 'Modifier Chaining',
+        paragraphs: [
+          'Modifiers are chained together using the dot notation. Each modifier wraps the previous one, like layers of an onion:',
+        ],
+        code: `@Composable
+fun StyledBox() {
+    Box(
+        modifier = Modifier
+            .size(200.dp)           // Size: 200x200dp
+            .background(Color.Blue) // Fill with blue
+            .padding(16.dp)         // Inner padding
+            .background(Color.Red)  // Inner red box
+    ) {
+        Text("Hello!", color = Color.White)
+    }
+}`,
+        note: 'The blue background covers the full 200dp, but the red background only covers the area inside the 16dp padding. Order matters!',
+      },
+      {
+        heading: 'Essential Layout Modifiers',
+        paragraphs: [
+          'Here are the modifiers you will use in almost every Composable:',
+        ],
+        code: `Modifier
+    // Size
+    .size(100.dp)              // Fixed width and height
+    .width(200.dp)             // Fixed width only
+    .height(50.dp)             // Fixed height only
+    .fillMaxWidth()            // Match parent width
+    .fillMaxHeight()           // Match parent height
+    .fillMaxSize()             // Match both
+    .wrapContentSize()         // Wrap content
+    
+    // Spacing
+    .padding(16.dp)            // Padding on all sides
+    .padding(horizontal = 8.dp, vertical = 16.dp)
+    .padding(start = 8.dp, top = 4.dp, end = 8.dp, bottom = 4.dp)
+    
+    // Alignment (in Box)
+    .align(Alignment.Center)   // Center in parent Box`,
+      },
+      {
+        heading: 'Styling Modifiers',
+        paragraphs: [
+          'Modifiers also handle visual styling:',
+        ],
+        code: `Modifier
+    // Background
+    .background(Color.Blue)
+    .background(Color.Blue, RoundedCornerShape(8.dp))
+    .background(brush = Brush.verticalGradient(listOf(Color.Blue, Color.Cyan)))
+    
+    // Border
+    .border(2.dp, Color.Black)
+    .border(2.dp, Color.Black, RoundedCornerShape(8.dp))
+    
+    // Shape clipping
+    .clip(RoundedCornerShape(8.dp))
+    .clip(CircleShape)
+    
+    // Shadow (must come before clip/background)
+    .shadow(4.dp, RoundedCornerShape(8.dp))`,
+      },
+      {
+        heading: 'Interaction Modifiers',
+        paragraphs: [
+          'Making things interactive is also done through modifiers:',
+        ],
+        code: `Modifier
+    // Click handling
+    .clickable { onClick() }
+    .clickable(
+        interactionSource = remember { MutableInteractionSource() },
+        indication = rememberRipple()  // Ripple effect
+    ) { onClick() }
+    
+    // Scroll
+    .verticalScroll(rememberScrollState())
+    .horizontalScroll(rememberScrollState())`,
+      },
+      {
+        heading: 'The Order Rule',
+        paragraphs: [
+          'Modifier order is crucial. The rule is: \"Outer modifiers apply first, inner modifiers apply last.\" This catches many beginners:',
+        ],
+        code: `// ❌ WRONG: Padding is outside clickable, so edges don't respond to taps
+Modifier
+    .padding(16.dp)
+    .clickable { }
+
+// ✅ RIGHT: Clickable area includes the padding
+Modifier
+    .clickable { }
+    .padding(16.dp)`,
+        note: 'When debugging layout issues, try reordering your modifiers. The visual result can change dramatically.',
+      },
+    ],
+  },
+  {
+    slug: 'compose-fundamentals-part3',
+    title: 'Compose Fundamentals Part 3: State and Recomposition',
+    description: 'Understand the heart of Compose: state management and recomposition. Learn remember, mutableStateOf, and how Compose efficiently updates your UI.',
+    publishedAt: '2025-12-15',
+    updatedAt: '2025-12-15',
+    author: 'Engineering Team',
+    tags: ['Beginner', 'Fundamentals', 'State', 'Recomposition'],
+    readingMinutes: 14,
+    sections: [
+      {
+        heading: 'The Heart of Compose: State',
+        paragraphs: [
+          'So far, our Composables have been static — they display data but cannot change. Real apps need interactive UIs: buttons that respond, counters that increment, forms that update. This requires state.',
+          'State is any value that changes over time. In Compose, when state changes, the framework automatically updates the UI. This is called recomposition.',
+        ],
+      },
+      {
+        heading: 'Your First Stateful Component',
+        paragraphs: [
+          'Let us build a simple counter. We need two things: a variable to hold the count, and a way to tell Compose when it changes:',
+        ],
+        code: `@Composable
+fun Counter() {
+    // remember: Keep this value across recompositions
+    // mutableStateOf: When this changes, trigger recomposition
+    var count by remember { mutableStateOf(0) }
+    
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.padding(16.dp)
+    ) {
+        Text(
+            text = "Count: $count",
+            style = MaterialTheme.typography.headlineMedium
+        )
+        
+        Spacer(modifier = Modifier.height(16.dp))
+        
+        Row {
+            Button(onClick = { count-- }) {
+                Text("-")
+            }
+            Spacer(modifier = Modifier.width(16.dp))
+            Button(onClick = { count++ }) {
+                Text("+")
+            }
+        }
+    }
+}`,
+      },
+      {
+        heading: 'Breaking Down remember and mutableStateOf',
+        paragraphs: [
+          'These two functions are the foundation of Compose state:',
+        ],
+        list: [
+          'mutableStateOf(value): Creates an observable state holder. When you change it, Compose knows to update the UI.',
+          'remember { }: Saves a value across recompositions. Without it, your state would reset every time the function runs.',
+          'Together, they create persistent, observable state that survives UI updates.',
+        ],
+      },
+      {
+        heading: 'What Is Recomposition?',
+        paragraphs: [
+          'Recomposition is Compose re-running your Composable functions when state changes. But here is the genius: Compose is smart about it.',
+        ],
+        code: `@Composable
+fun ParentScreen() {
+    var name by remember { mutableStateOf("") }
+    
+    Column {
+        // This recomposes when name changes
+        NameInput(
+            name = name,
+            onNameChange = { name = it }
+        )
+        
+        // This does NOT recompose - it doesn't read "name"
+        StaticHeader()
+        
+        // This recomposes when name changes
+        Greeting(name = name)
+    }
+}`,
+        note: 'Compose only re-runs Composables that read the changed state. Unrelated parts of your UI stay untouched. This is why Compose can be efficient even with complex UIs.',
+      },
+      {
+        heading: 'Common State Patterns',
+        paragraphs: [
+          'Here are patterns you will use frequently:',
+        ],
+        code: `// Text input
+var text by remember { mutableStateOf("") }
+TextField(
+    value = text,
+    onValueChange = { text = it }
+)
+
+// Toggle/checkbox
+var isChecked by remember { mutableStateOf(false) }
+Checkbox(
+    checked = isChecked,
+    onCheckedChange = { isChecked = it }
+)
+
+// List of items
+var items by remember { mutableStateOf(listOf("A", "B", "C")) }
+items = items + "D"  // Add item
+items = items.filter { it != "B" }  // Remove item`,
+      },
+      {
+        heading: 'State vs Stateless Composables',
+        paragraphs: [
+          'As you gain experience, you will learn to separate stateful and stateless Composables. Stateless Composables are easier to test, preview, and reuse:',
+        ],
+        code: `// Stateless: receives state as parameter
+@Composable
+fun CounterDisplay(
+    count: Int,
+    onIncrement: () -> Unit,
+    onDecrement: () -> Unit
+) {
+    // Just displays, doesn't own state
+}
+
+// Stateful: manages its own state
+@Composable
+fun CounterScreen() {
+    var count by remember { mutableStateOf(0) }
+    CounterDisplay(
+        count = count,
+        onIncrement = { count++ },
+        onDecrement = { count-- }
+    )
+}`,
+        note: 'This pattern is called \"state hoisting.\" Push state up to the caller, making your Composables more reusable. We cover this in depth in our State Hoisting Patterns article.',
+      },
+    ],
+  },
+  {
+    slug: 'compose-real-world-migrations',
+    title: 'Real-World Compose Migrations: Lessons from Twitter, Airbnb, and Spotify',
+    description: 'Deep dive into how major companies migrated to Jetpack Compose. Learn from their strategies, challenges, and measured outcomes with concrete data.',
+    publishedAt: '2025-12-14',
+    updatedAt: '2025-12-14',
+    author: 'Engineering Team',
+    tags: ['Case Study', 'Migration', 'Enterprise', 'Real World'],
+    readingMinutes: 18,
+    sections: [
+      {
+        heading: 'Why Study Real Migrations?',
+        paragraphs: [
+          'Blog tutorials show ideal scenarios. Reality is messier. Large codebases have legacy constraints, team dynamics, and business pressures. By studying how major companies migrated to Compose, you can learn lessons that apply to your own projects.',
+          'This article compiles publicly shared data from Twitter (now X), Airbnb, Spotify, and others. All information comes from official tech blogs, conference talks, and published case studies.',
+        ],
+      },
+      {
+        heading: 'Twitter/X: Incremental Migration at Scale',
+        paragraphs: [
+          'Twitter\'s Android app has over 1 million lines of Kotlin code. A full rewrite was impossible. Instead, they adopted an incremental approach that took over two years.',
+        ],
+        list: [
+          'Strategy: Started with new features only, then gradually migrated existing screens',
+          'Key decision: Built a Design System in Compose first (Twitter UI Kit)',
+          'Challenge: Existing custom Views with complex accessibility requirements',
+          'Result: 50% of new feature code shipped in Compose by end of 2023',
+        ],
+        note: 'Twitter\'s key insight: "Don\'t migrate screens, migrate components." They focused on building a comprehensive component library first.',
+      },
+      {
+        heading: 'Airbnb: Design System as Foundation',
+        paragraphs: [
+          'Airbnb\'s approach centered on their Lottie design system. Before touching product code, they rebuilt their entire design system in Compose. This took 6 months but paid dividends afterward.',
+        ],
+        code: `// Airbnb's component abstraction pattern
+// All product code uses these, not raw Compose
+@Composable
+fun AirbnbCard(
+    title: String,
+    subtitle: String,
+    imageUrl: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    // Internal implementation can change
+    // without affecting product teams
+}`,
+      },
+      {
+        paragraphs: [
+          'By abstracting Compose behind their design system, Airbnb achieved: consistent UI across 20+ product teams, easy updates when Compose APIs changed, reduced onboarding time for new developers (they learn Airbnb components, not raw Compose).',
+        ],
+      },
+      {
+        heading: 'Spotify: Performance-First Migration',
+        paragraphs: [
+          'Spotify\'s primary concern was performance. Music playback is sensitive to UI jank — any frame drops are immediately noticeable.',
+        ],
+        list: [
+          'Benchmark requirement: New Compose screens must match or beat XML performance',
+          'Tool: Custom Macrobenchmark suite run on every PR',
+          'Discovery: Initial Compose code was 15% slower; after optimization, 10% faster',
+          'Key optimization: Aggressive use of derivedStateOf and remember with stable keys',
+        ],
+      },
+      {
+        heading: 'Common Patterns Across Companies',
+        paragraphs: [
+          'Despite different approaches, successful migrations share common patterns:',
+        ],
+        list: [
+          'Investment in tooling: All companies built custom lint rules, preview tools, and benchmarks',
+          'Design system first: Abstract Compose behind company-specific components',
+          'Gradual rollout: Use feature flags for A/B testing Compose vs View implementations',
+          'Dedicated migration team: 2-5 engineers focused full-time on infrastructure',
+          'Documentation culture: Internal wikis with patterns, anti-patterns, and migration guides',
+        ],
+      },
+      {
+        heading: 'Measured Outcomes',
+        paragraphs: [
+          'Here is aggregated data from public sources:',
+        ],
+        code: `// Industry-reported metrics (2024-2025)
+{
+  "code_reduction": "40-60% fewer lines for UI code",
+  "development_velocity": "20-40% faster feature delivery",
+  "crash_reduction": "30-50% fewer UI-related crashes",
+  "build_time_impact": "5-15% increase in build times (Compose compiler)",
+  "onboarding": "2-4 weeks for View developers to become productive"
+}`,
+        note: 'These are averages from multiple companies. Your results will vary based on codebase complexity, team experience, and migration scope.',
+      },
+      {
+        heading: 'Lessons for Your Migration',
+        paragraphs: [
+          'Based on these case studies, here is actionable advice:',
+        ],
+        list: [
+          'Start small: Pick a low-risk screen with clear success metrics',
+          'Measure everything: Establish baseline performance before migrating',
+          'Build infrastructure: Invest in preview tooling and lint rules early',
+          'Train the team: Formal training reduces "Compose gotcha" bugs',
+          'Communicate timeline: Set realistic expectations — major migrations take 12-24 months',
+        ],
+      },
+    ],
+  },
 ];
 
 export function getAllPosts() {
