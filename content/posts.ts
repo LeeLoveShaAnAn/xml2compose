@@ -1253,6 +1253,598 @@ fun loadingIndicator_disappears_afterDataLoads() {
       },
     ],
   },
+  {
+    slug: 'compose-side-effects-explained',
+    title: 'Side Effects in Compose: LaunchedEffect, DisposableEffect, and Friends',
+    description: 'Demystify Compose side effect APIs. Learn when to use LaunchedEffect, DisposableEffect, SideEffect, and rememberCoroutineScope for clean, lifecycle-aware code.',
+    publishedAt: '2025-12-14',
+    updatedAt: '2025-12-14',
+    author: 'Engineering Team',
+    tags: ['Side Effects', 'Lifecycle', 'Coroutines', 'Best Practices'],
+    readingMinutes: 12,
+    sections: [
+      {
+        heading: 'What Are Side Effects in Compose?',
+        paragraphs: [
+          'In Compose, a side effect is any operation that escapes the scope of a composable function — network calls, database writes, analytics events, or anything that should persist beyond recomposition. Since composables can recompose frequently and unpredictably, uncontrolled side effects lead to bugs.',
+          'Compose provides dedicated APIs to manage side effects safely. Each has a specific use case, and choosing the wrong one is a common source of subtle bugs.',
+        ],
+      },
+      {
+        heading: 'LaunchedEffect: One-Shot Coroutines',
+        paragraphs: [
+          'LaunchedEffect launches a coroutine when it enters composition and cancels it when leaving. Use it for one-shot operations triggered by key changes:',
+        ],
+        code: `@Composable
+fun UserProfile(userId: String) {
+    var user by remember { mutableStateOf<User?>(null) }
+    
+    // Launches when userId changes, cancels previous if still running
+    LaunchedEffect(userId) {
+        user = repository.fetchUser(userId)
+    }
+    
+    user?.let { ProfileContent(it) } ?: LoadingSpinner()
+}`,
+        note: 'Always provide meaningful keys to LaunchedEffect. Using Unit as key means it runs once on first composition only.',
+      },
+      {
+        heading: 'DisposableEffect: Setup and Cleanup',
+        paragraphs: [
+          'DisposableEffect is for operations that require cleanup — listeners, callbacks, or resources that must be released:',
+        ],
+        code: `@Composable
+fun LocationTracker(onLocationChanged: (Location) -> Unit) {
+    val context = LocalContext.current
+    
+    DisposableEffect(Unit) {
+        val locationManager = context.getSystemService<LocationManager>()
+        val listener = LocationListener { location ->
+            onLocationChanged(location)
+        }
+        
+        locationManager?.requestLocationUpdates(
+            LocationManager.GPS_PROVIDER,
+            1000L,
+            10f,
+            listener
+        )
+        
+        onDispose {
+            locationManager?.removeUpdates(listener)
+        }
+    }
+}`,
+      },
+      {
+        heading: 'rememberCoroutineScope: User-Triggered Actions',
+        paragraphs: [
+          'For coroutines triggered by user actions (not composition), use rememberCoroutineScope. Unlike LaunchedEffect, it survives recomposition:',
+        ],
+        code: `@Composable
+fun SubmitButton(onSubmit: suspend () -> Result<Unit>) {
+    val scope = rememberCoroutineScope()
+    var isLoading by remember { mutableStateOf(false) }
+    
+    Button(
+        onClick = {
+            scope.launch {
+                isLoading = true
+                onSubmit()
+                isLoading = false
+            }
+        },
+        enabled = !isLoading
+    ) {
+        if (isLoading) CircularProgressIndicator() else Text("Submit")
+    }
+}`,
+      },
+      {
+        heading: 'SideEffect: Sync with Non-Compose Code',
+        paragraphs: [
+          'SideEffect runs on every successful recomposition. Use it to sync Compose state with non-Compose systems like analytics or logging:',
+        ],
+        code: `@Composable
+fun AnalyticsScreen(screenName: String, content: @Composable () -> Unit) {
+    SideEffect {
+        // Runs on every successful recomposition
+        analytics.trackScreenView(screenName)
+    }
+    content()
+}`,
+        note: 'SideEffect should never trigger recomposition or modify state. It is purely for syncing with external systems.',
+      },
+    ],
+  },
+  {
+    slug: 'compose-accessibility-guide',
+    title: 'Building Accessible Apps with Compose: A Complete Guide',
+    description: 'Make your Compose apps accessible to everyone. Learn semantics, content descriptions, touch targets, and how to test with TalkBack and accessibility scanners.',
+    publishedAt: '2025-12-13',
+    updatedAt: '2025-12-13',
+    author: 'Engineering Team',
+    tags: ['Accessibility', 'Semantics', 'TalkBack', 'Inclusive Design'],
+    readingMinutes: 14,
+    sections: [
+      {
+        heading: 'Why Accessibility Matters',
+        paragraphs: [
+          'Over 1 billion people worldwide have disabilities. Building accessible apps is not just ethical — it is often legally required and expands your user base. Compose makes accessibility easier than ever with its semantic tree approach.',
+          'The semantic tree is a parallel structure to the UI tree that accessibility services like TalkBack use to understand your app. Every composable can contribute to this tree.',
+        ],
+      },
+      {
+        heading: 'Content Descriptions for Images',
+        paragraphs: [
+          'Screen readers cannot see images. Always provide meaningful descriptions:',
+        ],
+        code: `// Informative image - describe what it shows
+Image(
+    painter = painterResource(R.drawable.product_photo),
+    contentDescription = "Red running shoes, side view"
+)
+
+// Decorative image - hide from accessibility tree
+Image(
+    painter = painterResource(R.drawable.decorative_divider),
+    contentDescription = null  // Explicitly null for decorative
+)
+
+// Icon button - describe the action, not the icon
+IconButton(onClick = { /* delete */ }) {
+    Icon(
+        Icons.Default.Delete,
+        contentDescription = "Delete item"  // Not "trash can icon"
+    )
+}`,
+      },
+      {
+        heading: 'Semantic Merging and Grouping',
+        paragraphs: [
+          'By default, every Text and clickable element is a separate node. Merge related content for better screen reader experience:',
+        ],
+        code: `// Before: TalkBack reads "John Doe" then "Senior Engineer" separately
+Row {
+    Text("John Doe")
+    Text("Senior Engineer")
+}
+
+// After: TalkBack reads "John Doe, Senior Engineer" as one item
+Row(modifier = Modifier.semantics(mergeDescendants = true) {}) {
+    Text("John Doe")
+    Text("Senior Engineer")
+}
+
+// For interactive items with multiple text elements
+Card(
+    modifier = Modifier
+        .clickable { openProfile() }
+        .semantics(mergeDescendants = true) {}
+) {
+    Text("John Doe")
+    Text("Senior Engineer")
+    Text("View Profile")
+}`,
+      },
+      {
+        heading: 'Touch Target Size',
+        paragraphs: [
+          'Small touch targets are hard for users with motor impairments. Material 3 enforces minimum 48dp targets automatically, but custom components need manual handling:',
+        ],
+        code: `// Ensure minimum touch target regardless of visual size
+Box(
+    modifier = Modifier
+        .size(24.dp)  // Visual size
+        .sizeIn(minWidth = 48.dp, minHeight = 48.dp)  // Touch target
+        .clickable { /* action */ },
+    contentAlignment = Alignment.Center
+) {
+    Icon(Icons.Default.Add, contentDescription = "Add item")
+}`,
+      },
+      {
+        heading: 'Testing Accessibility',
+        paragraphs: [
+          'Always test with real accessibility tools:',
+        ],
+        list: [
+          'Enable TalkBack and navigate your app using only gestures',
+          'Run Accessibility Scanner from Play Store to find issues',
+          'Use Layout Inspector to view the semantic tree',
+          'Write accessibility tests with composeTestRule.onNode(hasContentDescription(...))',
+        ],
+        note: 'Accessibility testing should be part of your regular QA process, not an afterthought. Include it in your PR checklist.',
+      },
+    ],
+  },
+  {
+    slug: 'compose-animations-deep-dive',
+    title: 'Mastering Animations in Compose: From Simple to Complex',
+    description: 'Create delightful animations in Jetpack Compose. Master animate*AsState, Transition, AnimatedVisibility, and physics-based animations for professional UIs.',
+    publishedAt: '2025-12-12',
+    updatedAt: '2025-12-12',
+    author: 'Engineering Team',
+    tags: ['Animation', 'Motion', 'UI Polish', 'User Experience'],
+    readingMinutes: 16,
+    sections: [
+      {
+        heading: 'Animation Philosophy in Compose',
+        paragraphs: [
+          'Compose animations are state-driven. You change state, and the framework animates between old and new values. This declarative approach eliminates the imperative animation code that was error-prone in Views.',
+          'The key insight: you do not tell Compose HOW to animate, you tell it WHAT values to animate between, and it figures out the rest.',
+        ],
+      },
+      {
+        heading: 'animate*AsState: The Simplest Animation',
+        paragraphs: [
+          'For animating single values, animate*AsState is your go-to. It creates a smooth transition whenever the target value changes:',
+        ],
+        code: `@Composable
+fun ExpandableCard(isExpanded: Boolean, content: @Composable () -> Unit) {
+    // Animates smoothly between 100dp and 300dp
+    val height by animateDpAsState(
+        targetValue = if (isExpanded) 300.dp else 100.dp,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessLow
+        ),
+        label = "card height"
+    )
+    
+    Card(modifier = Modifier.height(height)) {
+        content()
+    }
+}`,
+      },
+      {
+        heading: 'AnimatedVisibility: Enter and Exit',
+        paragraphs: [
+          'AnimatedVisibility handles appearing and disappearing content with customizable transitions:',
+        ],
+        code: `@Composable
+fun NotificationBanner(message: String?, onDismiss: () -> Unit) {
+    AnimatedVisibility(
+        visible = message != null,
+        enter = slideInVertically(initialOffsetY = { -it }) + fadeIn(),
+        exit = slideOutVertically(targetOffsetY = { -it }) + fadeOut()
+    ) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            Row(
+                modifier = Modifier.padding(16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(message ?: "")
+                IconButton(onClick = onDismiss) {
+                    Icon(Icons.Default.Close, contentDescription = "Dismiss")
+                }
+            }
+        }
+    }
+}`,
+      },
+      {
+        heading: 'Transition: Coordinating Multiple Animations',
+        paragraphs: [
+          'When multiple values need to animate together, use updateTransition. It ensures all animations start and end at the same time:',
+        ],
+        code: `enum class CardState { Collapsed, Expanded }
+
+@Composable
+fun CoordinatedCard(state: CardState) {
+    val transition = updateTransition(state, label = "card transition")
+    
+    val height by transition.animateDp(label = "height") { cardState ->
+        when (cardState) {
+            CardState.Collapsed -> 100.dp
+            CardState.Expanded -> 300.dp
+        }
+    }
+    
+    val cornerRadius by transition.animateDp(label = "corner") { cardState ->
+        when (cardState) {
+            CardState.Collapsed -> 16.dp
+            CardState.Expanded -> 8.dp
+        }
+    }
+    
+    val backgroundColor by transition.animateColor(label = "color") { cardState ->
+        when (cardState) {
+            CardState.Collapsed -> Color.LightGray
+            CardState.Expanded -> Color.White
+        }
+    }
+    
+    Card(
+        modifier = Modifier.height(height),
+        shape = RoundedCornerShape(cornerRadius),
+        colors = CardDefaults.cardColors(containerColor = backgroundColor)
+    ) {
+        // Content
+    }
+}`,
+      },
+      {
+        heading: 'Performance Tips',
+        paragraphs: [
+          'Animations can be performance-intensive. Follow these guidelines:',
+        ],
+        list: [
+          'Prefer graphicsLayer modifiers for translation, rotation, scale, and alpha — they avoid recomposition',
+          'Use derivedStateOf to debounce rapid state changes',
+          'Provide meaningful labels to all animations for debugging in Layout Inspector',
+          'Test on low-end devices to catch performance issues early',
+        ],
+        note: 'Always respect user preferences. Check LocalAccessibilityManager for users who have enabled "reduce motion" in system settings.',
+      },
+    ],
+  },
+  {
+    slug: 'state-hoisting-patterns',
+    title: 'State Hoisting Patterns in Compose: When, Why, and How',
+    description: 'Master the art of state hoisting in Jetpack Compose. Learn when to hoist state, how to design stateless components, and patterns for complex state management.',
+    publishedAt: '2025-12-11',
+    updatedAt: '2025-12-11',
+    author: 'Engineering Team',
+    tags: ['State Management', 'Architecture', 'Best Practices', 'Reusability'],
+    readingMinutes: 11,
+    sections: [
+      {
+        heading: 'What Is State Hoisting?',
+        paragraphs: [
+          'State hoisting is a pattern where you move state up from a composable to its caller, making the composable stateless. The composable receives state as parameters and notifies the caller of changes via callbacks.',
+          'This pattern is fundamental to Compose. It makes components reusable, testable, and previewable. Material components like TextField are designed this way.',
+        ],
+      },
+      {
+        heading: 'The Basic Pattern',
+        paragraphs: [
+          'A stateless composable receives two things: the current value and an onValueChange callback:',
+        ],
+        code: `// Stateful version - owns its state, less reusable
+@Composable
+fun StatefulCounter() {
+    var count by remember { mutableStateOf(0) }
+    Button(onClick = { count++ }) {
+        Text("Count: $count")
+    }
+}
+
+// Stateless version - state is hoisted, fully reusable
+@Composable
+fun StatelessCounter(
+    count: Int,
+    onIncrement: () -> Unit
+) {
+    Button(onClick = onIncrement) {
+        Text("Count: $count")
+    }
+}
+
+// Usage - caller owns the state
+@Composable
+fun CounterScreen() {
+    var count by remember { mutableStateOf(0) }
+    StatelessCounter(
+        count = count,
+        onIncrement = { count++ }
+    )
+}`,
+      },
+      {
+        heading: 'When to Hoist State',
+        paragraphs: [
+          'Not all state needs hoisting. Use this decision tree:',
+        ],
+        list: [
+          'Hoist if multiple composables need to read or write the state',
+          'Hoist if a parent needs to control or observe the state',
+          'Hoist if the state affects business logic or needs persistence',
+          'Keep local if it is purely UI-internal (like scroll position or hover state)',
+        ],
+      },
+      {
+        heading: 'State Holder Pattern',
+        paragraphs: [
+          'For complex state with multiple related values, create a state holder class:',
+        ],
+        code: `// State holder for a search feature
+class SearchState(
+    initialQuery: String = "",
+    initialFilters: Set<Filter> = emptySet()
+) {
+    var query by mutableStateOf(initialQuery)
+        private set
+    var filters by mutableStateOf(initialFilters)
+        private set
+    var isSearching by mutableStateOf(false)
+        private set
+    
+    val hasActiveFilters: Boolean
+        get() = filters.isNotEmpty()
+    
+    fun updateQuery(newQuery: String) {
+        query = newQuery
+    }
+    
+    fun toggleFilter(filter: Filter) {
+        filters = if (filter in filters) {
+            filters - filter
+        } else {
+            filters + filter
+        }
+    }
+}
+
+@Composable
+fun rememberSearchState(): SearchState {
+    return remember { SearchState() }
+}
+
+// Usage
+@Composable
+fun SearchScreen() {
+    val searchState = rememberSearchState()
+    
+    SearchBar(
+        query = searchState.query,
+        onQueryChange = searchState::updateQuery,
+        hasFilters = searchState.hasActiveFilters
+    )
+}`,
+      },
+      {
+        heading: 'Hoisting to ViewModel',
+        paragraphs: [
+          'For state that survives configuration changes or needs to trigger business logic, hoist to ViewModel:',
+        ],
+        code: `class CartViewModel : ViewModel() {
+    private val _items = MutableStateFlow<List<CartItem>>(emptyList())
+    val items: StateFlow<List<CartItem>> = _items.asStateFlow()
+    
+    val totalPrice: StateFlow<BigDecimal> = _items
+        .map { items -> items.sumOf { it.price * it.quantity } }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), BigDecimal.ZERO)
+    
+    fun addItem(item: CartItem) {
+        _items.update { current -> current + item }
+    }
+}
+
+@Composable
+fun CartScreen(viewModel: CartViewModel = viewModel()) {
+    val items by viewModel.items.collectAsStateWithLifecycle()
+    val total by viewModel.totalPrice.collectAsStateWithLifecycle()
+    
+    CartContent(
+        items = items,
+        total = total,
+        onAddItem = viewModel::addItem
+    )
+}`,
+        note: 'The rule of thumb: UI state lives in composables, business state lives in ViewModels. State hoisting connects them cleanly.',
+      },
+    ],
+  },
+  {
+    slug: 'compose-for-wear-os',
+    title: 'Compose for Wear OS: Building Watch Apps That Shine',
+    description: 'Create beautiful Wear OS apps with Compose. Learn about the unique constraints, Wear-specific components, and how to design for the wrist.',
+    publishedAt: '2025-12-06',
+    updatedAt: '2025-12-06',
+    author: 'Engineering Team',
+    tags: ['Wear OS', 'Wearables', 'Mobile', 'Cross-platform'],
+    readingMinutes: 13,
+    sections: [
+      {
+        heading: 'Wear OS: A Different Canvas',
+        paragraphs: [
+          'Watches are not tiny phones. They have round or square screens as small as 1.2 inches, limited battery, no keyboard, and are glanced at for seconds. Compose for Wear OS is built specifically for these constraints.',
+          'The good news: if you know Compose, you already know 80% of Wear OS development. The APIs are intentionally similar, with Wear-specific additions for watch interactions.',
+        ],
+      },
+      {
+        heading: 'Setting Up a Wear Project',
+        paragraphs: [
+          'Wear OS uses different dependencies than mobile Compose. Your build.gradle needs:',
+        ],
+        code: `dependencies {
+    // Wear Compose foundation and material
+    implementation("androidx.wear.compose:compose-foundation:1.3.0")
+    implementation("androidx.wear.compose:compose-material:1.3.0")
+    implementation("androidx.wear.compose:compose-navigation:1.3.0")
+    
+    // Horologist for advanced features
+    implementation("com.google.android.horologist:horologist-compose-layout:0.5.0")
+}`,
+      },
+      {
+        heading: 'Wear-Specific Components',
+        paragraphs: [
+          'Wear Compose provides components designed for watch interactions:',
+        ],
+        code: `@Composable
+fun WearSampleApp() {
+    // ScalingLazyColumn - the primary scrollable container for Wear
+    ScalingLazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        autoCentering = AutoCenteringParams(itemIndex = 0)
+    ) {
+        // Chip - the main interactive element (like Button)
+        item {
+            Chip(
+                onClick = { /* action */ },
+                label = { Text("Start Workout") },
+                icon = {
+                    Icon(
+                        Icons.Default.PlayArrow,
+                        contentDescription = null
+                    )
+                }
+            )
+        }
+        
+        // ToggleChip - for on/off settings
+        item {
+            ToggleChip(
+                checked = true,
+                onCheckedChange = { /* toggle */ },
+                label = { Text("Heart Rate Monitoring") },
+                toggleControl = {
+                    Switch(checked = true, onCheckedChange = null)
+                }
+            )
+        }
+    }
+}`,
+      },
+      {
+        heading: 'Handling Round Screens',
+        paragraphs: [
+          'Content near the edges of round screens gets clipped. Use proper insets and padding:',
+        ],
+        code: `@Composable
+fun RoundAwareScreen() {
+    // Scaffold handles curved edges automatically
+    Scaffold(
+        timeText = { TimeText() },
+        vignette = { Vignette(vignettePosition = VignettePosition.TopAndBottom) },
+        positionIndicator = {
+            PositionIndicator(scalingLazyListState = listState)
+        }
+    ) {
+        ScalingLazyColumn(
+            state = listState,
+            contentPadding = PaddingValues(
+                horizontal = 10.dp  // Extra padding for round corners
+            )
+        ) {
+            // Content
+        }
+    }
+}`,
+      },
+      {
+        heading: 'Design Guidelines',
+        paragraphs: [
+          'Follow these principles for successful watch apps:',
+        ],
+        list: [
+          'Keep interactions under 5 seconds — users glance, not stare',
+          'Use large touch targets (minimum 48dp, prefer 52dp)',
+          'Limit text to essential information',
+          'Use high contrast colors for outdoor visibility',
+          'Support both round and square screens',
+          'Provide haptic feedback for confirmations',
+        ],
+        note: 'Test on real hardware. Emulators cannot replicate the small screen experience or battery constraints accurately.',
+      },
+    ],
+  },
 ];
 
 export function getAllPosts() {

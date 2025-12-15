@@ -155,4 +155,36 @@
         <changefreq>monthly</changefreq>
         <priority>0.6</priority>
     </url>
+    
+    <!-- 新增博客文章 (2025-12-15) -->
+    <url>
+        <loc>https://xml2compose.dev/blog/compose-side-effects-explained</loc>
+        <lastmod>2025-12-14</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.6</priority>
+    </url>
+    <url>
+        <loc>https://xml2compose.dev/blog/compose-accessibility-guide</loc>
+        <lastmod>2025-12-13</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.6</priority>
+    </url>
+    <url>
+        <loc>https://xml2compose.dev/blog/compose-animations-deep-dive</loc>
+        <lastmod>2025-12-12</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.6</priority>
+    </url>
+    <url>
+        <loc>https://xml2compose.dev/blog/state-hoisting-patterns</loc>
+        <lastmod>2025-12-11</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.6</priority>
+    </url>
+    <url>
+        <loc>https://xml2compose.dev/blog/compose-for-wear-os</loc>
+        <lastmod>2025-12-06</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.6</priority>
+    </url>
 </urlset>
