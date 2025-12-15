@@ -2330,6 +2330,667 @@ fun AirbnbCard(
       },
     ],
   },
+  {
+    slug: 'viewmodel-compose-integration',
+    title: 'ViewModel and Compose: The Perfect Architecture Partnership',
+    description: 'Master the integration of ViewModel with Jetpack Compose. Learn StateFlow patterns, lifecycle handling, and architecture best practices for production apps.',
+    publishedAt: '2025-12-15',
+    updatedAt: '2025-12-15',
+    author: 'Engineering Team',
+    tags: ['ViewModel', 'Architecture', 'StateFlow', 'MVVM'],
+    readingMinutes: 15,
+    sections: [
+      {
+        heading: 'Why ViewModel Still Matters in Compose',
+        paragraphs: [
+          'Some developers new to Compose wonder if ViewModel is still necessary. The answer is absolutely yes. While Compose manages UI state excellently, ViewModel serves a different purpose: surviving configuration changes (like screen rotation), hosting business logic, and serving as the single source of truth for screen-level state.',
+          'The combination of ViewModel + Compose creates a clean separation: ViewModel owns and manages state, Compose observes and renders it.',
+        ],
+      },
+      {
+        heading: 'StateFlow: The Bridge Between ViewModel and Compose',
+        paragraphs: [
+          'StateFlow is the recommended way to expose state from ViewModel to Compose. It is hot, always has a value, and integrates seamlessly with Compose:',
+        ],
+        code: `class ProfileViewModel : ViewModel() {
+    // Private mutable state
+    private val _uiState = MutableStateFlow(ProfileUiState())
+    // Public immutable state exposed to UI
+    val uiState: StateFlow<ProfileUiState> = _uiState.asStateFlow()
+    
+    fun updateName(name: String) {
+        _uiState.update { current ->
+            current.copy(name = name)
+        }
+    }
+    
+    fun loadProfile(userId: String) {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true) }
+            try {
+                val profile = repository.getProfile(userId)
+                _uiState.update { 
+                    it.copy(
+                        name = profile.name,
+                        email = profile.email,
+                        isLoading = false
+                    )
+                }
+            } catch (e: Exception) {
+                _uiState.update { 
+                    it.copy(error = e.message, isLoading = false) 
+                }
+            }
+        }
+    }
+}
+
+data class ProfileUiState(
+    val name: String = "",
+    val email: String = "",
+    val isLoading: Boolean = false,
+    val error: String? = null
+)`,
+      },
+      {
+        heading: 'Collecting State in Compose',
+        paragraphs: [
+          'Use collectAsStateWithLifecycle to safely collect StateFlow in Compose. It automatically stops collection when the lifecycle is below a certain state:',
+        ],
+        code: `@Composable
+fun ProfileScreen(
+    viewModel: ProfileViewModel = viewModel()
+) {
+    // Lifecycle-aware collection - stops when app goes to background
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    
+    ProfileContent(
+        uiState = uiState,
+        onNameChange = viewModel::updateName,
+        onRetry = { viewModel.loadProfile(userId) }
+    )
+}
+
+@Composable
+fun ProfileContent(
+    uiState: ProfileUiState,
+    onNameChange: (String) -> Unit,
+    onRetry: () -> Unit
+) {
+    when {
+        uiState.isLoading -> LoadingScreen()
+        uiState.error != null -> ErrorScreen(uiState.error, onRetry)
+        else -> ProfileForm(uiState, onNameChange)
+    }
+}`,
+        note: 'Always use collectAsStateWithLifecycle() instead of collectAsState(). The lifecycle-aware version prevents unnecessary work when your app is in the background.',
+      },
+      {
+        heading: 'One-Time Events: The Event Pattern',
+        paragraphs: [
+          'Navigation, snackbars, and other one-time events need special handling. Use a Channel or SharedFlow:',
+        ],
+        code: `class CheckoutViewModel : ViewModel() {
+    private val _events = Channel<CheckoutEvent>()
+    val events = _events.receiveAsFlow()
+    
+    fun checkout() {
+        viewModelScope.launch {
+            try {
+                val orderId = repository.placeOrder()
+                _events.send(CheckoutEvent.NavigateToConfirmation(orderId))
+            } catch (e: Exception) {
+                _events.send(CheckoutEvent.ShowError(e.message ?: "Unknown error"))
+            }
+        }
+    }
+}
+
+sealed class CheckoutEvent {
+    data class NavigateToConfirmation(val orderId: String) : CheckoutEvent()
+    data class ShowError(val message: String) : CheckoutEvent()
+}
+
+// In Compose
+@Composable
+fun CheckoutScreen(viewModel: CheckoutViewModel, navController: NavController) {
+    val context = LocalContext.current
+    
+    LaunchedEffect(Unit) {
+        viewModel.events.collect { event ->
+            when (event) {
+                is CheckoutEvent.NavigateToConfirmation -> {
+                    navController.navigate("confirmation/\${event.orderId}")
+                }
+                is CheckoutEvent.ShowError -> {
+                    Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+    // ... rest of UI
+}`,
+      },
+      {
+        heading: 'Testing ViewModel with Compose',
+        paragraphs: [
+          'ViewModels can be tested independently of Compose, making your architecture more testable:',
+        ],
+        code: `class ProfileViewModelTest {
+    private lateinit var viewModel: ProfileViewModel
+    private lateinit var fakeRepository: FakeProfileRepository
+    
+    @Before
+    fun setup() {
+        fakeRepository = FakeProfileRepository()
+        viewModel = ProfileViewModel(fakeRepository)
+    }
+    
+    @Test
+    fun loadProfile_success_updatesState() = runTest {
+        // Given
+        fakeRepository.setProfile(Profile("John", "john@example.com"))
+        
+        // When
+        viewModel.loadProfile("123")
+        
+        // Then
+        val state = viewModel.uiState.value
+        assertEquals("John", state.name)
+        assertEquals("john@example.com", state.email)
+        assertFalse(state.isLoading)
+        assertNull(state.error)
+    }
+}`,
+        note: 'Keep your Composables as dumb as possible - they should only render UI based on state. All logic belongs in ViewModel, where it can be easily tested.',
+      },
+    ],
+  },
+  {
+    slug: 'hilt-compose-dependency-injection',
+    title: 'Dependency Injection with Hilt and Compose: A Complete Guide',
+    description: 'Learn how to integrate Hilt with Jetpack Compose for clean, testable architecture. From basic setup to advanced scoping and testing strategies.',
+    publishedAt: '2025-12-14',
+    updatedAt: '2025-12-14',
+    author: 'Engineering Team',
+    tags: ['Hilt', 'Dependency Injection', 'Architecture', 'Testing'],
+    readingMinutes: 14,
+    sections: [
+      {
+        heading: 'Why Hilt for Compose?',
+        paragraphs: [
+          'Dependency Injection (DI) is essential for maintainable, testable code. Hilt is Google\'s recommended DI framework for Android, and it integrates seamlessly with Compose.',
+          'With Hilt, you can inject ViewModels, repositories, and other dependencies without manual factory creation. This reduces boilerplate and makes testing trivial.',
+        ],
+      },
+      {
+        heading: 'Basic Setup',
+        paragraphs: [
+          'First, add Hilt dependencies and set up your Application class:',
+        ],
+        code: `// build.gradle.kts
+plugins {
+    id("com.google.dagger.hilt.android")
+    id("com.google.devtools.ksp")
+}
+
+dependencies {
+    implementation("com.google.dagger:hilt-android:2.50")
+    ksp("com.google.dagger:hilt-compiler:2.50")
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
+}
+
+// Application class
+@HiltAndroidApp
+class MyApplication : Application()
+
+// MainActivity
+@AndroidEntryPoint
+class MainActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContent {
+            MyAppTheme {
+                AppNavigation()
+            }
+        }
+    }
+}`,
+      },
+      {
+        heading: 'Injecting ViewModels',
+        paragraphs: [
+          'Use @HiltViewModel and hiltViewModel() for clean ViewModel injection:',
+        ],
+        code: `@HiltViewModel
+class ProductListViewModel @Inject constructor(
+    private val productRepository: ProductRepository,
+    private val analyticsTracker: AnalyticsTracker
+) : ViewModel() {
+    
+    private val _products = MutableStateFlow<List<Product>>(emptyList())
+    val products: StateFlow<List<Product>> = _products.asStateFlow()
+    
+    init {
+        loadProducts()
+    }
+    
+    private fun loadProducts() {
+        viewModelScope.launch {
+            _products.value = productRepository.getProducts()
+            analyticsTracker.trackScreenView("product_list")
+        }
+    }
+}
+
+// In Compose - hiltViewModel() handles creation and scoping
+@Composable
+fun ProductListScreen(
+    viewModel: ProductListViewModel = hiltViewModel(),
+    onProductClick: (String) -> Unit
+) {
+    val products by viewModel.products.collectAsStateWithLifecycle()
+    ProductList(products = products, onProductClick = onProductClick)
+}`,
+      },
+      {
+        heading: 'Providing Dependencies with Modules',
+        paragraphs: [
+          'Define Hilt modules to provide dependencies that cannot be constructor-injected:',
+        ],
+        code: `@Module
+@InstallIn(SingletonComponent::class)
+object NetworkModule {
+    
+    @Provides
+    @Singleton
+    fun provideOkHttpClient(): OkHttpClient {
+        return OkHttpClient.Builder()
+            .addInterceptor(HttpLoggingInterceptor())
+            .connectTimeout(30, TimeUnit.SECONDS)
+            .build()
+    }
+    
+    @Provides
+    @Singleton
+    fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl("https://api.example.com/")
+            .client(okHttpClient)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+    }
+    
+    @Provides
+    @Singleton
+    fun provideProductApi(retrofit: Retrofit): ProductApi {
+        return retrofit.create(ProductApi::class.java)
+    }
+}
+
+@Module
+@InstallIn(SingletonComponent::class)
+abstract class RepositoryModule {
+    
+    @Binds
+    @Singleton
+    abstract fun bindProductRepository(
+        impl: ProductRepositoryImpl
+    ): ProductRepository
+}`,
+      },
+      {
+        heading: 'Testing with Hilt',
+        paragraphs: [
+          'Hilt makes testing easy by allowing you to replace dependencies:',
+        ],
+        code: `@HiltAndroidTest
+class ProductListScreenTest {
+    
+    @get:Rule(order = 0)
+    val hiltRule = HiltAndroidRule(this)
+    
+    @get:Rule(order = 1)
+    val composeRule = createAndroidComposeRule<MainActivity>()
+    
+    @BindValue
+    val fakeRepository: ProductRepository = FakeProductRepository()
+    
+    @Before
+    fun setup() {
+        hiltRule.inject()
+        (fakeRepository as FakeProductRepository).setProducts(
+            listOf(Product("1", "Test Product", 9.99))
+        )
+    }
+    
+    @Test
+    fun productList_displaysProducts() {
+        composeRule.onNodeWithText("Test Product").assertIsDisplayed()
+        composeRule.onNodeWithText("$9.99").assertIsDisplayed()
+    }
+}`,
+        note: 'Use @BindValue to replace real dependencies with fakes in tests. This is cleaner than creating separate test modules.',
+      },
+    ],
+  },
+  {
+    slug: 'compose-performance-profiling',
+    title: 'Compose Performance Profiling: Tools and Techniques',
+    description: 'Master Compose performance analysis with Layout Inspector, Composition Tracing, and Macrobenchmark. Find and fix performance bottlenecks like a pro.',
+    publishedAt: '2025-12-13',
+    updatedAt: '2025-12-13',
+    author: 'Engineering Team',
+    tags: ['Performance', 'Profiling', 'Optimization', 'Debugging'],
+    readingMinutes: 16,
+    sections: [
+      {
+        heading: 'Why Performance Profiling Matters',
+        paragraphs: [
+          'Compose is fast by default, but it is easy to introduce performance problems accidentally. Excessive recompositions, heavy computations during composition, and inefficient state reads can all cause jank.',
+          'The good news: Android Studio provides excellent tooling for diagnosing Compose performance issues. Let\'s explore each tool and when to use it.',
+        ],
+      },
+      {
+        heading: 'Layout Inspector: Visualizing Recomposition',
+        paragraphs: [
+          'Layout Inspector is your first stop for Compose debugging. Enable recomposition highlighting to see which components update:',
+        ],
+        list: [
+          'Open Layout Inspector: View > Tool Windows > Layout Inspector',
+          'Enable "Show Recomposition Counts" in the toolbar',
+          'Blue highlights show recomposition count; red shows skipped count',
+          'Components recomposing excessively appear with high blue counts',
+        ],
+        note: 'A well-optimized Compose UI should show mostly "skipped" (red) counts. High blue counts indicate components that recompose too often.',
+      },
+      {
+        heading: 'Composition Tracing with System Trace',
+        paragraphs: [
+          'For deeper analysis, enable Composition Tracing to see exactly what happens during each frame:',
+        ],
+        code: `// Add to build.gradle.kts
+android {
+    buildTypes {
+        debug {
+            // Enable composition tracing
+            manifestPlaceholders["enableComposeCompilerReports"] = true
+        }
+    }
+}
+
+// In code, you can add custom trace sections
+@Composable
+fun ExpensiveList(items: List<Item>) {
+    trace("ExpensiveList") {
+        LazyColumn {
+            items(items, key = { it.id }) { item ->
+                trace("ItemRow-\${item.id}") {
+                    ItemRow(item)
+                }
+            }
+        }
+    }
+}`,
+      },
+      {
+        heading: 'Macrobenchmark: Measuring Real Performance',
+        paragraphs: [
+          'For production-grade performance testing, use Macrobenchmark. It measures startup time, frame timing, and scrolling performance:',
+        ],
+        code: `@LargeTest
+@RunWith(AndroidJUnit4::class)
+class ScrollBenchmark {
+    @get:Rule
+    val benchmarkRule = MacrobenchmarkRule()
+
+    @Test
+    fun scrollProductList() {
+        benchmarkRule.measureRepeated(
+            packageName = "com.example.app",
+            metrics = listOf(FrameTimingMetric()),
+            iterations = 5,
+            startupMode = StartupMode.COLD,
+            setupBlock = {
+                startActivityAndWait()
+            }
+        ) {
+            // Scroll the product list
+            val list = device.findObject(By.res("product_list"))
+            list.setGestureMargin(device.displayWidth / 5)
+            
+            repeat(3) {
+                list.fling(Direction.DOWN)
+                device.waitForIdle()
+            }
+        }
+    }
+}`,
+      },
+      {
+        heading: 'Common Performance Anti-Patterns',
+        paragraphs: [
+          'Here are the most frequent causes of Compose performance issues:',
+        ],
+        code: `// ❌ Anti-pattern 1: Creating objects during composition
+@Composable
+fun BadExample() {
+    val items = listOf(1, 2, 3) // New list every recomposition!
+    val onClick = { doSomething() } // New lambda every recomposition!
+}
+
+// ✅ Fix: Use remember
+@Composable
+fun GoodExample() {
+    val items = remember { listOf(1, 2, 3) }
+    val onClick = remember { { doSomething() } }
+}
+
+// ❌ Anti-pattern 2: Reading state too high
+@Composable
+fun BadScreen(viewModel: MyViewModel) {
+    val scrollState = viewModel.scrollState.collectAsState() // Read at top
+    Column {
+        Header() // Recomposes even though it doesn't use scrollState
+        Content(scrollState) // Only this needs scrollState
+    }
+}
+
+// ✅ Fix: Read state where it's used (defer reads)
+@Composable
+fun GoodScreen(viewModel: MyViewModel) {
+    Column {
+        Header() // Won't recompose when scrollState changes
+        Content(viewModel) // Read scrollState inside Content
+    }
+}`,
+        note: 'Profile before optimizing. Premature optimization often makes code harder to read without meaningful performance gains.',
+      },
+    ],
+  },
+  {
+    slug: 'compose-error-handling-patterns',
+    title: 'Error Handling Patterns in Compose: From Try-Catch to Graceful UX',
+    description: 'Build resilient Compose applications with proper error handling. Learn patterns for network errors, validation, loading states, and user-friendly error messages.',
+    publishedAt: '2025-12-12',
+    updatedAt: '2025-12-12',
+    author: 'Engineering Team',
+    tags: ['Error Handling', 'UX', 'Best Practices', 'Architecture'],
+    readingMinutes: 13,
+    sections: [
+      {
+        heading: 'Errors Are Inevitable',
+        paragraphs: [
+          'Network requests fail. Users enter invalid data. APIs return unexpected responses. A production-quality app handles all these gracefully, turning potential crashes into helpful user experiences.',
+          'Compose makes error handling elegant when you model errors as state. Instead of try-catch scattered everywhere, errors become first-class citizens in your UI state.',
+        ],
+      },
+      {
+        heading: 'The Sealed Result Pattern',
+        paragraphs: [
+          'Model operation outcomes with a sealed class that captures success, loading, and error states:',
+        ],
+        code: `sealed class Result<out T> {
+    data class Success<T>(val data: T) : Result<T>()
+    data class Error(val exception: Throwable) : Result<Nothing>()
+    object Loading : Result<Nothing>()
+}
+
+// In ViewModel
+class UserViewModel @Inject constructor(
+    private val userRepository: UserRepository
+) : ViewModel() {
+    
+    private val _userState = MutableStateFlow<Result<User>>(Result.Loading)
+    val userState: StateFlow<Result<User>> = _userState.asStateFlow()
+    
+    fun loadUser(userId: String) {
+        viewModelScope.launch {
+            _userState.value = Result.Loading
+            _userState.value = try {
+                Result.Success(userRepository.getUser(userId))
+            } catch (e: Exception) {
+                Result.Error(e)
+            }
+        }
+    }
+}`,
+      },
+      {
+        heading: 'Rendering Error States',
+        paragraphs: [
+          'Create reusable components for different result states:',
+        ],
+        code: `@Composable
+fun <T> ResultHandler(
+    result: Result<T>,
+    onRetry: () -> Unit,
+    content: @Composable (T) -> Unit
+) {
+    when (result) {
+        is Result.Loading -> {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+        }
+        is Result.Error -> {
+            ErrorScreen(
+                message = result.exception.toUserMessage(),
+                onRetry = onRetry
+            )
+        }
+        is Result.Success -> {
+            content(result.data)
+        }
+    }
+}
+
+// Extension function for user-friendly messages
+fun Throwable.toUserMessage(): String = when (this) {
+    is java.net.UnknownHostException -> "No internet connection"
+    is java.net.SocketTimeoutException -> "Request timed out"
+    is HttpException -> when (code()) {
+        401 -> "Please log in again"
+        403 -> "Access denied"
+        404 -> "Content not found"
+        in 500..599 -> "Server error. Please try later."
+        else -> "Something went wrong"
+    }
+    else -> "An unexpected error occurred"
+}`,
+      },
+      {
+        heading: 'Form Validation Errors',
+        paragraphs: [
+          'For form inputs, model validation errors alongside the data:',
+        ],
+        code: `data class FormField(
+    val value: String = "",
+    val error: String? = null
+)
+
+data class LoginFormState(
+    val email: FormField = FormField(),
+    val password: FormField = FormField(),
+    val isSubmitting: Boolean = false
+)
+
+class LoginViewModel : ViewModel() {
+    private val _formState = MutableStateFlow(LoginFormState())
+    val formState: StateFlow<LoginFormState> = _formState.asStateFlow()
+    
+    fun updateEmail(email: String) {
+        _formState.update { 
+            it.copy(email = FormField(value = email, error = validateEmail(email)))
+        }
+    }
+    
+    private fun validateEmail(email: String): String? {
+        return when {
+            email.isBlank() -> "Email is required"
+            !email.contains("@") -> "Invalid email format"
+            else -> null
+        }
+    }
+}
+
+// In Compose
+@Composable
+fun EmailField(field: FormField, onValueChange: (String) -> Unit) {
+    Column {
+        OutlinedTextField(
+            value = field.value,
+            onValueChange = onValueChange,
+            isError = field.error != null,
+            label = { Text("Email") }
+        )
+        if (field.error != null) {
+            Text(
+                text = field.error,
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.padding(start = 16.dp, top = 4.dp)
+            )
+        }
+    }
+}`,
+      },
+      {
+        heading: 'Snackbars for Transient Errors',
+        paragraphs: [
+          'Some errors are best shown briefly and dismissed automatically:',
+        ],
+        code: `@Composable
+fun AppScaffold(viewModel: AppViewModel) {
+    val snackbarHostState = remember { SnackbarHostState() }
+    
+    // Collect error events
+    LaunchedEffect(Unit) {
+        viewModel.errorEvents.collect { error ->
+            val result = snackbarHostState.showSnackbar(
+                message = error.message,
+                actionLabel = if (error.isRetryable) "Retry" else null,
+                duration = SnackbarDuration.Short
+            )
+            if (result == SnackbarResult.ActionPerformed) {
+                error.onRetry?.invoke()
+            }
+        }
+    }
+    
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) }
+    ) { padding ->
+        AppContent(Modifier.padding(padding))
+    }
+}`,
+        note: 'Match error severity to UI treatment: blocking errors get full-screen treatment, recoverable errors get snackbars, field errors appear inline.',
+      },
+    ],
+  },
 ];
 
 export function getAllPosts() {
