@@ -1,0 +1,1174 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-F2G7TSB6Q6"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-F2G7TSB6Q6');
+    </script>
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2819959179592334"
+        crossorigin="anonymous"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compose Playground - Live Kotlin & Jetpack Compose Editor | xml2compose.dev</title>
+    <meta name="description"
+        content="Interactive Kotlin and Jetpack Compose playground. Write, edit, and run Compose code directly in your browser with 10+ ready-to-use examples.">
+    <meta name="keywords"
+        content="Kotlin Playground, Compose Playground, Jetpack Compose editor, Android UI, live code editor, Compose examples">
+    <link rel="canonical" href="https://xml2compose.dev/playground.html">
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+    <!-- Open Graph -->
+    <meta property="og:title" content="Compose Playground - Live Kotlin & Jetpack Compose Editor">
+    <meta property="og:description"
+        content="Interactive Kotlin and Jetpack Compose playground. Write, edit, and run Compose code in your browser.">
+    <meta property="og:url" content="https://xml2compose.dev/playground.html">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="https://xml2compose.dev/og-image.png">
+    <meta property="og:site_name" content="xml2compose.dev">
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Compose Playground - Live Kotlin Editor">
+    <meta name="twitter:description"
+        content="Interactive Kotlin and Jetpack Compose playground with ready-to-use examples.">
+    <meta name="twitter:image" content="https://xml2compose.dev/og-image.png">
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Compose Playground",
+      "url": "https://xml2compose.dev/playground.html",
+      "applicationCategory": "DeveloperApplication",
+      "operatingSystem": "Web",
+      "description": "Interactive Kotlin and Jetpack Compose playground for learning and experimenting with Android UI code.",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "author": {
+        "@type": "Organization",
+        "name": "xml2compose.dev"
+      }
+    }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Playground specific styles */
+        .playground-hero {
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+            padding: var(--space-12) 0 var(--space-8);
+            text-align: center;
+            border-bottom: 1px solid var(--border-secondary);
+        }
+
+        .playground-hero h1 {
+            font-size: var(--text-4xl);
+            font-weight: var(--font-bold);
+            color: var(--text-primary);
+            margin: 0 0 var(--space-4);
+            letter-spacing: -0.02em;
+        }
+
+        .playground-hero p {
+            font-size: var(--text-lg);
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto var(--space-6);
+            line-height: var(--leading-relaxed);
+        }
+
+        .playground-main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: var(--space-8) var(--space-4);
+        }
+
+        /* Category Tabs */
+        .category-tabs {
+            display: flex;
+            gap: var(--space-2);
+            flex-wrap: wrap;
+            margin-bottom: var(--space-6);
+            padding: var(--space-4);
+            background: var(--bg-primary);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .category-tab {
+            padding: var(--space-2) var(--space-4);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-secondary);
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            font-size: var(--text-sm);
+            font-weight: var(--font-medium);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .category-tab:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .category-tab.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        /* Examples Grid */
+        .examples-grid {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: var(--space-6);
+            margin-bottom: var(--space-8);
+        }
+
+        .examples-list {
+            background: var(--bg-primary);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+        }
+
+        .examples-list-header {
+            background: var(--bg-tertiary);
+            padding: var(--space-4) var(--space-5);
+            border-bottom: 1px solid var(--border-secondary);
+        }
+
+        .examples-list-header h3 {
+            margin: 0;
+            font-size: var(--text-lg);
+            font-weight: var(--font-semibold);
+            color: var(--text-primary);
+        }
+
+        .example-items {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .example-item {
+            padding: var(--space-4) var(--space-5);
+            border-bottom: 1px solid var(--border-secondary);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .example-item:hover {
+            background: var(--bg-secondary);
+        }
+
+        .example-item.active {
+            background: rgba(59, 130, 246, 0.1);
+            border-left: 3px solid var(--primary-color);
+        }
+
+        .example-item h4 {
+            margin: 0 0 var(--space-1);
+            font-size: var(--text-base);
+            font-weight: var(--font-medium);
+            color: var(--text-primary);
+        }
+
+        .example-item p {
+            margin: 0;
+            font-size: var(--text-sm);
+            color: var(--text-tertiary);
+        }
+
+        .example-tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: var(--radius-sm);
+            font-size: 11px;
+            font-weight: var(--font-semibold);
+            text-transform: uppercase;
+            margin-top: var(--space-2);
+        }
+
+        .example-tag.basics {
+            background: #e0f2fe;
+            color: #0369a1;
+        }
+
+        .example-tag.layout {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .example-tag.state {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .example-tag.animation {
+            background: #fce7f3;
+            color: #9d174d;
+        }
+
+        .example-tag.material3 {
+            background: #ede9fe;
+            color: #6d28d9;
+        }
+
+        /* Playground Editor */
+        .playground-editor {
+            background: var(--bg-primary);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+        }
+
+        .playground-editor-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--bg-tertiary);
+            padding: var(--space-4) var(--space-5);
+            border-bottom: 1px solid var(--border-secondary);
+        }
+
+        .playground-editor-title {
+            margin: 0;
+            font-size: var(--text-lg);
+            font-weight: var(--font-semibold);
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+
+        .playground-editor-title svg {
+            width: 20px;
+            height: 20px;
+            color: var(--primary-color);
+        }
+
+        .playground-editor-actions {
+            display: flex;
+            gap: var(--space-2);
+        }
+
+        .action-btn {
+            padding: var(--space-2) var(--space-4);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-secondary);
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            font-size: var(--text-sm);
+            font-weight: var(--font-medium);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .action-btn:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .action-btn.primary {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .action-btn.primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .playground-code-container {
+            padding: var(--space-6);
+            min-height: 400px;
+        }
+
+        /* Kotlin Playground Overrides */
+        .kotlin-code {
+            font-family: var(--font-mono);
+            font-size: var(--text-sm);
+            line-height: var(--leading-relaxed);
+        }
+
+        .executable-fragment-wrapper {
+            border-radius: var(--radius-md) !important;
+        }
+
+        /* Tips Section */
+        .tips-section {
+            background: var(--bg-primary);
+            border-radius: var(--radius-lg);
+            padding: var(--space-6);
+            margin-top: var(--space-8);
+            box-shadow: var(--shadow-md);
+        }
+
+        .tips-section h3 {
+            margin: 0 0 var(--space-4);
+            font-size: var(--text-xl);
+            font-weight: var(--font-semibold);
+            color: var(--text-primary);
+        }
+
+        .tips-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--space-4);
+        }
+
+        .tip-card {
+            padding: var(--space-4);
+            background: var(--bg-secondary);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-secondary);
+        }
+
+        .tip-card h4 {
+            margin: 0 0 var(--space-2);
+            font-size: var(--text-base);
+            font-weight: var(--font-medium);
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+
+        .tip-card p {
+            margin: 0;
+            font-size: var(--text-sm);
+            color: var(--text-secondary);
+            line-height: var(--leading-relaxed);
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .examples-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .examples-list {
+                order: 2;
+            }
+
+            .playground-editor {
+                order: 1;
+            }
+
+            .example-items {
+                max-height: 300px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .playground-hero h1 {
+                font-size: var(--text-2xl);
+            }
+
+            .playground-hero p {
+                font-size: var(--text-base);
+            }
+
+            .category-tabs {
+                justify-content: center;
+            }
+
+            .playground-editor-header {
+                flex-direction: column;
+                gap: var(--space-3);
+                align-items: flex-start;
+            }
+
+            .playground-editor-actions {
+                width: 100%;
+                justify-content: flex-end;
+            }
+        }
+
+        /* Custom URL param indicator */
+        .custom-code-banner {
+            display: none;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: var(--space-3) var(--space-5);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-4);
+            font-size: var(--text-sm);
+        }
+
+        .custom-code-banner.show {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">
+                <div class="logo-text"><a href="index.html">xml2compose.dev</a></div>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="converter.html">Converter</a></li>
+                    <li><a href="playground.html" class="active">Playground</a></li>
+                    <li><a href="/blog">Blog</a></li>
+                    <li><a href="index.html#faq">FAQ</a></li>
+                </ul>
+            </nav>
+            <div class="lang-switch">
+                <button class="active">EN</button>
+                <button>中文</button>
+            </div>
+            <!-- Theme Toggle Button -->
+            <button class="theme-toggle-btn" id="theme-toggle-btn" aria-label="Toggle dark mode">
+                <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="5" />
+                    <line x1="12" y1="1" x2="12" y2="3" />
+                    <line x1="12" y1="21" x2="12" y2="23" />
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                    <line x1="1" y1="12" x2="3" y2="12" />
+                    <line x1="21" y1="12" x2="23" y2="12" />
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+                </svg>
+                <svg class="moon-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <section class="playground-hero">
+        <div class="container">
+            <h1>🚀 Compose Playground</h1>
+            <p>Interactive Kotlin & Jetpack Compose editor. Explore 10+ ready-to-use examples, edit code in real-time,
+                and learn by experimenting. Perfect for learning Compose patterns and testing ideas.</p>
+        </div>
+    </section>
+
+    <main class="playground-main">
+        <!-- Custom Code Banner -->
+        <div class="custom-code-banner" id="custom-code-banner">
+            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+            <span>You're viewing code from the converter. Edit and run it below!</span>
+        </div>
+
+        <!-- Category Tabs -->
+        <div class="category-tabs">
+            <button class="category-tab active" data-category="all">All Examples</button>
+            <button class="category-tab" data-category="basics">Basics</button>
+            <button class="category-tab" data-category="layout">Layout</button>
+            <button class="category-tab" data-category="state">State</button>
+            <button class="category-tab" data-category="animation">Animation</button>
+            <button class="category-tab" data-category="material3">Material 3</button>
+        </div>
+
+        <!-- Examples Grid -->
+        <div class="examples-grid">
+            <!-- Examples List -->
+            <div class="examples-list">
+                <div class="examples-list-header">
+                    <h3>📚 Examples</h3>
+                </div>
+                <div class="example-items" id="example-items">
+                    <!-- Populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Playground Editor -->
+            <div class="playground-editor">
+                <div class="playground-editor-header">
+                    <h2 class="playground-editor-title">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                        </svg>
+                        <span id="current-example-title">Hello World</span>
+                    </h2>
+                    <div class="playground-editor-actions">
+                        <button class="action-btn" id="copy-code-btn">📋 Copy</button>
+                        <button class="action-btn" id="reset-code-btn">🔄 Reset</button>
+                    </div>
+                </div>
+                <div class="playground-code-container">
+                    <code class="kotlin-code" id="kotlin-playground">
+fun main() {
+    // Welcome to Compose Playground!
+    // This is a simple Kotlin example.
+    
+    println("Hello, Jetpack Compose! 🚀")
+    
+    // Try the examples on the left to see
+    // different Compose patterns and components.
+}
+                    </code>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tips Section -->
+        <div class="tips-section">
+            <h3>💡 Quick Tips</h3>
+            <div class="tips-grid">
+                <div class="tip-card">
+                    <h4>⌨️ Keyboard Shortcuts</h4>
+                    <p>Use <strong>Ctrl+Enter</strong> (or <strong>Cmd+Enter</strong> on Mac) to run your code
+                        instantly.</p>
+                </div>
+                <div class="tip-card">
+                    <h4>🔗 From Converter</h4>
+                    <p>Converted XML code? Click "Try in Playground" in the converter to test it here.</p>
+                </div>
+                <div class="tip-card">
+                    <h4>📖 Learn by Example</h4>
+                    <p>Browse examples by category. Each shows a different Compose pattern with working code.</p>
+                </div>
+                <div class="tip-card">
+                    <h4>✏️ Experiment Freely</h4>
+                    <p>Modify any example to see how changes affect the output. Click Reset to restore original code.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 xml2compose.dev. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- JetBrains Kotlin Playground -->
+    <script src="https://unpkg.com/kotlin-playground@1"></script>
+
+    <script>
+        // Example Templates Data
+        const examples = [
+            {
+                id: 'hello-world',
+                title: 'Hello World',
+                description: 'Simple Text composable',
+                category: 'basics',
+                code: `import androidx.compose.material3.*
+import androidx.compose.runtime.*
+
+// Basic Compose function that displays text
+@Composable
+fun Greeting(name: String) {
+    Text(
+        text = "Hello, ${"$"}name!",
+        style = MaterialTheme.typography.headlineMedium
+    )
+}
+
+// Usage in your app:
+// Greeting(name = "Jetpack Compose")
+
+fun main() {
+    println("✅ This code demonstrates a basic @Composable function")
+    println("   The Greeting function displays styled text")
+}`
+            },
+            {
+                id: 'button-click',
+                title: 'Button with Click',
+                description: 'Interactive button with onClick handler',
+                category: 'basics',
+                code: `import androidx.compose.material3.*
+import androidx.compose.runtime.*
+
+@Composable
+fun ClickableButton(onClick: () -> Unit) {
+    Button(
+        onClick = onClick,
+        colors = ButtonDefaults.buttonColors(
+            containerColor = MaterialTheme.colorScheme.primary
+        )
+    ) {
+        Text("Click Me!")
+    }
+}
+
+// Usage:
+// ClickableButton { println("Button clicked!") }
+
+fun main() {
+    println("✅ Button component with onClick lambda")
+    println("   Uses Material 3 ButtonDefaults for styling")
+}`
+            },
+            {
+                id: 'column-row',
+                title: 'Column & Row',
+                description: 'Basic layout containers',
+                category: 'layout',
+                code: `import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+
+@Composable
+fun LayoutExample() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        Text("Column arranges items vertically")
+        
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text("Row 1")
+            Text("Row 2")
+            Text("Row 3")
+        }
+    }
+}
+
+fun main() {
+    println("✅ Column: Vertical arrangement")
+    println("   Row: Horizontal arrangement")
+    println("   Use Arrangement.spacedBy() for gaps")
+}`
+            },
+            {
+                id: 'box-alignment',
+                title: 'Box with Alignment',
+                description: 'Overlapping elements with alignment',
+                category: 'layout',
+                code: `import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+
+@Composable
+fun BoxExample() {
+    Box(
+        modifier = Modifier
+            .size(200.dp)
+            .background(Color.LightGray),
+        contentAlignment = Alignment.Center
+    ) {
+        // Elements stack on top of each other
+        Box(
+            modifier = Modifier
+                .size(100.dp)
+                .background(Color.Blue)
+        )
+        Text(
+            text = "Centered",
+            color = Color.White,
+            modifier = Modifier.align(Alignment.Center)
+        )
+    }
+}
+
+fun main() {
+    println("✅ Box allows overlapping children")
+    println("   contentAlignment: default alignment for all children")
+    println("   Modifier.align(): per-child alignment override")
+}`
+            },
+            {
+                id: 'lazy-column',
+                title: 'LazyColumn List',
+                description: 'Efficient scrollable list',
+                category: 'layout',
+                code: `import androidx.compose.foundation.lazy.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.fillMaxWidth
+
+@Composable
+fun LazyListExample(items: List<String>) {
+    LazyColumn {
+        // Header item
+        item {
+            Text(
+                text = "My List",
+                style = MaterialTheme.typography.headlineSmall,
+                modifier = Modifier.padding(16.dp)
+            )
+        }
+        
+        // Dynamic items
+        items(items) { item ->
+            ListItem(
+                headlineContent = { Text(item) },
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+    }
+}
+
+fun main() {
+    val sampleItems = listOf("Apple", "Banana", "Cherry", "Date", "Elderberry")
+    println("✅ LazyColumn only renders visible items")
+    println("   Perfect for large lists like RecyclerView")
+    println("   Sample items: ${"$"}sampleItems")
+}`
+            },
+            {
+                id: 'counter-state',
+                title: 'Counter with State',
+                description: 'remember + mutableStateOf',
+                category: 'state',
+                code: `import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+
+@Composable
+fun Counter() {
+    // State that survives recomposition
+    var count by remember { mutableStateOf(0) }
+    
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        Text(
+            text = "Count: ${"$"}count",
+            style = MaterialTheme.typography.displayMedium
+        )
+        
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            Button(onClick = { count-- }) {
+                Text("-")
+            }
+            Button(onClick = { count++ }) {
+                Text("+")
+            }
+        }
+    }
+}
+
+fun main() {
+    println("✅ remember: stores value across recompositions")
+    println("   mutableStateOf: creates observable state")
+    println("   by delegate: allows direct read/write")
+}`
+            },
+            {
+                id: 'textfield-input',
+                title: 'TextField Input',
+                description: 'User text input handling',
+                category: 'state',
+                code: `import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+
+@Composable
+fun TextInputExample() {
+    var text by remember { mutableStateOf("") }
+    
+    Column(
+        modifier = Modifier.padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        OutlinedTextField(
+            value = text,
+            onValueChange = { text = it },
+            label = { Text("Enter your name") },
+            modifier = Modifier.fillMaxWidth()
+        )
+        
+        if (text.isNotEmpty()) {
+            Text(
+                text = "Hello, ${"$"}text!",
+                style = MaterialTheme.typography.bodyLarge
+            )
+        }
+    }
+}
+
+fun main() {
+    println("✅ TextField uses controlled state pattern")
+    println("   value: current text")
+    println("   onValueChange: callback when text changes")
+}`
+            },
+            {
+                id: 'visibility-animation',
+                title: 'Animated Visibility',
+                description: 'Enter/exit animations',
+                category: 'animation',
+                code: `import androidx.compose.animation.*
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+
+@Composable
+fun AnimatedVisibilityExample() {
+    var visible by remember { mutableStateOf(true) }
+    
+    Column(
+        modifier = Modifier.padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        Button(onClick = { visible = !visible }) {
+            Text(if (visible) "Hide" else "Show")
+        }
+        
+        AnimatedVisibility(
+            visible = visible,
+            enter = fadeIn() + slideInVertically(),
+            exit = fadeOut() + slideOutVertically()
+        ) {
+            Card(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = "I can appear and disappear!",
+                    modifier = Modifier.padding(16.dp)
+                )
+            }
+        }
+    }
+}
+
+fun main() {
+    println("✅ AnimatedVisibility handles enter/exit animations")
+    println("   Combine animations with + operator")
+    println("   fadeIn, slideIn, expandIn, etc.")
+}`
+            },
+            {
+                id: 'color-animation',
+                title: 'Color Animation',
+                description: 'animateColorAsState',
+                category: 'animation',
+                code: `import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+
+@Composable
+fun ColorAnimationExample() {
+    var isBlue by remember { mutableStateOf(true) }
+    
+    val backgroundColor by animateColorAsState(
+        targetValue = if (isBlue) Color.Blue else Color.Red,
+        animationSpec = tween(durationMillis = 500),
+        label = "background color"
+    )
+    
+    Box(
+        modifier = Modifier
+            .size(200.dp)
+            .background(backgroundColor)
+            .clickable { isBlue = !isBlue }
+    ) {
+        Text(
+            text = "Tap me!",
+            color = Color.White,
+            modifier = Modifier.padding(16.dp)
+        )
+    }
+}
+
+fun main() {
+    println("✅ animateColorAsState: smooth color transitions")
+    println("   tween: customize animation duration")
+    println("   Also: animateFloatAsState, animateDpAsState, etc.")
+}`
+            },
+            {
+                id: 'material-card',
+                title: 'Material Card',
+                description: 'Elevated card component',
+                category: 'material3',
+                code: `import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+
+@Composable
+fun CardExample() {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 4.dp
+        ),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        )
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Text(
+                text = "Card Title",
+                style = MaterialTheme.typography.titleLarge
+            )
+            Text(
+                text = "This is a Material 3 Card with elevation and custom colors.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Button(onClick = { }) {
+                Text("Action")
+            }
+        }
+    }
+}
+
+fun main() {
+    println("✅ Material 3 Card component")
+    println("   CardDefaults.cardElevation: shadow depth")
+    println("   Uses semantic color tokens from theme")
+}`
+            },
+            {
+                id: 'scaffold-topbar',
+                title: 'Scaffold + TopAppBar',
+                description: 'App structure with toolbar',
+                category: 'material3',
+                code: `import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ScaffoldExample() {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("My App") },
+                navigationIcon = {
+                    IconButton(onClick = { }) {
+                        Icon(Icons.Filled.Menu, "Menu")
+                    }
+                },
+                actions = {
+                    IconButton(onClick = { }) {
+                        Icon(Icons.Filled.Search, "Search")
+                    }
+                    IconButton(onClick = { }) {
+                        Icon(Icons.Filled.MoreVert, "More")
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer
+                )
+            )
+        },
+        floatingActionButton = {
+            FloatingActionButton(onClick = { }) {
+                Icon(Icons.Filled.Add, "Add")
+            }
+        }
+    ) { paddingValues ->
+        // Main content
+        Box(modifier = Modifier.padding(paddingValues)) {
+            Text("Hello, Scaffold!")
+        }
+    }
+}
+
+fun main() {
+    println("✅ Scaffold: standard Material app structure")
+    println("   TopAppBar: navigation, title, actions")
+    println("   FloatingActionButton: primary action")
+    println("   paddingValues: respects system bars")
+}`
+            }
+        ];
+
+        // Current state
+        let currentExample = examples[0];
+        let currentCategory = 'all';
+        let customCode = null;
+
+        // DOM Elements
+        const exampleItemsContainer = document.getElementById('example-items');
+        const playgroundCode = document.getElementById('kotlin-playground');
+        const currentExampleTitle = document.getElementById('current-example-title');
+        const categoryTabs = document.querySelectorAll('.category-tab');
+        const copyBtn = document.getElementById('copy-code-btn');
+        const resetBtn = document.getElementById('reset-code-btn');
+        const customCodeBanner = document.getElementById('custom-code-banner');
+
+        // Check for custom code from URL params
+        function checkUrlParams() {
+            const params = new URLSearchParams(window.location.search);
+            const code = params.get('code');
+            if (code) {
+                try {
+                    customCode = decodeURIComponent(code);
+                    playgroundCode.textContent = customCode;
+                    currentExampleTitle.textContent = 'Converted Code';
+                    customCodeBanner.classList.add('show');
+                    return true;
+                } catch (e) {
+                    console.error('Failed to decode code from URL:', e);
+                }
+            }
+            return false;
+        }
+
+        // Render example list
+        function renderExamples() {
+            const filteredExamples = currentCategory === 'all'
+                ? examples
+                : examples.filter(e => e.category === currentCategory);
+
+            exampleItemsContainer.innerHTML = filteredExamples.map(example => `
+                <div class="example-item ${example.id === currentExample.id ? 'active' : ''}" 
+                     data-id="${example.id}">
+                    <h4>${example.title}</h4>
+                    <p>${example.description}</p>
+                    <span class="example-tag ${example.category}">${example.category}</span>
+                </div>
+            `).join('');
+
+            // Add click handlers
+            document.querySelectorAll('.example-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    const id = item.dataset.id;
+                    selectExample(id);
+                });
+            });
+        }
+
+        // Select an example
+        function selectExample(id) {
+            currentExample = examples.find(e => e.id === id) || examples[0];
+            customCode = null;
+            customCodeBanner.classList.remove('show');
+
+            // Update title
+            currentExampleTitle.textContent = currentExample.title;
+
+            // Update active state in examples list
+            document.querySelectorAll('.example-item').forEach(item => {
+                item.classList.toggle('active', item.dataset.id === id);
+            });
+
+            // Recreate the code element (Kotlin Playground replaces the original)
+            const container = document.querySelector('.playground-code-container');
+            container.innerHTML = `<code class="kotlin-code" id="kotlin-playground">${escapeHtml(currentExample.code)}</code>`;
+
+            // Update reference
+            playgroundCode = document.getElementById('kotlin-playground');
+
+            // Reinitialize Kotlin Playground
+            if (window.KotlinPlayground) {
+                KotlinPlayground('#kotlin-playground');
+            }
+        }
+
+        // Helper function to escape HTML
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Category tab click handler
+        categoryTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                currentCategory = tab.dataset.category;
+                categoryTabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                renderExamples();
+            });
+        });
+
+        // Copy button
+        copyBtn.addEventListener('click', () => {
+            const code = customCode || currentExample.code;
+            navigator.clipboard.writeText(code).then(() => {
+                copyBtn.textContent = '✅ Copied!';
+                setTimeout(() => {
+                    copyBtn.textContent = '📋 Copy';
+                }, 2000);
+            });
+        });
+
+        // Reset button
+        resetBtn.addEventListener('click', () => {
+            const code = customCode || currentExample.code;
+
+            // Recreate the code element
+            const container = document.querySelector('.playground-code-container');
+            container.innerHTML = `<code class="kotlin-code" id="kotlin-playground">${escapeHtml(code)}</code>`;
+
+            // Update reference
+            playgroundCode = document.getElementById('kotlin-playground');
+
+            if (window.KotlinPlayground) {
+                KotlinPlayground('#kotlin-playground');
+            }
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            const hasCustomCode = checkUrlParams();
+            renderExamples();
+
+            if (!hasCustomCode) {
+                playgroundCode.textContent = currentExample.code;
+            }
+
+            // Initialize Kotlin Playground
+            if (window.KotlinPlayground) {
+                KotlinPlayground('#kotlin-playground', {
+                    onChange: (code) => {
+                        // Track code changes if needed
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>

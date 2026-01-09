@@ -61,6 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const clearInputBtn = document.getElementById('clear-input-btn');
     const downloadBtn = document.getElementById('download-btn');
     const compareBtn = document.getElementById('compare-btn');
+    const playgroundBtn = document.getElementById('playground-btn');
     const inputStatus = document.getElementById('input-status');
     const inputStatusText = document.getElementById('input-status-text');
     const outputStatus = document.getElementById('output-status');
@@ -120,6 +121,10 @@ document.addEventListener('DOMContentLoaded', () => {
             outputLines.textContent = i18n.t('lines', { count: 0 });
             outputStatus.className = 'status-dot';
             outputStatusText.textContent = i18n.t('status.waiting');
+        }
+        // 更新 Playground 按钮可见性
+        if (playgroundBtn) {
+            playgroundBtn.style.display = hasContent ? 'inline-flex' : 'none';
         }
     }
 
@@ -268,6 +273,26 @@ document.addEventListener('DOMContentLoaded', () => {
         diffViewer.show(xmlCode, composeCode);
     }
 
+    // 打开 Playground
+    function openInPlayground() {
+        const composeCode = composeOutput.textContent;
+        if (!composeCode.trim()) {
+            notifier.warning(i18n.t('notification.noCode'));
+            return;
+        }
+
+        // Encode the code and open in playground
+        const encodedCode = encodeURIComponent(composeCode);
+        window.open(`playground.html?code=${encodedCode}`, '_blank');
+    }
+
+    // 显示/隐藏 Playground 按钮
+    function updatePlaygroundButton(hasContent) {
+        if (playgroundBtn) {
+            playgroundBtn.style.display = hasContent ? 'inline-flex' : 'none';
+        }
+    }
+
     // 绑定事件
     if (convertBtn) convertBtn.addEventListener('click', performConversion);
     if (copyBtn) copyBtn.addEventListener('click', copyCode);
@@ -275,6 +300,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (clearInputBtn) clearInputBtn.addEventListener('click', clearInput);
     if (downloadBtn) downloadBtn.addEventListener('click', downloadCode);
     if (compareBtn) compareBtn.addEventListener('click', showComparison);
+    if (playgroundBtn) playgroundBtn.addEventListener('click', openInPlayground);
     if (xmlInput) xmlInput.addEventListener('input', updateInputStatus);
 
     // 初始化拖拽上传
